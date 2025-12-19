@@ -1,0 +1,198 @@
+﻿@{
+    ViewBag.Title = "Validación de Comercios";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2 class="fw-bold text-success mb-4">
+    Validación de Comercios Regulados
+</h2>
+
+<p class="text-muted mb-4">
+    Listado de comercios pendientes de validación por parte de la municipalidad.
+</p>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="d-flex justify-content-end mb-3">
+            <a href="#" class="btn btn-success">
+                Agregar comercio
+            </a>
+        </div>
+
+        <table class="table table-hover align-middle">
+            <thead class="table-success">
+                <tr>
+                    <th>Nombre</th>
+                    <th>Tipo</th>
+                    <th>Propietario</th>
+                    <th>Ubicación</th>
+                    <th>Estado</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>Restaurante Sabores Típicos</td>
+                    <td>Restaurante</td>
+                    <td>María González</td>
+                    <td>Barrio Central</td>
+                    <td>
+                        <span class="badge bg-warning text-dark">
+                            Pendiente
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-success btn-sm">Aprobar</button>
+                        <button class="btn btn-danger btn-sm">Rechazar</button>
+                        <button class="btn btn-primary btn-sm"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalDetalleComercio">
+                            <i class="fa-solid fa-pen me-1"></i> Editar
+                        </button>
+
+
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Hotel Mirador Verde</td>
+                    <td>Hospedaje</td>
+                    <td>Carlos Rodríguez</td>
+                    <td>Zona Turística</td>
+                    <td>
+                        <span class="badge bg-warning text-dark">
+                            Pendiente
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-success btn-sm">Aprobar</button>
+                        <button class="btn btn-danger btn-sm">Rechazar</button>
+                        <button class="btn btn-primary btn-sm"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalDetalleComercio">
+                            <i class="fa-solid fa-pen me-1"></i> Editar
+                        </button>
+
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Café Montaña Verde</td>
+                    <td>Cafetería</td>
+                    <td>Sofía Ramírez</td>
+                    <td>Centro del cantón</td>
+                    <td>
+                        <span class="badge bg-warning text-dark">
+                            Pendiente
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-success btn-sm">Aprobar</button>
+                        <button class="btn btn-danger btn-sm">Rechazar</button>
+                        <button class="btn btn-primary btn-sm"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalDetalleComercio">
+                            <i class="fa-solid fa-pen me-1"></i> Editar
+                        </button>
+
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+
+    </div>
+    <div class="modal fade" id="modalDetalleComercio" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+
+            <div class="modal-content">
+
+                <!-- HEADER -->
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">
+                        Detalle del Comercio
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white"
+                            data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- BODY -->
+                <div class="modal-body">
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Nombre del comercio</label>
+                            <input type="text" class="form-control"
+                                   value="Restaurante Sabores Típicos" disabled>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Tipo de comercio</label>
+                            <input type="text" class="form-control"
+                                   value="Restaurante" disabled>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Propietario</label>
+                            <input type="text" class="form-control"
+                                   value="María González" disabled>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Ubicación</label>
+                            <input type="text" class="form-control"
+                                   value="Barrio Central" disabled>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Teléfono</label>
+                            <input type="text" class="form-control"
+                                   value="8888-9999" disabled>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Correo electrónico</label>
+                            <input type="email" class="form-control"
+                                   value="saborestipicos@email.com" disabled>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Descripción</label>
+                            <textarea class="form-control" rows="3" disabled>
+Restaurante especializado en comida típica costarricense, con atención a turistas nacionales e internacionales.
+                        </textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Estado</label><br>
+                            <span class="badge bg-warning text-dark fs-6">
+                                Pendiente de validación
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- FOOTER -->
+                <div class="modal-footer">
+                    <button class="btn btn-success">
+                        <i class="fa-solid fa-check"></i> Aprobar
+                    </button>
+                    <button class="btn btn-danger">
+                        <i class="fa-solid fa-xmark"></i> Rechazar
+                    </button>
+                    <button class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cerrar
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>

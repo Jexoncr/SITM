@@ -1,0 +1,121 @@
+﻿@{
+    ViewBag.Title = "Eventos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+
+    <h2 class="fw-bold text-success mb-3">Eventos y Actividades Turísticas</h2>
+    <p class="text-muted mb-5 fs-5">
+        Conocé los principales eventos culturales, recreativos y turísticos del cantón.
+    </p>
+
+    <div class="row g-4 row-cols-1 row-cols-md-2 row-cols-lg-3">
+
+        <!-- EVENTO 1 -->
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h4 class="fw-bold text-success">Festival Cultural Municipal</h4>
+                    <p class="fs-6">
+                        Evento cultural con música, danza y gastronomía típica del cantón.
+                    </p>
+                    <ul class="list-unstyled fs-6">
+                        <li>📍 Parque Central</li>
+                        <li>📅 15 de agosto, 2025</li>
+                    </ul>
+                    <div class="mt-auto d-flex gap-2">
+                        <a href="@Url.Action("Detalle", "Eventos", new { id = 1 })" class="btn btn-outline-success">Ver detalles</a>
+                        <a href="@Url.Action("Contacto", "Eventos", new { id = 1 })" class="btn btn-success">Contactar</a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EVENTO 2 -->
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h4 class="fw-bold text-success">Feria Gastronómica</h4>
+                    <p class="fs-6">
+                        Feria con emprendimientos locales y comida tradicional.
+                    </p>
+                    <ul class="list-unstyled fs-6">
+                        <li>📍 Plaza Municipal</li>
+                        <li>📅 22 de septiembre, 2025</li>
+                    </ul>
+                    <div class="mt-auto d-flex gap-2">
+                        <a href="@Url.Action("Detalle", "Eventos", new { id = 2 })" class="btn btn-outline-success">Ver detalles</a>
+                        <a href="@Url.Action("Contacto", "Eventos", new { id = 2 })" class="btn btn-success">Contactar</a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EVENTO 3 -->
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h4 class="fw-bold text-success">Caminata Ecológica Guiada</h4>
+                    <p class="fs-6">
+                        Recorrido guiado por senderos naturales del cantón.
+                    </p>
+                    <ul class="list-unstyled fs-6">
+                        <li>📍 Reserva Natural</li>
+                        <li>📅 10 de octubre, 2025</li>
+                    </ul>
+                    <div class="mt-auto d-flex gap-2">
+                        <a href="@Url.Action("Detalle", "Eventos", new { id = 3 })" class="btn btn-outline-success">Ver detalles</a>
+                        <a href="@Url.Action("Contacto", "Eventos", new { id = 3 })" class="btn btn-success">Contactar</a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EVENTO 4 -->
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h4 class="fw-bold text-success">Concierto al Aire Libre</h4>
+                    <p class="fs-6">
+                        Presentación de artistas locales en un espacio abierto.
+                    </p>
+                    <ul class="list-unstyled fs-6">
+                        <li>📍 Anfiteatro Municipal</li>
+                        <li>📅 5 de noviembre, 2025</li>
+                    </ul>
+                    <div class="mt-auto d-flex gap-2">
+                        <a href="@Url.Action("Detalle", "Eventos", new { id = 4 })" class="btn btn-outline-success">Ver detalles</a>
+                        <a href="@Url.Action("Contacto", "Eventos", new { id = 4 })" class="btn btn-success">Contactar</a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EVENTO 5 -->
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h4 class="fw-bold text-success">Festival Navideño Municipal</h4>
+                    <p class="fs-6">
+                        Celebración con luces, música y actividades familiares.
+                    </p>
+                    <ul class="list-unstyled fs-6">
+                        <li>📍 Avenida Principal</li>
+                        <li>📅 20 de diciembre, 2025</li>
+                    </ul>
+                    <div class="mt-auto d-flex gap-2">
+                        <a href="@Url.Action("Detalle", "Eventos", new { id = 5 })" class="btn btn-outline-success">Ver detalles</a>
+                        <a href="@Url.Action("Contacto", "Eventos", new { id = 5 })" class="btn btn-success">Contactar</a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

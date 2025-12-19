@@ -1,0 +1,97 @@
+﻿@{
+    ViewBag.Title = "Mis Reservas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container my-5">
+
+    <h2 class="fw-bold text-success mb-3">
+        Mis Reservaciones
+    </h2>
+
+    <p class="text-muted mb-4">
+        Consultá el estado de tus reservas y administrá tus planes turísticos.
+    </p>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <table class="table table-hover align-middle">
+                <thead class="table-success">
+                    <tr>
+                        <th>Comercio</th>
+                        <th>Tipo</th>
+                        <th>Fechas</th>
+                        <th>Personas</th>
+                        <th>Plan</th>
+                        <th>Estado</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <!-- RESERVA 1 -->
+                    <tr>
+                        <td>Hotel Mirador Verde</td>
+                        <td>Hotel</td>
+                        <td>10/08/2025 - 12/08/2025</td>
+                        <td>2</td>
+                        <td>Todo incluido</td>
+                        <td>
+                            <span class="badge bg-success">
+                                Confirmada
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <button class="btn btn-outline-danger btn-sm">
+                                Cancelar
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- RESERVA 2 -->
+                    <tr>
+                        <td>Restaurante Sabores Típicos</td>
+                        <td>Restaurante</td>
+                        <td>20/08/2025</td>
+                        <td>4</td>
+                        <td>Cena especial</td>
+                        <td>
+                            <span class="badge bg-warning text-dark">
+                                Pendiente
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <button class="btn btn-outline-danger btn-sm">
+                                Cancelar
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- RESERVA 3 -->
+                    <tr>
+                        <td>Tour Catarata Escondida</td>
+                        <td>Tour</td>
+                        <td>05/09/2025</td>
+                        <td>3</td>
+                        <td>Paquete guiado</td>
+                        <td>
+                            <span class="badge bg-danger">
+                                Cancelada
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <button class="btn btn-secondary btn-sm" disabled>
+                                No disponible
+                            </button>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+</div>

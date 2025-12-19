@@ -1,0 +1,117 @@
+﻿@{
+    ViewBag.Title = "Comercios";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+
+    <h2 class="fw-bold text-success mb-3">Comercios y Servicios Registrados</h2>
+    <p class="text-muted mb-5 fs-5">
+        Listado de comercios locales registrados y regulados por la municipalidad.
+    </p>
+
+    <div class="row g-4 row-cols-1 row-cols-md-2 row-cols-lg-3">
+
+        <!-- COMERCIO 1 -->
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <img src="~/Content/img/comercios/san-bosco-inn.jpg"
+                     class="card-img-top"
+                     style="height:160px; object-fit:cover;"
+                     alt="Hotel San Bosco">
+
+                <div class="card-body d-flex flex-column">
+                    <h4 class="fw-bold text-success">Hotel San Bosco</h4>
+                    <p class="fs-6">
+                        Hotel turístico con piscina y jardines, cerca del Volcán Arenal.
+                    </p>
+                    <ul class="list-unstyled fs-6">
+                        <li>🏨 Categoría: Hospedaje</li>
+                        <li>📍 La Fortuna, San Carlos</li>
+                    </ul>
+                    <div class="mt-auto d-flex gap-2">
+                        <a href="@Url.Action("Perfil", "Comercios", new { id = 1 })" class="btn btn-outline-success">Ver perfil</a>
+                        <a href="@Url.Action("Contacto", "Comercios", new { id = 1 })" class="btn btn-success">Contactar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMERCIO 2 -->
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <img src="~/Content/img/comercios/caption.jpg"
+                     class="card-img-top"
+                     style="height:160px; object-fit:cover;"
+                     alt="La Choza del Maíz">
+
+                <div class="card-body d-flex flex-column">
+                    <h4 class="fw-bold text-success">Restaurante La Choza del Maíz</h4>
+                    <p class="fs-6">
+                        Restaurante típico costarricense con platillos tradicionales.
+                    </p>
+                    <ul class="list-unstyled fs-6">
+                        <li>🍽️ Categoría: Restaurante</li>
+                        <li>📍 Ciudad Quesada</li>
+                    </ul>
+                    <div class="mt-auto d-flex gap-2">
+                        <a href="@Url.Action("Perfil", "Comercios", new { id = 2 })" class="btn btn-outline-success">Ver perfil</a>
+                        <a href="@Url.Action("Contacto", "Comercios", new { id = 2 })" class="btn btn-success">Contactar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMERCIO 3 -->
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <img src="~/Content/img/comercios/caption1.jpg"
+                     class="card-img-top"
+                     style="height:160px; object-fit:cover;"
+                     alt="Soda Viquez">
+
+                <div class="card-body d-flex flex-column">
+                    <h4 class="fw-bold text-success">Soda Viquez</h4>
+                    <p class="fs-6">
+                        Soda tradicional muy conocida por su comida casera.
+                    </p>
+                    <ul class="list-unstyled fs-6">
+                        <li>🥘 Categoría: Soda</li>
+                        <li>📍 Ciudad Quesada</li>
+                    </ul>
+                    <div class="mt-auto d-flex gap-2">
+                        <a href="@Url.Action("Perfil", "Comercios", new { id = 3 })" class="btn btn-outline-success">Ver perfil</a>
+                        <a href="@Url.Action("Contacto", "Comercios", new { id = 3 })" class="btn btn-success">Contactar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMERCIO 4 -->
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <img src="~/Content/img/comercios/763eb9ab.jpg"
+                     class="card-img-top"
+                     style="height:160px; object-fit:cover;"
+                     alt="Hotel Eco Arenal">
+
+                <div class="card-body d-flex flex-column">
+                    <h4 class="fw-bold text-success">Hotel Eco Arenal</h4>
+                    <p class="fs-6">
+                        Hospedaje ecológico rodeado de naturaleza y vistas al volcán.
+                    </p>
+                    <ul class="list-unstyled fs-6">
+                        <li>🌿 Categoría: Hospedaje</li>
+                        <li>📍 La Fortuna, San Carlos</li>
+                    </ul>
+                    <div class="mt-auto d-flex gap-2">
+                        <a href="@Url.Action("Perfil", "Comercios", new { id = 4 })" class="btn btn-outline-success">Ver perfil</a>
+                        <a href="@Url.Action("Contacto", "Comercios", new { id = 4 })" class="btn btn-success">Contactar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

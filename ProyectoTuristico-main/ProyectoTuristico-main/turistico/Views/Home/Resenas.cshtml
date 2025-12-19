@@ -1,0 +1,348 @@
+﻿@{
+    ViewBag.Title = "Opiniones y Reseñas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <!-- ===================== -->
+    <!-- TABS -->
+    <!-- ===================== -->
+    <ul class="nav nav-tabs mb-4" role="tablist">
+        <li class="nav-item">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabHoteles">
+                <i class="fa-solid fa-hotel me-2"></i>
+                Hoteles mejor valorados
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabRestaurantes">
+                <i class="fa-solid fa-utensils me-2"></i>
+                Restaurantes mejor valorados
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabEventos">
+                <i class="fa-solid fa-calendar-days me-2"></i>
+                Eventos y actividades mejor valorados
+            </button>
+        </li>
+    </ul>
+
+    <!-- ===================== -->
+    <!-- CONTENIDO DE TABS -->
+    <!-- ===================== -->
+    <div class="tab-content">
+
+        <!-- HOTELES -->
+        <div class="tab-pane fade show active" id="tabHoteles">
+            <div class="row g-4 row-cols-1 row-cols-md-2 row-cols-lg-3">
+
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-success">
+                        <div class="card-body">
+                            <h5 class="fw-bold">Hotel Mirador Verde</h5>
+
+                            <p class="text-success mb-1">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </p>
+
+                            <p class="fs-6">
+                                Excelente atención, habitaciones limpias y vista panorámica.
+                            </p>
+
+                            <small class="text-muted">
+                                <i class="fa-solid fa-user me-1"></i> Juan Pérez ·
+                                <i class="fa-solid fa-clock ms-1 me-1"></i> Agosto 2025
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-success">
+                        <div class="card-body">
+                            <h5 class="fw-bold">Eco Lodge Montaña Azul</h5>
+
+                            <p class="text-success mb-1">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-regular fa-star"></i>
+                            </p>
+
+                            <p class="fs-6">
+                                Hospedaje ecológico con excelente organización y contacto natural.
+                            </p>
+
+                            <small class="text-muted">
+                                <i class="fa-solid fa-user me-1"></i> Andrés Rojas ·
+                                <i class="fa-solid fa-clock ms-1 me-1"></i> Octubre 2025
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-success">
+                        <div class="card-body">
+                            <h5 class="fw-bold">Hotel Valle Dorado</h5>
+
+                            <p class="text-success mb-1">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-regular fa-star"></i>
+                            </p>
+
+                            <p class="fs-6">
+                                Ubicación céntrica, habitaciones cómodas y buena relación precio-calidad.
+                            </p>
+
+                            <small class="text-muted">
+                                <i class="fa-solid fa-user me-1"></i> Laura Jiménez ·
+                                <i class="fa-solid fa-clock ms-1 me-1"></i> Septiembre 2025
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-success">
+                        <div class="card-body">
+                            <h5 class="fw-bold">Hotel Bosque Alto</h5>
+
+                            <p class="text-success mb-1">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </p>
+
+                            <p class="fs-6">
+                                Tranquilidad total, excelente servicio y entorno natural.
+                            </p>
+
+                            <small class="text-muted">
+                                <i class="fa-solid fa-user me-1"></i> Diego Vargas ·
+                                <i class="fa-solid fa-clock ms-1 me-1"></i> Noviembre 2025
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-success">
+                        <div class="card-body">
+                            <h5 class="fw-bold">Hotel Río Claro</h5>
+
+                            <p class="text-success mb-1">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </p>
+
+                            <p class="fs-6">
+                                Excelente para turismo rural con atención personalizada.
+                            </p>
+
+                            <small class="text-muted">
+                                <i class="fa-solid fa-user me-1"></i> Sofía Ramírez ·
+                                <i class="fa-solid fa-clock ms-1 me-1"></i> Enero 2026
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+
+        <!-- RESTAURANTES -->
+        <div class="tab-pane fade" id="tabRestaurantes">
+            <div class="row g-4 row-cols-1 row-cols-md-2 row-cols-lg-3">
+
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="fw-bold">Café Montaña Verde</h5>
+
+                            <p class="text-success mb-1">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </p>
+
+                            <p class="fs-6">
+                                Ambiente acogedor y excelente café artesanal.
+                            </p>
+
+                            <small class="text-muted">
+                                <i class="fa-solid fa-user me-1"></i> Sofía Ramírez ·
+                                <i class="fa-solid fa-clock ms-1 me-1"></i> Enero 2026
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="fw-bold">Restaurante Sabores Típicos</h5>
+
+                            <p class="text-success mb-1">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-regular fa-star"></i>
+                            </p>
+
+                            <p class="fs-6">
+                                Comida tradicional de alta calidad y buen servicio.
+                            </p>
+
+                            <small class="text-muted">
+                                <i class="fa-solid fa-user me-1"></i> Ana Morales ·
+                                <i class="fa-solid fa-clock ms-1 me-1"></i> Noviembre 2025
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- EVENTOS -->
+        <div class="tab-pane fade" id="tabEventos">
+            <div class="row g-4 row-cols-1 row-cols-md-2 row-cols-lg-3">
+
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="fw-bold">Festival Cultural Municipal</h5>
+
+                            <p class="text-success mb-1">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </p>
+
+                            <p class="fs-6">
+                                Excelente organización y actividades para toda la familia.
+                            </p>
+
+                            <small class="text-muted">
+                                <i class="fa-solid fa-user me-1"></i> Luis Fernández ·
+                                <i class="fa-solid fa-clock ms-1 me-1"></i> Diciembre 2025
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="fw-bold">Caminata Ecológica Guiada</h5>
+
+                            <p class="text-success mb-1">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </p>
+
+                            <p class="fs-6">
+                                Experiencia educativa, bien organizada y segura.
+                            </p>
+
+                            <small class="text-muted">
+                                <i class="fa-solid fa-user me-1"></i> Carlos Rodríguez ·
+                                <i class="fa-solid fa-clock ms-1 me-1"></i> Octubre 2025
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <!-- FORMULARIO DE RESEÑA -->
+    <div class="mt-5 p-4 rounded shadow-sm border"
+         style="background-color:#e8f5e9; border-color:#66bb6a;">
+
+        <h4 class="fw-bold text-success mb-3">Dejá tu opinión</h4>
+
+        <form>
+
+            <div class="mb-3">
+                <label class="form-label">Nombre</label>
+                <input type="text" class="form-control" placeholder="Tu nombre">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Tipo de servicio</label>
+                <select class="form-select">
+                    <option selected disabled>Seleccioná una opción</option>
+                    <option>Restaurante</option>
+                    <option>Hotel</option>
+                    <option>Evento</option>
+                    <option>Actividad turística</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Restaurante / Hotel / Evento</label>
+                <select class="form-select">
+                    <option selected disabled>Seleccioná el lugar o actividad</option>
+                    <option>Hotel Mirador Verde</option>
+                    <option>Restaurante Sabores Típicos</option>
+                    <option>Café Montaña Verde</option>
+                    <option>Festival Cultural Municipal</option>
+                    <option>Feria Gastronómica</option>
+                    <option>Caminata Ecológica Guiada</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Calificación</label>
+                <select class="form-select">
+                    <option>★★★★★ Excelente</option>
+                    <option>★★★★☆ Muy bueno</option>
+                    <option>★★★☆☆ Bueno</option>
+                    <option>★★☆☆☆ Regular</option>
+                    <option>★☆☆☆☆ Malo</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Comentario</label>
+                <textarea class="form-control" rows="3" placeholder="Escribí tu opinión"></textarea>
+            </div>
+
+            <button type="button" class="btn btn-success">
+                Enviar reseña
+            </button>
+
+        </form>
+    </div>
+
+</div>

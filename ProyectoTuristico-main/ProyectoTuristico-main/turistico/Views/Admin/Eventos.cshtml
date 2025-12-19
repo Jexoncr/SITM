@@ -1,0 +1,200 @@
+﻿@{
+    ViewBag.Title = "Gestión de Eventos";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2 class="fw-bold text-success mb-4">
+    Gestión de Eventos y Actividades
+</h2>
+
+<p class="text-muted mb-4">
+    Administración de eventos turísticos y actividades del cantón.
+</p>
+
+<!-- BOTÓN AGREGAR -->
+<div class="d-flex justify-content-end mb-3">
+    <button class="btn btn-success"
+            data-bs-toggle="modal"
+            data-bs-target="#modalEvento">
+        <i class="fa-solid fa-plus me-1"></i>
+        Agregar evento
+    </button>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <table class="table table-hover align-middle">
+            <thead class="table-success">
+                <tr>
+                    <th>Evento</th>
+                    <th>Tipo</th>
+                    <th>Fecha</th>
+                    <th>Ubicación</th>
+                    <th>Estado</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>Festival Cultural Municipal</td>
+                    <td>Cultural</td>
+                    <td>15/08/2025</td>
+                    <td>Parque Central</td>
+                    <td>
+                        <span class="badge bg-success">
+                            Activo
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-primary btn-sm"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalEvento">
+                            Editar
+                        </button>
+                        <button class="btn btn-warning btn-sm">
+                            Desactivar
+                        </button>
+                        <button class="btn btn-danger btn-sm">
+                            Eliminar
+                        </button>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Feria Gastronómica</td>
+                    <td>Gastronómico</td>
+                    <td>22/09/2025</td>
+                    <td>Plaza Municipal</td>
+                    <td>
+                        <span class="badge bg-success">
+                            Activo
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-primary btn-sm"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalEvento">
+                            Editar
+                        </button>
+                        <button class="btn btn-warning btn-sm">
+                            Desactivar
+                        </button>
+                        <button class="btn btn-danger btn-sm">
+                            Eliminar
+                        </button>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Caminata Ecológica Guiada</td>
+                    <td>Turismo</td>
+                    <td>10/10/2025</td>
+                    <td>Reserva Natural</td>
+                    <td>
+                        <span class="badge bg-secondary">
+                            Inactivo
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-primary btn-sm"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalEvento">
+                            Editar
+                        </button>
+                        <button class="btn btn-success btn-sm">
+                            Activar
+                        </button>
+                        <button class="btn btn-danger btn-sm">
+                            Eliminar
+                        </button>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+
+    </div>
+    <div class="modal fade" id="modalEvento" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+
+            <div class="modal-content">
+
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">
+                        Evento
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white"
+                            data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                Nombre del evento
+                            </label>
+                            <input type="text" class="form-control"
+                                   value="Festival Cultural Municipal">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                Tipo de evento
+                            </label>
+                            <select class="form-select">
+                                <option>Cultural</option>
+                                <option>Gastronómico</option>
+                                <option>Turismo</option>
+                                <option>Deportivo</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                Fecha
+                            </label>
+                            <input type="date" class="form-control"
+                                   value="2025-08-15">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                Ubicación
+                            </label>
+                            <input type="text" class="form-control"
+                                   value="Parque Central">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">
+                                Descripción
+                            </label>
+                            <textarea class="form-control" rows="3">
+Evento cultural con presentaciones artísticas y actividades familiares.
+                        </textarea>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-success">
+                        Guardar
+                    </button>
+                    <button class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>

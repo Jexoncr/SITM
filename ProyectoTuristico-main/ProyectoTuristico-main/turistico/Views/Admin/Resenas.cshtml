@@ -1,0 +1,167 @@
+﻿@{
+    ViewBag.Title = "Moderación de Reseñas";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2 class="fw-bold text-success mb-4">
+    Moderación de Opiniones y Reseñas
+</h2>
+
+<p class="text-muted mb-4">
+    Gestión y control de las reseñas realizadas por los usuarios del sistema.
+</p>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <table class="table table-hover align-middle">
+            <thead class="table-success">
+                <tr>
+                    <th>Usuario</th>
+                    <th>Elemento</th>
+                    <th>Calificación</th>
+                    <th>Comentario</th>
+                    <th>Estado</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>Juan Pérez</td>
+                    <td>Hotel Mirador Verde</td>
+                    <td>★★★★★</td>
+                    <td>Excelente atención y muy buena ubicación.</td>
+                    <td>
+                        <span class="badge bg-warning text-dark">
+                            Pendiente
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-primary btn-sm"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalResena">
+                            Ver
+                        </button>
+                        <button class="btn btn-success btn-sm">
+                            Aprobar
+                        </button>
+                        <button class="btn btn-danger btn-sm">
+                            Rechazar
+                        </button>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>María González</td>
+                    <td>Festival Cultural Municipal</td>
+                    <td>★★★★☆</td>
+                    <td>Muy bien organizado, aunque había mucha gente.</td>
+                    <td>
+                        <span class="badge bg-success">
+                            Publicada
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-primary btn-sm"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalResena">
+                            Ver
+                        </button>
+                        <button class="btn btn-warning btn-sm">
+                            Ocultar
+                        </button>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Carlos Rodríguez</td>
+                    <td>Restaurante Sabores Típicos</td>
+                    <td>★★☆☆☆</td>
+                    <td>La comida estuvo bien, pero el servicio fue lento.</td>
+                    <td>
+                        <span class="badge bg-danger">
+                            Rechazada
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-primary btn-sm"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalResena">
+                            Ver
+                        </button>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+
+    </div>
+    <div class="modal fade" id="modalResena" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+
+            <div class="modal-content">
+
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">
+                        Detalle de la Reseña
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white"
+                            data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Usuario</label>
+                        <input type="text" class="form-control"
+                               value="Juan Pérez" disabled>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Elemento evaluado</label>
+                        <input type="text" class="form-control"
+                               value="Hotel Mirador Verde" disabled>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Calificación</label>
+                        <input type="text" class="form-control"
+                               value="★★★★★" disabled>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Comentario</label>
+                        <textarea class="form-control" rows="4" disabled>
+Excelente atención y muy buena ubicación.
+                    </textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Estado</label><br>
+                        <span class="badge bg-warning text-dark fs-6">
+                            Pendiente
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-success">
+                        Aprobar
+                    </button>
+                    <button class="btn btn-danger">
+                        Rechazar
+                    </button>
+                    <button class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cerrar
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>

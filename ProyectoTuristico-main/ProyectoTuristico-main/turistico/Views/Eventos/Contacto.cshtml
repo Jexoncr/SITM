@@ -1,0 +1,85 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    int id = ViewBag.Id;
+
+    string titulo = "";
+    string organizador = "";
+    string correo = "";
+    string telefono = "";
+}
+
+@{
+    switch (id)
+    {
+        case 1:
+            titulo = "Festival Cultural Municipal";
+            organizador = "Comité Municipal de Cultura";
+            correo = "cultura@municipalidad.cr";
+            telefono = "2450-1122";
+            break;
+
+        case 2:
+            titulo = "Feria Gastronómica Municipal";
+            organizador = "Oficina de Desarrollo Local";
+            correo = "desarrollo@municipalidad.cr";
+            telefono = "2450-3344";
+            break;
+
+        case 3:
+            titulo = "Caminata Ecológica Guiada";
+            organizador = "Departamento de Turismo";
+            correo = "turismo@municipalidad.cr";
+            telefono = "2450-5588";
+            break;
+
+        case 4:
+            titulo = "Concierto al Aire Libre";
+            organizador = "Colectivo Cultural Municipal";
+            correo = "cultura@municipalidad.cr";
+            telefono = "2450-7799";
+            break;
+
+        case 5:
+            titulo = "Festival Navideño Municipal";
+            organizador = "Comité Municipal de Fiestas";
+            correo = "fiestas@municipalidad.cr";
+            telefono = "2450-9922";
+            break;
+    }
+}
+
+<div class="container">
+
+    <h2 class="fw-bold text-success">Contacto — @titulo</h2>
+    <p class="text-muted fs-5">Ponete en contacto con los organizadores del evento.</p>
+
+    <div class="p-4 mt-3 border rounded shadow-sm" style="background-color:#f9f9f9;">
+        <p><strong>Organizador:</strong> @organizador</p>
+        <p><strong>Correo electrónico:</strong> @correo</p>
+        <p><strong>Teléfono:</strong> @telefono</p>
+    </div>
+
+    <h4 class="fw-bold text-success mt-4">Enviar mensaje</h4>
+
+    <form class="mt-3">
+        <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input type="text" class="form-control" placeholder="Tu nombre completo">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Correo</label>
+            <input type="email" class="form-control" placeholder="tunombre@correo.com">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Mensaje</label>
+            <textarea class="form-control" rows="4" placeholder="Escribí tu consulta aquí"></textarea>
+        </div>
+
+        <button class="btn btn-success">Enviar</button>
+        <a href="@Url.Action("Eventos", "Home")" class="btn btn-outline-success mt-4">Volver</a>
+    </form>
+
+</div>

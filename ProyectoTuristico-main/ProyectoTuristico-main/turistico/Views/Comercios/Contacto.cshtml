@@ -1,0 +1,126 @@
+﻿@{
+    ViewBag.Title = "Reserva y Cotización";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    int id = ViewBag.Id;
+}
+
+<div class="container my-5">
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+
+                    <!-- TÍTULO -->
+                    <h3 class="fw-bold text-success mb-2">
+                        Solicitud de Reserva y Cotización
+                    </h3>
+                    <p class="text-muted mb-4">
+                        Completa el formulario para reservar tu estadía o cotizar un plan turístico.
+                    </p>
+
+                    <p class="small text-muted">
+                        Comercio seleccionado: <strong>ID @id</strong>
+                    </p>
+
+                    <form>
+
+                        <!-- DATOS PERSONALES -->
+                        <h5 class="fw-semibold text-success mt-4 mb-3">
+                            Datos del visitante
+                        </h5>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Nombre completo</label>
+                                <input type="text" class="form-control" placeholder="Tu nombre" required />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Correo electrónico</label>
+                                <input type="email" class="form-control" placeholder="correo@email.com" required />
+                            </div>
+                        </div>
+
+                        <!-- RESERVA -->
+                        <h5 class="fw-semibold text-success mt-4 mb-3">
+                            Detalles de la reserva
+                        </h5>
+
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Fecha de entrada</label>
+                                <input type="date" class="form-control" required />
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Fecha de salida</label>
+                                <input type="date" class="form-control" required />
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Cantidad de personas</label>
+                                <select class="form-select">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4+</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- PLAN -->
+                        <h5 class="fw-semibold text-success mt-4 mb-3">
+                            Tipo de plan
+                        </h5>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Plan turístico</label>
+                                <select class="form-select">
+                                    <option>Solo hospedaje</option>
+                                    <option>Hospedaje + desayuno</option>
+                                    <option>Todo incluido</option>
+                                    <option>Paquete turístico</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Presupuesto aproximado</label>
+                                <input type="text" class="form-control" placeholder="₡ / $" />
+                            </div>
+                        </div>
+
+                        <!-- MENSAJE -->
+                        <div class="mt-4">
+                            <label class="form-label">
+                                Comentarios adicionales
+                            </label>
+                            <textarea class="form-control" rows="4"
+                                      placeholder="Detalles especiales, solicitudes, consultas..."></textarea>
+                        </div>
+
+                        <!-- BOTONES -->
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <a href="@Url.Action("Perfil", "Comercios", new { id = id })"
+                               class="btn btn-outline-secondary">
+                                Cancelar
+                            </a>
+
+                            <button type="button" class="btn btn-success">
+                                Enviar solicitud
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+

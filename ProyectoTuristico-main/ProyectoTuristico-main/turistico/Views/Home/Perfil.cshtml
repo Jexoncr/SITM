@@ -1,0 +1,119 @@
+﻿@{
+    ViewBag.Title = "Perfil de Usuario";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+
+    <!-- TÍTULO -->
+    <h2 class="fw-bold text-success mb-3">Perfil y Preferencias del Usuario</h2>
+    <p class="text-muted fs-5 mb-5">
+        Información personal y configuración de preferencias turísticas del usuario.
+    </p>
+
+    <div class="row g-4">
+
+        <!-- PERFIL DEL USUARIO -->
+        <div class="col-lg-5">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h4 class="fw-bold text-success mb-3">Información del Perfil</h4>
+
+                    <div class="mb-3">
+                        <label class="form-label">Nombre completo</label>
+                        <input type="text" class="form-control" value="Jexon Salazar" disabled>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Correo electrónico</label>
+                        <input type="email" class="form-control" value="usuario@sitm.cr" disabled>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Contraseña</label>
+                        <input type="text" class="form-control" value="********" disabled>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Cantón</label>
+                        <input type="text" class="form-control" value="Cantón de San Carlos" disabled>
+                    </div>
+
+                    <button class="btn btn-outline-success" disabled>
+                        Editar perfil
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PREFERENCIAS -->
+        <div class="col-lg-7">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h4 class="fw-bold text-success mb-3">Preferencias Turísticas</h4>
+
+                    <!-- CATEGORÍAS -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">
+                            Tipos de actividades preferidas
+                        </label>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" checked>
+                            <label class="form-check-label">Eventos culturales</label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" checked>
+                            <label class="form-check-label">Turismo ecológico</label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox">
+                            <label class="form-check-label">Gastronomía local</label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox">
+                            <label class="form-check-label">Aventura y deportes</label>
+                        </div>
+                    </div>
+
+                    <!-- NOTIFICACIONES -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">
+                            Preferencias de notificación
+                        </label>
+
+                        <select class="form-select">
+                            <option>Recibir notificaciones por correo</option>
+                            <option selected>Recibir notificaciones dentro del sistema</option>
+                            <option>No recibir notificaciones</option>
+                        </select>
+                    </div>
+
+                    <!-- IDIOMA -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">
+                            Idioma preferido
+                        </label>
+
+                        <select class="form-select">
+                            <option selected>Español</option>
+                            <option>Inglés</option>
+                        </select>
+                    </div>
+
+                    <button class="btn btn-success" disabled>
+                        Guardar preferencias
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+

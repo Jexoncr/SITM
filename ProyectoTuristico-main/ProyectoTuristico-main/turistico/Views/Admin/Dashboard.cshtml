@@ -1,0 +1,117 @@
+﻿@{
+    ViewBag.Title = "Dashboard Administrativo";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2 class="fw-bold text-success mb-4">Panel de Administración</h2>
+
+<!-- CONTADORES -->
+<div class="row g-4 mb-5">
+
+    <div class="col-md-3">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <h6 class="text-muted">Comercios Registrados</h6>
+                <h2 class="fw-bold text-success">24</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <h6 class="text-muted">Comercios Pendientes</h6>
+                <h2 class="fw-bold text-warning">6</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <h6 class="text-muted">Eventos Activos</h6>
+                <h2 class="fw-bold text-primary">12</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <h6 class="text-muted">Usuarios Registrados</h6>
+                <h2 class="fw-bold text-dark">58</h2>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- GRÁFICOS -->
+<div class="row g-4">
+
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3">Eventos por Mes</h5>
+                <canvas id="eventosChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3">Estado de Comercios</h5>
+                <canvas id="comerciosChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            // EVENTOS POR MES
+            const eventosCanvas = document.getElementById('eventosChart');
+            if (eventosCanvas) {
+                new Chart(eventosCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                        datasets: [{
+                            data: [2, 4, 3, 5, 1, 6],
+                            backgroundColor: '#1b7a5c'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+            }
+
+            // ESTADO DE COMERCIOS
+            const comerciosCanvas = document.getElementById('comerciosChart');
+            if (comerciosCanvas) {
+                new Chart(comerciosCanvas, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Aprobados', 'Pendientes', 'Rechazados'],
+                        datasets: [{
+                            data: [18, 6, 3],
+                            backgroundColor: ['#1b7a5c', '#f0ad4e', '#dc3545']
+                        }]
+                    },
+                    options: {
+                        responsive: true
+                    }
+                });
+            }
+
+        });
+    </script>
+}

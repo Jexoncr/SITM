@@ -1,0 +1,120 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    int id = ViewBag.Id;
+
+    string titulo = "";
+    string resumen = "";
+    string lugar = "";
+    string fecha = "";
+    string descripcion = "";
+    string actividades = "";
+    string organizador = "";
+    string costo = "";
+    string publico = "";
+    string horario = "";
+}
+
+@* --- DEFINICIÓN DE CONTENIDO POR EVENTO --- *@
+@{
+    switch (id)
+    {
+        case 1:
+            titulo = "Festival Cultural Municipal";
+            resumen = "Un encuentro cultural que reúne música, danza, artesanías y gastronomía local.";
+            lugar = "Parque Central";
+            fecha = "15 de agosto, 2025";
+            descripcion = "El Festival Cultural Municipal es una celebración anual que tiene como objetivo promover el arte y la cultura del cantón. Durante la jornada se realizan presentaciones artísticas, exposiciones, talleres y venta de comida tradicional.";
+            actividades = "Presentaciones de danza, música en vivo, exposición de artesanos, talleres interactivos, comidas típicas.";
+            organizador = "Comité Municipal de Cultura";
+            costo = "Entrada gratuita";
+            publico = "Todo público";
+            horario = "9:00 a.m. a 8:00 p.m.";
+        break;
+
+        case 2:
+            titulo = "Feria Gastronómica Municipal";
+            resumen = "Un espacio para disfrutar comida tradicional y apoyar emprendimientos locales.";
+            lugar = "Plaza Municipal";
+            fecha = "22 de septiembre, 2025";
+            descripcion = "La Feria Gastronómica reúne a emprendimientos culinarios y productores locales que ofrecen platillos típicos, postres, bebidas artesanales y productos agrícolas. Es un evento ideal para familias y amantes de la cultura culinaria costarricense.";
+            actividades = "Degustaciones, venta de platillos, concursos gastronómicos, música ambiente.";
+            organizador = "Oficina de Desarrollo Local";
+            costo = "Entrada gratuita";
+            publico = "Todo público";
+            horario = "10:00 a.m. a 6:00 p.m.";
+        break;
+
+        case 3:
+            titulo = "Caminata Ecológica Guiada";
+            resumen = "Un recorrido por senderos naturales junto a guías especializados.";
+            lugar = "Reserva Natural Municipal";
+            fecha = "10 de octubre, 2025";
+            descripcion = "La caminata ecológica busca promover el turismo sostenible y la conexión con el entorno natural del cantón. Durante el recorrido se explican aspectos de flora, fauna y conservación ambiental.";
+            actividades = "Recorrido guiado, interpretación ambiental, descanso en miradores naturales.";
+            organizador = "Departamento de Turismo";
+            costo = "¢3.000 por persona";
+            publico = "Jóvenes y adultos (nivel físico básico)";
+            horario = "7:00 a.m. a 12:00 p.m.";
+        break;
+
+        case 4:
+            titulo = "Concierto al Aire Libre";
+            resumen = "Presentaciones de grupos musicales locales en un anfiteatro al aire libre.";
+            lugar = "Anfiteatro Municipal";
+            fecha = "5 de noviembre, 2025";
+            descripcion = "El concierto reúne a artistas locales que interpretan géneros como rock, reggae, trova y música popular. Es una actividad ideal para pasar la tarde en familia o con amigos.";
+            actividades = "Conciertos, zona de comidas, áreas de descanso.";
+            organizador = "Municipalidad y Colectivo Cultural";
+            costo = "Entrada gratuita";
+            publico = "Todo público";
+            horario = "4:00 p.m. a 10:00 p.m.";
+        break;
+
+        case 5:
+            titulo = "Festival Navideño Municipal";
+            resumen = "Evento lleno de actividades familiares, luces, música y tradiciones decembrinas.";
+            lugar = "Avenida Principal";
+            fecha = "20 de diciembre, 2025";
+            descripcion = "El festival celebra el espíritu navideño con actividades para toda la familia, incluyendo espectáculos musicales, juegos, dinámicas infantiles y el encendido del árbol navideño del cantón.";
+            actividades = "Desfile navideño, concierto, actividades infantiles, venta de comidas.";
+            organizador = "Comité Municipal de Fiestas";
+            costo = "Entrada gratuita";
+            publico = "Todo público";
+            horario = "3:00 p.m. a 11:00 p.m.";
+        break;
+    }
+}
+
+<div class="container">
+
+    <h2 class="fw-bold text-success">@titulo</h2>
+    <p class="text-muted fs-5">@resumen</p>
+
+    <div class="mt-4 p-3 border rounded shadow-sm" style="background-color:#f9f9f9;">
+        <p><strong>📍 Lugar:</strong> @lugar</p>
+        <p><strong>📅 Fecha:</strong> @fecha</p>
+        <p><strong>⏰ Horario:</strong> @horario</p>
+        <p><strong>👥 Público:</strong> @publico</p>
+        <p><strong>💵 Costo:</strong> @costo</p>
+    </div>
+
+    <h4 class="fw-bold text-success mt-4">Descripción del evento</h4>
+    <p class="fs-6">@descripcion</p>
+
+    <h4 class="fw-bold text-success mt-4">Actividades</h4>
+    <p class="fs-6">@actividades</p>
+
+    <h4 class="fw-bold text-success mt-4">Organiza</h4>
+    <p class="fs-6">@organizador</p>
+
+    <a href="@Url.Action("Eventos", "Home")" class="btn btn-outline-success mt-4">Volver</a>
+    <a href="@Url.Action("Contacto", "Eventos", new { id = ViewBag.Id })"
+       class="btn btn-success mt-4">
+        Contactar
+    </a>
+
+
+
+
+</div>
