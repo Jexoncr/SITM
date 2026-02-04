@@ -2,59 +2,519 @@
     ViewBag.Title = "Inicio";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<script>
+    document.body.classList.add("home-index");
+</script>
 
-<section class="hero">
-    <div>
-        <h2>Descubrí la belleza natural de nuestro cantón</h2>
-        <p>
-            Explorá montañas, ríos, gastronomía local y experiencias únicas
-            que conectan con la naturaleza.
+<style>
+    body.home-index #mainContent {
+        padding-top: 0 !important;
+    }
+</style>
+<style>
+    /* ===============================
+    SOLO INDEX – BASE
+    =============================== */
+
+    html, body {
+        height: 100%;
+    }
+
+    body {
+        margin: 0;
+        overflow-x: hidden;
+    }
+
+        /* El main NO empuja el hero */
+        body.home-index main {
+            padding-top: 0 !important;
+            margin: 0 !important;
+        }
+
+        /* ===============================
+    NAVBAR (VISIBLE SIEMPRE)
+    =============================== */
+
+        body.home-index .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 9999;
+            background: transparent !important;
+            box-shadow: none !important;
+            transition: background .4s ease, box-shadow .4s ease;
+        }
+
+            body.home-index .navbar .nav-link,
+            body.home-index .navbar .navbar-brand {
+                color: #fff !important;
+            }
+
+            /* Navbar al hacer scroll → VERDE */
+            body.home-index .navbar.scrolled {
+                background: rgba(27, 122, 92, 0.95) !important; /* verde bonito */
+                backdrop-filter: blur(8px);
+                box-shadow: 0 6px 20px rgba(0,0,0,.15);
+            }
+
+                /* Texto en blanco sobre verde */
+                body.home-index .navbar.scrolled .nav-link,
+                body.home-index .navbar.scrolled .navbar-brand {
+                    color: #fff !important;
+                }
+
+
+    /* ===============================
+    HERO FULL SCREEN
+    =============================== */
+
+    .hero-komoot {
+        height: 100vh;
+        min-height: 100vh;
+        width: 100%;
+        background-image: url("https://images.unsplash.com/photo-1552727131-5fc6af16796d?q=80&w=1049&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+
+        /* Overlay (DETRÁS del navbar) */
+        .hero-komoot::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,.45);
+            z-index: 1;
+        }
+
+    /* Contenido encima del overlay */
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        max-width: 900px;
+        padding: 0 1rem;
+    }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.8rem;
+        }
+
+    /* ===============================
+    BUSCADOR
+    =============================== */
+
+    .search-box {
+        display: flex;
+        background: #fff;
+        border-radius: 999px;
+        overflow: hidden;
+        width: 680px;
+        max-width: 90%;
+        margin: 0 auto;
+        box-shadow: 0 12px 30px rgba(0,0,0,.25);
+    }
+
+        .search-box input {
+            flex: 1;
+            padding: 1.1rem 1.6rem;
+            border: none;
+            outline: none;
+            font-size: 1.05rem;
+        }
+
+        .search-box button {
+            background: #5cb85c;
+            border: none;
+            padding: 0 2.2rem;
+            color: white;
+            font-size: 1.05rem;
+            cursor: pointer;
+        }
+
+    /* Frase debajo */
+    .hero-subtitle {
+        margin-top: 1.4rem;
+        font-size: .95rem;
+        color: rgba(255,255,255,.85);
+        letter-spacing: .5px;
+    }
+
+    /* ===============================
+    RESPONSIVE
+    =============================== */
+
+    @@media (max-width:768px) {
+        .hero-content h1 {
+            font-size: 2.4rem;
+        }
+
+        .search-box {
+            width: 100%;
+        }
+    }
+</style>
+
+<style>
+    .routes-section {
+        background: #f7f6f2;
+        padding: 4rem 3rem;
+        color: #111;
+    }
+
+    /* ===============================
+    HEADER
+    =============================== */
+
+    .routes-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+        .routes-header h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+            .routes-header h2 span {
+                color: #ff7a00;
+            }
+
+    /* ===============================
+    SCROLL HORIZONTAL (CLAVE)
+    =============================== */
+
+    .routes-container {
+        display: flex;
+        gap: 1.5rem;
+        overflow-x: auto;
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        padding: 0 3rem 1rem;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+        scrollbar-width: none;
+    }
+
+
+        .routes-container::-webkit-scrollbar {
+            display: none; /* Chrome */
+        }
+
+    /* ===============================
+    CARDS
+    =============================== */
+
+    .route-card {
+        min-width: 260px;
+        height: 360px;
+        border-radius: 22px;
+        overflow: hidden;
+        position: relative;
+        background: #000;
+        flex-shrink: 0;
+        box-shadow: 0 8px 20px rgba(0,0,0,.15);
+        /* SNAP */
+        scroll-snap-align: start;
+    }
+
+        /* Imagen */
+        .route-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform .4s ease;
+        }
+
+        /* Zoom MUY sutil */
+        .route-card:hover img {
+            transform: scale(1.03);
+        }
+
+    /* ===============================
+    OVERLAY
+    =============================== */
+
+    .route-info {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        padding: 1rem 1.1rem;
+        color: #fff;
+        background: linear-gradient( to top, rgba(0,0,0,.85), rgba(0,0,0,0) );
+    }
+
+        .route-info h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .route-info p {
+            font-size: .85rem;
+            opacity: .85;
+            margin: 0;
+        }
+
+    .rating {
+        font-size: .8rem;
+        margin-top: .3rem;
+    }
+
+    /* ===============================
+    FLECHAS
+    =============================== */
+
+    .routes-arrows {
+        display: flex;
+        gap: .6rem;
+    }
+
+    .arrow-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        border: none;
+        background: #fff;
+        color: #111;
+        font-size: 1.1rem;
+        cursor: pointer;
+        box-shadow: 0 6px 16px rgba(0,0,0,.15);
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+        .arrow-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px rgba(0,0,0,.2);
+        }
+
+    /* ===============================
+    RESPONSIVE
+    =============================== */
+
+    @@media (max-width:768px) {
+        .routes-section {
+            padding: 3rem 1.2rem;
+        }
+
+        .route-card {
+            height: 300px;
+            min-width: 240px;
+        }
+
+        .routes-arrows {
+            display: none;
+        }
+    }
+</style>
+
+
+
+
+<style>
+    .events-section {
+        background: #ffffff;
+        padding: 3.5rem 3rem 4rem;
+        color: #111;
+    }
+
+    .events-title {
+        font-size: 2rem;
+        font-weight: 800;
+        margin: 0 0 1.4rem 0;
+        color: #1b7a5c;
+    }
+
+    /* Grid */
+    .events-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(260px, 1fr));
+        gap: 1.2rem;
+    }
+
+    /* Card */
+    .event-card {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        padding: 1rem;
+        border-radius: 16px;
+        background: #f4f8f5;
+        border: 1px solid rgba(0,0,0,0.06);
+        transition: transform .25s ease, box-shadow .25s ease;
+    }
+
+        .event-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 22px rgba(0,0,0,0.10);
+        }
+
+    /* Imagen */
+    .event-img {
+        width: 110px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 12px;
+        flex-shrink: 0;
+    }
+
+    /* Texto */
+    .event-content h4 {
+        margin: 0;
+        font-weight: 800;
+    }
+
+    .event-content p {
+        margin: .15rem 0 0;
+        opacity: .8;
+    }
+
+    /* Responsive (Razor-safe) */
+    @@media (max-width: 992px) {
+        .events-section {
+            padding: 3rem 1.2rem;
+        }
+
+        .events-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+
+
+
+<section class="hero-komoot">
+    <div class="hero-content">
+        <h1>Explorá más<br />allá de San Carlos</h1>
+
+        <div class="search-box">
+            <input type="text" placeholder="Buscar lugares, eventos..." />
+            <button>Buscar →</button>
+        </div>
+        <p class="hero-subtitle">
+            Descubre  eventos y experiencias únicas en San Carlos
         </p>
+
     </div>
 </section>
 
-<section>
-    <h2>Destinos Destacados</h2>
+<section class="routes-section">
+    <div class="routes-header">
+        <h2><span>Lo Mejor de </span>San Carlos</h2>
 
-    <div class="cards">
-        <div class="card">
-            <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0f/29/41/bc/20170429-114200-largejpg.jpg?w=1200&h=1200&s=1">
-            <div class="card-content">
-                <h3>Catarata Río Fortuna</h3>
-                <p>Un paraíso natural rodeado de bosque, ideal para caminatas y descanso.</p>
+        <div class="routes-arrows">
+            <button class="arrow-btn" type="button" onclick="scrollRoutes(-1)">←</button>
+            <button class="arrow-btn" type="button" onclick="scrollRoutes(1)">→</button>
+        </div>
+    </div>
+
+    <div class="routes-container" id="routesContainer">
+        <div class="route-card">
+            <img src="https://images.unsplash.com/photo-1707074111761-3f1db359269e?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+            <div class="route-info">
+                <h3>Volcán Arenal</h3>
+                <p>From San Carlos</p>
+                <span class="rating">⭐ 5.0 · 162 comentarios</span>
             </div>
         </div>
 
-        <div class="card">
-            <img src="https://sancarlosdigital.com/wp-content/uploads/2021/01/mano-arenal.jpg">
-            <div class="card-content">
-                <h3>Mirador Natural</h3>
-                <p>Vista panorámica perfecta para fotografía y atardeceres inolvidables.</p>
+        <div class="route-card">
+            <img src="https://images.unsplash.com/photo-1628212094509-50706e8ffd4e?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+            <div class="route-info">
+                <h3>Ecotermales Fortuna</h3>
+                <p>San Carlos</p>
+                <span class="rating">⭐ 4.2 · 79 comentarios</span>
             </div>
         </div>
 
-        <div class="card">
-            <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/28/ef/ef/99/jalapas-costa-rica-restaurante.jpg">
-            <div class="card-content">
-                <h3>Ruta Gastronómica</h3>
-                <p>Sabores típicos preparados por emprendedores locales.</p>
+        <div class="route-card">
+            <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e">
+            <div class="route-info">
+                <h3>Mirador el Silencio</h3>
+                <p>San Carlos</p>
+                <span class="rating">⭐ 5.0 · 30 comentarios</span>
+            </div>
+        </div>
+
+        <div class="route-card">
+            <img src="https://misanimales.com/wp-content/uploads/2020/11/rana-ojos-rojos-arbol-768x554.jpg">
+            <div class="route-info">
+                <h3>Reserva Biológica Ecocentro Danaus</h3>
+                <p>San Carlos</p>
+                <span class="rating">⭐ 4.2 · 56 comentarios</span>
             </div>
         </div>
     </div>
 </section>
 
-<section class="eventos">
-    <h2>Próximos Eventos</h2>
 
-    <div class="evento">
-        <h4>🌿 Feria Ecoturística</h4>
-        <p>15 de agosto – Parque Central</p>
-    </div>
+<section class="events-section">
+    <h2 class="events-title">Próximos Eventos</h2>
 
-    <div class="evento">
-        <h4>🎶 Festival Cultural</h4>
-        <p>22 de septiembre – Anfiteatro Municipal</p>
+    <div class="events-grid">
+        <div class="event-card">
+            <img class="event-img"
+                 src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"
+                 alt="Feria Ecoturística">
+
+            <div class="event-content">
+                <h4> Feria Ecoturística</h4>
+                <p>15 de agosto – Parque Central</p>
+            </div>
+        </div>
+
+        <div class="event-card">
+            <img class="event-img"
+                 src="https://images.unsplash.com/photo-1501785888041-af3ef285b470"
+                 alt="Festival Cultural">
+
+            <div class="event-content">
+                <h4> Festival Cultural</h4>
+                <p>22 de septiembre – Anfiteatro Municipal</p>
+            </div>
+        </div>
     </div>
 </section>
 
 
+
+<script>
+    document.body.classList.add("home-index");
+
+    const navbar = document.querySelector(".navbar");
+
+    window.addEventListener("scroll", () => {
+        if (window.scrollY > 420) {
+            navbar.classList.add("scrolled");
+        } else {
+            navbar.classList.remove("scrolled");
+        }
+    });
+</script>
+<script>
+    function scrollRoutes(direction) {
+        const container = document.getElementById("routesContainer");
+        const card = container.querySelector(".route-card");
+        if (!card) return;
+
+        const gap = 24; // 1.5rem
+        const scrollAmount = card.offsetWidth + gap;
+
+        container.scrollBy({
+            left: direction * scrollAmount,
+            behavior: "smooth"
+        });
+    }
+</script>
