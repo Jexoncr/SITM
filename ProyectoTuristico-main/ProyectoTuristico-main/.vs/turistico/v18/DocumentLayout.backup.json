@@ -3,7 +3,7 @@
   "WorkspaceRootPath": "C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\views\\home\\eventos.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|c:\\users\\universidad\\downloads\\sitm\\proyectoturistico-main\\proyectoturistico-main\\turistico\\views\\home\\eventos.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|solutionrelative:turistico\\views\\home\\eventos.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
@@ -19,7 +19,7 @@
       "RelativeMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|solutionrelative:turistico\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|c:\\users\\universidad\\downloads\\sitm\\proyectoturistico-main\\proyectoturistico-main\\turistico\\views\\shared\\_layoutadmin.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\views\\shared\\_layoutadmin.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|solutionrelative:turistico\\views\\shared\\_layoutadmin.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
@@ -158,12 +158,11 @@
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\Views\\Home\\Index.cshtml",
               "RelativeDocumentMoniker": "turistico\\Views\\Home\\Index.cshtml",
-              "ToolTip": "C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\Views\\Home\\Index.cshtml*",
-              "RelativeToolTip": "turistico\\Views\\Home\\Index.cshtml*",
+              "ToolTip": "C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\Views\\Home\\Index.cshtml",
+              "RelativeToolTip": "turistico\\Views\\Home\\Index.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-02-04T03:00:38.415Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-04T03:00:38.415Z"
             },
             {
               "$type": "Document",
@@ -187,8 +186,7 @@
               "RelativeToolTip": "turistico\\Views\\Shared\\_LayoutAdmin.cshtml",
               "ViewState": "AgIAAC8AAAAAAAAAAAAwwFEAAAAHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-02-04T03:00:38.61Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-04T03:00:38.61Z"
             },
             {
               "$type": "Document",
@@ -200,8 +198,7 @@
               "RelativeToolTip": "turistico\\Views\\Shared\\_Layout.cshtml",
               "ViewState": "AgIAAO0AAAAAAAAAAAAAwBUBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-02-04T03:00:38.85Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-04T03:00:38.85Z"
             },
             {
               "$type": "Document",
@@ -238,8 +235,7 @@
               "RelativeToolTip": "turistico\\Views\\Home\\Mapa.cshtml",
               "ViewState": "AgIAAGoCAAAAAAAAAAAAwJICAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-02-04T03:00:38.858Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-04T03:00:38.858Z"
             },
             {
               "$type": "Document",

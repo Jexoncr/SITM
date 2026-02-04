@@ -3,32 +3,32 @@
   "WorkspaceRootPath": "C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\views\\home\\eventos.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|solutionrelative:turistico\\views\\home\\eventos.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\views\\home\\mapa.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|solutionrelative:turistico\\views\\home\\mapa.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\views\\home\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|solutionrelative:turistico\\views\\home\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|solutionrelative:turistico\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\views\\home\\mapa.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|solutionrelative:turistico\\views\\home\\mapa.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|c:\\users\\universidad\\downloads\\sitm\\proyectoturistico-main\\proyectoturistico-main\\turistico\\views\\home\\eventos.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|solutionrelative:turistico\\views\\home\\eventos.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|solutionrelative:turistico\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|c:\\users\\universidad\\downloads\\sitm\\proyectoturistico-main\\proyectoturistico-main\\turistico\\views\\shared\\_layoutadmin.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\views\\shared\\_layoutadmin.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|solutionrelative:turistico\\views\\shared\\_layoutadmin.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|solutionrelative:turistico\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\views\\home\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|solutionrelative:turistico\\views\\home\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{3DB09703-6656-4023-B212-2F5625C15794}|turistico\\turistico.csproj|C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\views\\admin\\dashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -114,23 +114,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 7,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "Comercios.cshtml",
-              "DocumentMoniker": "C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\Views\\Home\\Comercios.cshtml",
-              "RelativeDocumentMoniker": "turistico\\Views\\Home\\Comercios.cshtml",
-              "ToolTip": "C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\Views\\Home\\Comercios.cshtml",
-              "RelativeToolTip": "turistico\\Views\\Home\\Comercios.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAGsAAAA/AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-02-04T03:00:38.411Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 1,
               "Title": "login.cshtml",
               "DocumentMoniker": "C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\Views\\Home\\login.cshtml",
               "RelativeDocumentMoniker": "turistico\\Views\\Home\\login.cshtml",
@@ -138,7 +126,8 @@
               "RelativeToolTip": "turistico\\Views\\Home\\login.cshtml",
               "ViewState": "AgIAADgAAAAAAAAAAAAwwFAAAAAOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-02-04T03:00:38.413Z"
+              "WhenOpened": "2026-02-04T03:00:38.413Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -154,20 +143,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\Views\\Home\\Index.cshtml",
               "RelativeDocumentMoniker": "turistico\\Views\\Home\\Index.cshtml",
               "ToolTip": "C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\Views\\Home\\Index.cshtml",
               "RelativeToolTip": "turistico\\Views\\Home\\Index.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAiAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAI0BAAAdAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2026-02-04T03:00:38.415Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "HomeController.cs",
               "DocumentMoniker": "C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\Controllers\\HomeController.cs",
               "RelativeDocumentMoniker": "turistico\\Controllers\\HomeController.cs",
@@ -179,7 +168,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "_LayoutAdmin.cshtml",
               "DocumentMoniker": "C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\Views\\Shared\\_LayoutAdmin.cshtml",
               "RelativeDocumentMoniker": "turistico\\Views\\Shared\\_LayoutAdmin.cshtml",
@@ -187,12 +176,11 @@
               "RelativeToolTip": "turistico\\Views\\Shared\\_LayoutAdmin.cshtml",
               "ViewState": "AgIAAC8AAAAAAAAAAAAwwFEAAAAHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-02-04T03:00:38.61Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-04T03:00:38.61Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "_Layout.cshtml",
               "DocumentMoniker": "C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\Views\\Shared\\_Layout.cshtml",
               "RelativeDocumentMoniker": "turistico\\Views\\Shared\\_Layout.cshtml",
@@ -200,18 +188,17 @@
               "RelativeToolTip": "turistico\\Views\\Shared\\_Layout.cshtml",
               "ViewState": "AgIAAO0AAAAAAAAAAAAAwBUBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-02-04T03:00:38.85Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-04T03:00:38.85Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
               "Title": "Eventos.cshtml",
               "DocumentMoniker": "C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\Views\\Home\\Eventos.cshtml",
               "RelativeDocumentMoniker": "turistico\\Views\\Home\\Eventos.cshtml",
               "ToolTip": "C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\Views\\Home\\Eventos.cshtml",
               "RelativeToolTip": "turistico\\Views\\Home\\Eventos.cshtml",
-              "ViewState": "AgIAAIgAAAAAAAAAAAAAwJsAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAI4AAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2026-02-04T03:00:38.852Z",
               "EditorCaption": ""
@@ -230,16 +217,28 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "Mapa.cshtml",
               "DocumentMoniker": "C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\Views\\Home\\Mapa.cshtml",
               "RelativeDocumentMoniker": "turistico\\Views\\Home\\Mapa.cshtml",
               "ToolTip": "C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\Views\\Home\\Mapa.cshtml",
               "RelativeToolTip": "turistico\\Views\\Home\\Mapa.cshtml",
-              "ViewState": "AgIAAGoCAAAAAAAAAAAAwJICAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAE4AAAAAAAAAAAAAADUAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2026-02-04T03:00:38.858Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Comercios.cshtml",
+              "DocumentMoniker": "C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\Views\\Home\\Comercios.cshtml",
+              "RelativeDocumentMoniker": "turistico\\Views\\Home\\Comercios.cshtml",
+              "ToolTip": "C:\\Users\\Universidad\\Downloads\\SITM\\ProyectoTuristico-main\\ProyectoTuristico-main\\turistico\\Views\\Home\\Comercios.cshtml",
+              "RelativeToolTip": "turistico\\Views\\Home\\Comercios.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAGsAAAA/AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-04T03:00:38.411Z"
             },
             {
               "$type": "Document",
