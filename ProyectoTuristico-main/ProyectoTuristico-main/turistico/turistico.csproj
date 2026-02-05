@@ -188,6 +188,7 @@
     <Compile Include="Models\ProductoServicio.cs" />
     <Compile Include="Models\Resena.cs" />
     <Compile Include="Models\Reserva.cs" />
+    <Compile Include="Models\ComercioDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="App_Start\StartupAuth.cs" />
     <Compile Include="Startup.cs" />
@@ -264,6 +265,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Content Include="Views\Comercios\index.cshtml" />
+    <Content Include="Views\Comercios\Perfil.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Modelos\" />
     <Folder Include="Views\ReservacionViewModel\" />
   </ItemGroup>
   <ItemGroup>
