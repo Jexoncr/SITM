@@ -6,37 +6,16 @@ using System.Web.Mvc;
 
 namespace turistico.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
-        public ActionResult Dashboard()
-        {
-            return View();
-        }
-
-        public ActionResult Comercios()
-        {
-            return View();
-        }
-
-        public ActionResult Eventos()
-        {
-            return View();
-        }
-
-        public ActionResult Resenas()
-        {
-            return View();
-        }
-
-        public ActionResult Reservas()
-        {
-            return View();
-        }
-
-        public ActionResult Usuarios()
-        {
-            return View();
-        }
+        public ActionResult Dashboard() => View();
+        public ActionResult Comercios() => View();
+        public ActionResult Eventos() => View();
+        public ActionResult Resenas() => View();
+        public ActionResult Reservas() => View();
+        public ActionResult Usuarios() => View();
     }
+
 
 }
