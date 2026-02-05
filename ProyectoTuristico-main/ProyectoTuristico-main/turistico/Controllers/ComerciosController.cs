@@ -11,14 +11,11 @@ namespace turistico.Controllers
     {
         private string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
-        // GET: Comercios
         public ActionResult Index()
         {
-            List<ComercioDTO> comercios = ObtenerComercios();
-            return View(comercios);
+            return View(ObtenerComercios());
         }
 
-        // GET: Comercios/Perfil/5
         public ActionResult Perfil(int id)
         {
             ComercioDTO comercio = ObtenerComercioPorId(id);
@@ -26,7 +23,6 @@ namespace turistico.Controllers
             return View(comercio);
         }
 
-        // GET: Comercios/Contacto/5
         public ActionResult Contacto(int id)
         {
             ComercioDTO comercio = ObtenerComercioPorId(id);
@@ -37,19 +33,10 @@ namespace turistico.Controllers
         private List<ComercioDTO> ObtenerComercios()
         {
             List<ComercioDTO> comercios = new List<ComercioDTO>();
-
-            // QUERY CORREGIDO: Une Lugares con Comercios
             string query = @"
-                SELECT 
-                    L.Id,
-                    COM.Nombre,        
-                    COM.Descripcion,   
-                    CAT.Nombre AS Categoria,
-                    L.Direccion,
-                    L.Telefono,
-                    L.Horario,
-                    L.SitioWeb,
-                    (SELECT TOP 1 UrlImagen FROM ImagenesLugar WHERE LugarId = L.Id) AS ImagenUrl
+                SELECT L.Id, COM.Nombre, COM.Descripcion, CAT.Nombre AS Categoria,
+                       L.Direccion, L.Telefono, L.Horario, L.SitioWeb,
+                       (SELECT TOP 1 UrlImagen FROM ImagenesLugar WHERE LugarId = L.Id) AS ImagenUrl
                 FROM Lugares L
                 INNER JOIN Categorias CAT ON L.CategoriaId = CAT.Id
                 INNER JOIN Comercios COM ON L.Id = COM.LugarId
@@ -62,22 +49,16 @@ namespace turistico.Controllers
                 {
                     connection.Open();
                     using (SqlCommand command = new SqlCommand(query, connection))
+                    using (SqlDataReader reader = command.ExecuteReader())
                     {
-                        using (SqlDataReader reader = command.ExecuteReader())
+                        while (reader.Read())
                         {
-                            while (reader.Read())
-                            {
-                                comercios.Add(MapearComercio(reader));
-                            }
+                            comercios.Add(MapearComercio(reader));
                         }
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine("Error SQL: " + ex.Message);
-            }
-
+            catch (Exception ex) { System.Diagnostics.Debug.WriteLine(ex.Message); }
             return comercios;
         }
 
@@ -108,31 +89,27 @@ namespace turistico.Controllers
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine("Error SQL: " + ex.Message);
-            }
+            catch (Exception ex) { System.Diagnostics.Debug.WriteLine(ex.Message); }
             return comercio;
         }
 
-        // Método auxiliar para no repetir código de mapeo
         private ComercioDTO MapearComercio(SqlDataReader reader)
         {
+            string urlDb = reader["ImagenUrl"]?.ToString();
             return new ComercioDTO
             {
                 Id = Convert.ToInt32(reader["Id"]),
                 Nombre = reader["Nombre"].ToString(),
                 Descripcion = reader["Descripcion"]?.ToString() ?? "",
                 Categoria = reader["Categoria"].ToString(),
-                Direccion = reader["Direccion"]?.ToString() ?? "",
                 Ubicacion = reader["Direccion"]?.ToString() ?? "No especificada",
                 Telefono = reader["Telefono"]?.ToString() ?? "",
                 Horario = reader["Horario"]?.ToString() ?? "",
                 SitioWeb = reader["SitioWeb"]?.ToString() ?? "",
-                // Quitamos el ~ para evitar errores de renderizado en el navegador
-                ImagenUrl = reader["ImagenUrl"] == DBNull.Value
-                            ? "/Content/img/comercios/default.jpg"
-                            : reader["ImagenUrl"].ToString().Replace("~", "")
+                // AJUSTE FINAL: La ruta debe empezar con /Content/img/
+                ImagenUrl = string.IsNullOrWhiteSpace(urlDb)
+                            ? "/Content/img/default.jpg"
+                            : urlDb.Trim()
             };
         }
     }
