@@ -3,6 +3,9 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<!-- Leaflet CSS (CDN) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
 <style>
     /* ====== Estilos específicos de la página ====== */
     .hero-map {
@@ -31,11 +34,12 @@
         border: 1px solid rgba(0,0,0,.06);
     }
 
-    .map-frame {
-        border: 0;
+    /* (Antes era iframe) */
+    #leafletMap {
         width: 100%;
-        height: 360px;
+        height: 350px;
         border-radius: 16px;
+        overflow: hidden;
     }
 
     .badge-soft {
@@ -82,7 +86,6 @@
                 </div>
                 <div class="d-flex gap-2 mt-2 flex-wrap">
                     <button id="btnClear" class="btn btn-sm btn-outline-secondary rounded-pill" type="button">Limpiar</button>
-                    
                 </div>
             </form>
         </div>
@@ -142,24 +145,16 @@
         <!-- MAPA + LISTADO -->
         <div class="col-lg-9">
 
-            <!-- MAPA (GOOGLE MAPS IFRAME) -->
+            <!-- MAPA (Leaflet) -->
             <div class="card map-card shadow-sm mb-4 overflow-hidden">
                 <div class="card-body p-2 p-md-3">
                     <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
                         <div class="fw-semibold text-success">Mapa</div>
-                        <div class="text-muted small">Podés incrustar el mapa del cantón (o un lugar específico).</div>
+                        <div class="text-muted small">Arrastrá y hacé zoom para ver todo el cantón.</div>
                     </div>
 
-                   
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d62945.40272181664!2d-84.5246177!3d10.3320378!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8fa0f5a2e9c6a93f%3A0x6b5c4e2b9b5a6c7!2sSan%20Carlos%2C%20Alajuela!5e0!3m2!1ses!2scr!4v1700000000000"
-                            width="100%"
-                            height="350"
-                            style="border:0; border-radius:16px;"
-                            allowfullscreen=""
-                            loading="lazy"
-                            referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
-
+                    <!-- Aquí va Leaflet -->
+                    <div id="leafletMap"></div>
                 </div>
             </div>
 
@@ -171,8 +166,16 @@
 
             <div id="placesGrid" class="row g-4 row-cols-1 row-cols-md-2 row-cols-lg-3">
 
+                <!-- IMPORTANTE:
+                     data-lat y data-lng son las coordenadas (un PUNTO).
+                     Si no las tenés todavía, dejalas vacías "" y el botón "Ubicar" te centra en San Carlos.
+                -->
                 <!-- LUGAR 1 -->
-                <div class="col place-item" data-name="Cascada El Encanto" data-cat="Naturaleza">
+                <div class="col place-item"
+                     data-name="Cascada El Encanto"
+                     data-cat="Naturaleza"
+                     data-lat=""
+                     data-lng="">
                     <div class="card place-card h-100 shadow-sm">
                         <div class="card-body">
                             <h6 class="fw-bold text-success place-title mb-2">Cascada El Encanto</h6>
@@ -181,14 +184,18 @@
 
                             <div class="mt-3 d-flex gap-2">
                                 <a href="#" class="btn btn-outline-success btn-sm rounded-pill">Ver detalle</a>
-                                <button type="button" class="btn btn-success btn-sm rounded-pill">Ubicar</button>
+                                <button type="button" class="btn btn-success btn-sm rounded-pill btnUbicar">Ubicar</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- LUGAR 2 -->
-                <div class="col place-item" data-name="Restaurante Sabores Típicos" data-cat="Gastronomía">
+                <div class="col place-item"
+                     data-name="Restaurante Sabores Típicos"
+                     data-cat="Gastronomía"
+                     data-lat=""
+                     data-lng="">
                     <div class="card place-card h-100 shadow-sm">
                         <div class="card-body">
                             <h6 class="fw-bold text-success place-title mb-2">Restaurante Sabores Típicos</h6>
@@ -197,14 +204,18 @@
 
                             <div class="mt-3 d-flex gap-2">
                                 <a href="#" class="btn btn-outline-success btn-sm rounded-pill">Ver detalle</a>
-                                <button type="button" class="btn btn-success btn-sm rounded-pill">Ubicar</button>
+                                <button type="button" class="btn btn-success btn-sm rounded-pill btnUbicar">Ubicar</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- LUGAR 3 -->
-                <div class="col place-item" data-name="Casa Histórica Municipal" data-cat="Cultura">
+                <div class="col place-item"
+                     data-name="Casa Histórica Municipal"
+                     data-cat="Cultura"
+                     data-lat=""
+                     data-lng="">
                     <div class="card place-card h-100 shadow-sm">
                         <div class="card-body">
                             <h6 class="fw-bold text-success place-title mb-2">Casa Histórico Municipal</h6>
@@ -213,14 +224,18 @@
 
                             <div class="mt-3 d-flex gap-2">
                                 <a href="#" class="btn btn-outline-success btn-sm rounded-pill">Ver detalle</a>
-                                <button type="button" class="btn btn-success btn-sm rounded-pill">Ubicar</button>
+                                <button type="button" class="btn btn-success btn-sm rounded-pill btnUbicar">Ubicar</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- LUGAR 4 -->
-                <div class="col place-item" data-name="Hotel Mirador Verde" data-cat="Hospedaje">
+                <div class="col place-item"
+                     data-name="Hotel Mirador Verde"
+                     data-cat="Hospedaje"
+                     data-lat=""
+                     data-lng="">
                     <div class="card place-card h-100 shadow-sm">
                         <div class="card-body">
                             <h6 class="fw-bold text-success place-title mb-2">Hotel Mirador Verde</h6>
@@ -229,14 +244,18 @@
 
                             <div class="mt-3 d-flex gap-2">
                                 <a href="#" class="btn btn-outline-success btn-sm rounded-pill">Ver detalle</a>
-                                <button type="button" class="btn btn-success btn-sm rounded-pill">Ubicar</button>
+                                <button type="button" class="btn btn-success btn-sm rounded-pill btnUbicar">Ubicar</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- LUGAR 5 -->
-                <div class="col place-item" data-name="Sendero Los Robles" data-cat="Aventura">
+                <div class="col place-item"
+                     data-name="Sendero Los Robles"
+                     data-cat="Aventura"
+                     data-lat=""
+                     data-lng="">
                     <div class="card place-card h-100 shadow-sm">
                         <div class="card-body">
                             <h6 class="fw-bold text-success place-title mb-2">Sendero Los Robles</h6>
@@ -245,7 +264,7 @@
 
                             <div class="mt-3 d-flex gap-2">
                                 <a href="#" class="btn btn-outline-success btn-sm rounded-pill">Ver detalle</a>
-                                <button type="button" class="btn btn-success btn-sm rounded-pill">Ubicar</button>
+                                <button type="button" class="btn btn-success btn-sm rounded-pill btnUbicar">Ubicar</button>
                             </div>
                         </div>
                     </div>
@@ -257,8 +276,46 @@
     </div>
 </div>
 
+<!-- Leaflet JS (CDN) -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <script>
-    // ====== Buscador + filtros (front-end simple) ======
+    // ====== 1) MAPA Leaflet (centrado en San Carlos) ======
+    // Coordenadas de referencia: Ciudad Quesada (centro cantonal)
+    const SAN_CARLOS_CENTER = { lat: 10.3266, lng: -84.432 }; // referencia
+
+    const map = L.map('leafletMap', {
+        scrollWheelZoom: true
+    }).setView([SAN_CARLOS_CENTER.lat, SAN_CARLOS_CENTER.lng], 11);
+
+    // Mapa base: OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Un marcador simple para "San Carlos" (centro)
+    const cantonMarker = L.marker([SAN_CARLOS_CENTER.lat, SAN_CARLOS_CENTER.lng])
+        .addTo(map)
+        .bindPopup('Centro de San Carlos (Ciudad Quesada)');
+
+    // Marcadores por lugar (solo si vos llenás data-lat y data-lng)
+    const markersByEl = new Map();
+
+    document.querySelectorAll(".place-item").forEach(el => {
+        const lat = parseFloat(el.dataset.lat);
+        const lng = parseFloat(el.dataset.lng);
+
+        if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
+            const title = el.dataset.name || "Lugar";
+            const cat = el.dataset.cat || "";
+            const marker = L.marker([lat, lng]).bindPopup(`<strong>${title}</strong><br>${cat}`);
+            marker.addTo(map);
+            markersByEl.set(el, marker);
+        }
+    });
+
+    // ====== 2) Buscador + filtros (front-end simple) ======
     const searchInput = document.getElementById("searchInput");
     const btnClear = document.getElementById("btnClear");
     const btnApply = document.getElementById("btnApply");
@@ -288,6 +345,14 @@
             const show = matchSearch && matchCat;
             el.style.display = show ? "" : "none";
             if (show) visible++;
+
+            // Mostrar/ocultar marcador si existe
+            const marker = markersByEl.get(el);
+            if (marker) {
+                const isOnMap = map.hasLayer(marker);
+                if (show && !isOnMap) marker.addTo(map);
+                if (!show && isOnMap) map.removeLayer(marker);
+            }
         });
 
         resultCount.textContent = `${visible} resultado(s)`;
@@ -309,6 +374,30 @@
         document.querySelectorAll(".filterCheck").forEach(cb => cb.checked = true);
         searchInput.value = "";
         applyFilters();
+    });
+
+    // ====== 3) Botón "Ubicar" ======
+    document.querySelectorAll(".btnUbicar").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            const placeEl = e.target.closest(".place-item");
+            if (!placeEl) return;
+
+            const lat = parseFloat(placeEl.dataset.lat);
+            const lng = parseFloat(placeEl.dataset.lng);
+
+            // Si el lugar no tiene coordenadas, solo centramos en San Carlos
+            if (Number.isNaN(lat) || Number.isNaN(lng)) {
+                map.setView([SAN_CARLOS_CENTER.lat, SAN_CARLOS_CENTER.lng], 11);
+                cantonMarker.openPopup();
+                return;
+            }
+
+            // Si sí tiene coordenadas, centramos ahí
+            map.setView([lat, lng], 15);
+
+            const marker = markersByEl.get(placeEl);
+            if (marker) marker.openPopup();
+        });
     });
 
     // Inicial
