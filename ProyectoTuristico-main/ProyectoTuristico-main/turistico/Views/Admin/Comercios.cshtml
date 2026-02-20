@@ -1,198 +1,263 @@
 ﻿@{
-    ViewBag.Title = "Validación de Comercios";
+    ViewBag.Title = "Gestión de Comercios";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
-<h2 class="fw-bold text-success mb-4">
-    Validación de Comercios Regulados
-</h2>
+<!-- ===================== -->
+<!-- HEADER DE SECCIÓN -->
+<!-- ===================== -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-success mb-1">Gestión de Comercios</h2>
+        <p class="text-muted mb-0">
+            Revisión, aprobación y control de comercios registrados en la municipalidad.
+        </p>
+    </div>
 
-<p class="text-muted mb-4">
-    Listado de comercios pendientes de validación por parte de la municipalidad.
-</p>
+    <a href="#" class="btn btn-success rounded-pill px-4">
+        <i class="bi bi-plus-lg me-2"></i> Nuevo comercio
+    </a>
+</div>
 
-<div class="card shadow-sm">
-    <div class="card-body">
-        <div class="d-flex justify-content-end mb-3">
-            <a href="#" class="btn btn-success">
-                Agregar comercio
-            </a>
-        </div>
+<!-- ===================== -->
+<!-- FILTROS -->
+<!-- ===================== -->
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-body d-flex gap-2 flex-wrap">
 
-        <table class="table table-hover align-middle">
-            <thead class="table-success">
-                <tr>
-                    <th>Nombre</th>
-                    <th>Tipo</th>
-                    <th>Propietario</th>
-                    <th>Ubicación</th>
-                    <th>Estado</th>
-                    <th class="text-center">Acciones</th>
-                </tr>
-            </thead>
+        <button class="btn btn-outline-success btn-sm rounded-pill filter-btn active"
+                data-status="all">
+            Todos
+        </button>
 
-            <tbody>
+        <button class="btn btn-outline-warning btn-sm rounded-pill filter-btn"
+                data-status="Pendiente">
+            Pendientes
+        </button>
 
-                <tr>
-                    <td>Restaurante Sabores Típicos</td>
-                    <td>Restaurante</td>
-                    <td>María González</td>
-                    <td>Barrio Central</td>
-                    <td>
-                        <span class="badge bg-warning text-dark">
-                            Pendiente
-                        </span>
-                    </td>
-                    <td class="text-center">
-                        <button class="btn btn-success btn-sm">Aprobar</button>
-                        <button class="btn btn-danger btn-sm">Rechazar</button>
-                        <button class="btn btn-primary btn-sm"
-                                data-bs-toggle="modal"
-                                data-bs-target="#modalDetalleComercio">
-                            <i class="fa-solid fa-pen me-1"></i> Editar
-                        </button>
+        <button class="btn btn-outline-success btn-sm rounded-pill filter-btn"
+                data-status="Aprobado">
+            Aprobados
+        </button>
 
-
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>Hotel Mirador Verde</td>
-                    <td>Hospedaje</td>
-                    <td>Carlos Rodríguez</td>
-                    <td>Zona Turística</td>
-                    <td>
-                        <span class="badge bg-warning text-dark">
-                            Pendiente
-                        </span>
-                    </td>
-                    <td class="text-center">
-                        <button class="btn btn-success btn-sm">Aprobar</button>
-                        <button class="btn btn-danger btn-sm">Rechazar</button>
-                        <button class="btn btn-primary btn-sm"
-                                data-bs-toggle="modal"
-                                data-bs-target="#modalDetalleComercio">
-                            <i class="fa-solid fa-pen me-1"></i> Editar
-                        </button>
-
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>Café Montaña Verde</td>
-                    <td>Cafetería</td>
-                    <td>Sofía Ramírez</td>
-                    <td>Centro del cantón</td>
-                    <td>
-                        <span class="badge bg-warning text-dark">
-                            Pendiente
-                        </span>
-                    </td>
-                    <td class="text-center">
-                        <button class="btn btn-success btn-sm">Aprobar</button>
-                        <button class="btn btn-danger btn-sm">Rechazar</button>
-                        <button class="btn btn-primary btn-sm"
-                                data-bs-toggle="modal"
-                                data-bs-target="#modalDetalleComercio">
-                            <i class="fa-solid fa-pen me-1"></i> Editar
-                        </button>
-
-                    </td>
-                </tr>
-
-            </tbody>
-        </table>
+        <button class="btn btn-outline-danger btn-sm rounded-pill filter-btn"
+                data-status="Rechazado">
+            Rechazados
+        </button>
 
     </div>
-    <div class="modal fade" id="modalDetalleComercio" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+</div>
 
-            <div class="modal-content">
+<!-- ===================== -->
+<!-- LISTADO -->
+<!-- ===================== -->
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
 
-                <!-- HEADER -->
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title">
-                        Detalle del Comercio
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white"
-                            data-bs-dismiss="modal"></button>
-                </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 comercio-table">
+                <thead>
+                    <tr>
+                        <th>Comercio</th>
+                        <th>Tipo</th>
+                        <th>Propietario</th>
+                        <th>Ubicación</th>
+                        <th>Estado</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
 
-                <!-- BODY -->
-                <div class="modal-body">
+                <tbody>
 
-                    <div class="row g-3">
-
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Nombre del comercio</label>
-                            <input type="text" class="form-control"
-                                   value="Restaurante Sabores Típicos" disabled>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Tipo de comercio</label>
-                            <input type="text" class="form-control"
-                                   value="Restaurante" disabled>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Propietario</label>
-                            <input type="text" class="form-control"
-                                   value="María González" disabled>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Ubicación</label>
-                            <input type="text" class="form-control"
-                                   value="Barrio Central" disabled>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Teléfono</label>
-                            <input type="text" class="form-control"
-                                   value="8888-9999" disabled>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Correo electrónico</label>
-                            <input type="email" class="form-control"
-                                   value="saborestipicos@email.com" disabled>
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label fw-semibold">Descripción</label>
-                            <textarea class="form-control" rows="3" disabled>
-Restaurante especializado en comida típica costarricense, con atención a turistas nacionales e internacionales.
-                        </textarea>
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label fw-semibold">Estado</label><br>
-                            <span class="badge bg-warning text-dark fs-6">
-                                Pendiente de validación
+                    <!-- COMERCIO -->
+                    <tr data-status="Pendiente">
+                        <td class="fw-semibold">Restaurante Sabores Típicos</td>
+                        <td>Restaurante</td>
+                        <td>María González</td>
+                        <td>Barrio Central</td>
+                        <td>
+                            <span class="badge badge-pending">
+                                Pendiente
                             </span>
-                        </div>
+                        </td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-light action-btn"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalDetalle">
+                                <i class="bi bi-eye"></i>
+                            </button>
 
+                            <button class="btn btn-sm btn-success action-btn">
+                                <i class="bi bi-check-lg"></i>
+                            </button>
+
+                            <button class="btn btn-sm btn-danger action-btn">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </td>
+                    </tr>
+
+                    <tr data-status="Pendiente">
+                        <td class="fw-semibold">Hotel Mirador Verde</td>
+                        <td>Hospedaje</td>
+                        <td>Carlos Rodríguez</td>
+                        <td>Zona Turística</td>
+                        <td>
+                            <span class="badge badge-pending">
+                                Pendiente
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-light action-btn"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalDetalle">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-success action-btn">
+                                <i class="bi bi-check-lg"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger action-btn">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<!-- ===================== -->
+<!-- MODAL DETALLE -->
+<!-- ===================== -->
+<div class="modal fade" id="modalDetalle" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    Detalle del Comercio
+                </h5>
+                <button class="btn-close btn-close-white"
+                        data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Nombre</label>
+                        <input class="form-control" disabled
+                               value="Restaurante Sabores Típicos" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Tipo</label>
+                        <input class="form-control" disabled value="Restaurante" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Propietario</label>
+                        <input class="form-control" disabled value="María González" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Ubicación</label>
+                        <input class="form-control" disabled value="Barrio Central" />
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Descripción</label>
+                        <textarea class="form-control" rows="3" disabled>
+Restaurante especializado en comida típica costarricense.
+                        </textarea>
                     </div>
 
                 </div>
-
-                <!-- FOOTER -->
-                <div class="modal-footer">
-                    <button class="btn btn-success">
-                        <i class="fa-solid fa-check"></i> Aprobar
-                    </button>
-                    <button class="btn btn-danger">
-                        <i class="fa-solid fa-xmark"></i> Rechazar
-                    </button>
-                    <button class="btn btn-secondary"
-                            data-bs-dismiss="modal">
-                        Cerrar
-                    </button>
-                </div>
-
             </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-success">
+                    <i class="bi bi-check-lg me-1"></i> Aprobar
+                </button>
+                <button class="btn btn-danger">
+                    <i class="bi bi-x-lg me-1"></i> Rechazar
+                </button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cerrar
+                </button>
+            </div>
+
         </div>
     </div>
-
 </div>
+
+<!-- ===================== -->
+<!-- ESTILOS SCOPED -->
+<!-- ===================== -->
+<style>
+    .comercio-table thead th {
+        background: #f6f8f7;
+        font-weight: 600;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .comercio-table tbody tr {
+        transition: background .25s ease;
+    }
+
+        .comercio-table tbody tr:hover {
+            background: #f3faf7;
+        }
+
+    .badge-pending {
+        background: rgba(255,193,7,.15);
+        color: #856404;
+        padding: .45em .75em;
+        border-radius: 999px;
+        font-weight: 500;
+    }
+
+    .action-btn {
+        border-radius: 50%;
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .filter-btn.active {
+        background: #198754;
+        color: #fff;
+        border-color: #198754;
+    }
+</style>
+
+<!-- ===================== -->
+<!-- JS FILTROS -->
+<!-- ===================== -->
+<script>
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const rows = document.querySelectorAll('tbody tr');
+
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+
+            filterButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const status = btn.dataset.status;
+
+            rows.forEach(row => {
+                row.style.display =
+                    status === 'all' || row.dataset.status === status
+                        ? ''
+                        : 'none';
+            });
+        });
+    });
+</script>
