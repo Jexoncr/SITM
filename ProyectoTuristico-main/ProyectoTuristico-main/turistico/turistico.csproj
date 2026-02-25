@@ -183,6 +183,7 @@
     <Compile Include="Models\AdminDashboardVM.cs" />
     <Compile Include="Models\Categoria.cs" />
     <Compile Include="Models\CategoriaEvento.cs" />
+    <Compile Include="Models\MapaTuristicoVM.cs" />
     <Compile Include="Models\Comercio.cs" />
     <Compile Include="Models\ComercioRegulado.cs" />
     <Compile Include="Models\Evento.cs" />

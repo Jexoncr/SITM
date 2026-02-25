@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using turistico.Models;
 using System.Data.Entity;
 using System.Linq;
+using System.Collections.Generic;
 
 
 namespace turistico.Controllers
@@ -59,7 +60,56 @@ namespace turistico.Controllers
             }
         }
         public ActionResult Resenas() => View();
-        public ActionResult Mapa() => View();
+
+        public async Task<ActionResult> Mapa()
+        {
+            using (var db = new ApplicationDbContext())
+            {
+                // 1) ids de Lugares que son Comercios (para habilitar "Ver detalle")
+                var comercioLugarIds = await db.Comercios
+                    .Select(c => c.LugarId)
+                    .ToListAsync();
+
+                // 2) Lugares aprobados/activos para el mapa
+                var lugaresEnt = await db.Lugares
+                    .Include(l => l.Categoria)
+                    .Include(l => l.ImagenesLugar)
+                    .Where(l => l.Estado == "Aprobado" || l.Estado == "Activo" || l.Estado == null)
+                    .OrderBy(l => l.Nombre)
+                    .ToListAsync();
+
+                var lugares = lugaresEnt.Select(l => new MapaLugarDTO
+                {
+                    Id = l.Id,
+                    Nombre = l.Nombre,
+                    Descripcion = l.Descripcion,
+                    Categoria = l.Categoria != null ? l.Categoria.Nombre : "Sin categoría",
+                    Latitud = l.Latitud,
+                    Longitud = l.Longitud,
+                    Direccion = l.Direccion,
+                    ImagenUrl = l.ImagenesLugar.Select(i => i.UrlImagen).FirstOrDefault(),
+                    EsComercio = comercioLugarIds.Contains(l.Id)
+                }).ToList();
+
+                // 3) Categorías desde BD (para generar filtros dinámicos)
+                var categorias = await db.Categorias
+                    .OrderBy(c => c.Nombre)
+                    .Select(c => c.Nombre)
+                    .ToListAsync();
+
+                // Si querés que SOLO salgan las categorías que tienen lugares:
+                // categorias = lugares.Select(x => x.Categoria).Distinct().OrderBy(x => x).ToList();
+
+                var model = new MapaTuristicoVM
+                {
+                    Categorias = categorias,
+                    Lugares = lugares
+                };
+
+                return View(model);
+            }
+        }
+
         public ActionResult Recuperar() => View();
 
         
@@ -161,5 +211,22 @@ namespace turistico.Controllers
 
         [Authorize]
         public ActionResult MisReservas() => View();
+    }
+    public class MapaVM
+    {
+        public List<Categoria> Categorias { get; set; }
+        public List<MapaItemVM> Items { get; set; }
+    }
+
+    public class MapaItemVM
+    {
+        public string Tipo { get; set; }      // "Comercio" o "Lugar"
+        public int Id { get; set; }           // Id del comercio (si aplica) o del lugar
+        public int LugarId { get; set; }      // Lugar.Id
+        public string Nombre { get; set; }
+        public string Descripcion { get; set; }
+        public string Categoria { get; set; } // Nombre de la categoría
+        public double? Latitud { get; set; }
+        public double? Longitud { get; set; }
     }
 }
