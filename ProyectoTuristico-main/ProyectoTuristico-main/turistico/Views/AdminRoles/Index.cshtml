@@ -1,0 +1,79 @@
+﻿@model IEnumerable<Microsoft.AspNet.Identity.EntityFramework.IdentityRole>
+@{
+    ViewBag.Title = "Roles";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h3 class="mb-1">Roles</h3>
+        <div class="text-muted">Crear y administrar roles del sistema.</div>
+    </div>
+</div>
+
+@if (TempData["Ok"] != null)
+{
+    <div class="alert alert-success">@TempData["Ok"]</div>
+}
+@if (TempData["Err"] != null)
+{
+    <div class="alert alert-danger">@TempData["Err"]</div>
+}
+
+<div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+        @using (Html.BeginForm("Create", "AdminRoles", FormMethod.Post, new { @class = "row g-2 align-items-end" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="col-12 col-md-6">
+                <label class="form-label mb-1">Nuevo rol</label>
+                <input type="text" name="name" class="form-control" placeholder="Ej: Editor, Moderador..." />
+            </div>
+
+            <div class="col-12 col-md-3">
+                <button class="btn btn-success w-100" type="submit">Crear rol</button>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">Rol</th>
+                        <th>ID</th>
+                        <th class="text-end pe-3" style="width:160px;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in Model)
+                    {
+                        <tr>
+                            <td class="ps-3 fw-semibold">@r.Name</td>
+                            <td class="text-muted small">@r.Id</td>
+                            <td class="text-end pe-3">
+                                @if (r.Name == "Admin")
+                                {
+                                    <span class="badge bg-secondary">Protegido</span>
+                                }
+                                else
+                                {
+                                    using (Html.BeginForm("Delete", "AdminRoles", FormMethod.Post, new { @class = "m-0" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        @Html.Hidden("id", r.Id)
+                                        <button class="btn btn-sm btn-outline-danger" type="submit">Eliminar</button>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

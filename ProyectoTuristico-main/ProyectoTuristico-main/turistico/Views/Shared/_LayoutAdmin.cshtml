@@ -46,29 +46,42 @@
             <h5 class="fw-bold mb-4">Administración SITM</h5>
 
             <nav class="d-flex flex-column gap-1">
-                <a href="/Admin/Dashboard">Dashboard</a>
-                <a href="/Admin/Comercios">Comercios</a>
-                <a href="/Admin/Eventos">Eventos</a>
-                <a href="/Admin/Resenas">Reseñas</a>
 
-                <hr class="border-light my-3">
-                <a href="/Home/Login" class="btn btn-outline-success btn-sm">
-                    Cerrar sesión
+                <a href="@Url.Action("Dashboard","Admin")">📊 Dashboard</a>
+
+                <!-- IR AL SITIO PUBLICO -->
+                <a href="@Url.Action("Index","Home")">
+                    🌐 Ver Sitio Web
                 </a>
 
+                <!-- Administración -->
+                <a href="@Url.Action("Index","AdminComercios")">🏪 Comercios</a>
+                <a href="@Url.Action("Index","AdminEventos")">📅 Eventos</a>
+                <a href="@Url.Action("Index","AdminResenas")">⭐ Reseñas</a>
+                <a href="@Url.Action("Index","AdminUsuarios")">👥 Usuarios</a>
+                <a href="@Url.Action("Index","AdminRoles")">🔐 Roles</a><nav class="d-flex flex-column gap-1">
+                    <a href="@Url.Action("Dashboard","Admin")">Dashboard</a>
 
-            </nav>
-        </aside>
+                   
+
+                    <hr class="border-light my-3">
+
+                    <!-- LOGOUT REAL (POST) -->
+                    @using (Html.BeginForm("Logout", "Account", FormMethod.Post, new { @class = "mt-2" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-outline-light btn-sm w-100">
+                            Cerrar sesión
+                        </button>
+                    }
+                </nav>
+</aside>
 
         <!-- CONTENIDO -->
         <div class="flex-fill d-flex flex-column">
-
-            <!-- HEADER -->
-            <!-- BODY -->
             <main class="flex-fill p-4">
                 @RenderBody()
             </main>
-
         </div>
 
     </div>

@@ -1,0 +1,47 @@
+﻿@model turistico.Controllers.EditUserRolesVM
+@{
+    ViewBag.Title = "Editar Roles";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h3 class="mb-1">Roles de usuario</h3>
+        <div class="text-muted">@Model.Email</div>
+    </div>
+    <a class="btn btn-outline-secondary" href="@Url.Action("Index","AdminUsuarios")">Volver</a>
+</div>
+
+@if (TempData["Err"] != null)
+{<div class="alert alert-danger">@TempData["Err"]</div>}
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        @using (Html.BeginForm("EditRoles", "AdminUsuarios", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.UserId)
+            @Html.HiddenFor(m => m.Email)
+
+            <div class="row g-2">
+                @for (int i = 0; i < Model.Roles.Count; i++)
+                {
+                    <div class="col-12 col-md-4">
+                        <div class="form-check">
+                            @Html.HiddenFor(m => m.Roles[i].RoleName)
+                            @Html.CheckBoxFor(m => m.Roles[i].Assigned, new { @class = "form-check-input", id = "role_" + i })
+                            <label class="form-check-label" for="@("role_" + i)">
+                                @Model.Roles[i].RoleName
+                            </label>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <hr class="my-4" />
+
+            <button class="btn btn-success" type="submit">Guardar</button>
+            <a class="btn btn-outline-secondary" href="@Url.Action("Index","AdminUsuarios")">Cancelar</a>
+        }
+    </div>
+</div>

@@ -1,0 +1,143 @@
+﻿@model turistico.Models.RegisterVM
+
+@{
+    ViewBag.Title = "Crear cuenta";
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+}
+
+<div class="d-flex justify-content-center align-items-center"
+     style="min-height: 90vh; background-color:#f4f8f5;">
+
+    <div class="card shadow-lg border-0" style="width: 420px; border-radius:15px;">
+        <div class="card-body p-4">
+
+            <!-- TÍTULO -->
+            <div class="text-center mb-4">
+                <h3 class="fw-bold text-success mb-1">SITM</h3>
+                <p class="text-muted mb-0">Crear cuenta</p>
+            </div>
+
+            <!-- ERRORES -->
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger">
+                    @Html.ValidationSummary(false)
+                </div>
+            }
+
+            <!-- FORMULARIO -->
+            @using (Html.BeginForm("Register", "Account", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="mb-3">
+                    <label class="form-label">Nombre</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fa-solid fa-user"></i>
+                        </span>
+                        @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control", placeholder = "Nombre" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.Nombre, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Apellido</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fa-solid fa-user"></i>
+                        </span>
+                        @Html.TextBoxFor(m => m.Apellido, new { @class = "form-control", placeholder = "Apellido" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.Apellido, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Correo electrónico</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fa-solid fa-envelope"></i>
+                        </span>
+                        @Html.TextBoxFor(m => m.Email, new
+                        {
+                            @class = "form-control",
+                            type = "email",
+                            placeholder = "Correo",
+                            autocomplete = "username"
+                        })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small" })
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Teléfono</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fa-solid fa-phone"></i>
+                        </span>
+                        @Html.TextBoxFor(m => m.PhoneNumber, new
+                        {
+                            @class = "form-control",
+                            placeholder = "Teléfono",
+                            autocomplete = "tel"
+                        })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Contraseña</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fa-solid fa-lock"></i>
+                        </span>
+                        @Html.PasswordFor(m => m.Password, new
+                        {
+                            @class = "form-control",
+                            placeholder = "Contraseña",
+                            autocomplete = "new-password"
+                        })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Confirmar contraseña</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fa-solid fa-lock"></i>
+                        </span>
+                        @Html.PasswordFor(m => m.ConfirmPassword, new
+                        {
+                            @class = "form-control",
+                            placeholder = "Confirmar contraseña",
+                            autocomplete = "new-password"
+                        })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="d-grid mb-3">
+                    <button type="submit" class="btn btn-success fw-semibold">
+                        Crear cuenta
+                    </button>
+                </div>
+            }
+
+            <!-- VOLVER A LOGIN -->
+        <div class="d-grid mb-2">
+            <a href="@Url.Action("Login", "Account")"
+               class="btn btn-outline-success fw-semibold">
+                Ya tengo cuenta
+            </a>
+        </div>
+
+            <div class="text-center mt-4">
+                <small class="text-muted">
+                    Únete para descubrir lo mejor de SITM
+                </small>
+            </div>
+
+        </div>
+    </div>
+</div>
