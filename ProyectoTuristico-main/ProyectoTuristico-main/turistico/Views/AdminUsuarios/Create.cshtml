@@ -1,0 +1,127 @@
+﻿@model turistico.Controllers.CreateUsuarioVM
+@{
+    ViewBag.Title = "Crear Usuario";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h3 class="mb-1">Crear usuario</h3>
+        <div class="text-muted">Registrar un nuevo usuario y asignarle roles.</div>
+    </div>
+    <div>
+        <a class="btn btn-outline-secondary" href="@Url.Action("Index","AdminUsuarios")">Volver</a>
+    </div>
+</div>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @Html.ValidationSummary(false)
+    </div>
+}
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        @using (Html.BeginForm("Create", "AdminUsuarios", FormMethod.Post, new { autocomplete = "off" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    <label class="form-label">Email</label>
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", type = "email", placeholder = "correo@ejemplo.com", required = "required" })
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label class="form-label">Teléfono</label>
+                    @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", placeholder = "8888-8888" })
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label class="form-label">Nombre</label>
+                    @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control", placeholder = "Nombre" })
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label class="form-label">Apellido</label>
+                    @Html.TextBoxFor(m => m.Apellido, new { @class = "form-control", placeholder = "Apellido" })
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label class="form-label">Contraseña</label>
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Contraseña", required = "required" })
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label class="form-label">Confirmar contraseña</label>
+                    @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", placeholder = "Confirmar", required = "required" })
+                </div>
+
+                <div class="col-12">
+                    <hr />
+                </div>
+
+                <div class="col-12 col-lg-7">
+                    <label class="form-label fw-semibold">Roles</label>
+                    <div class="text-muted small mb-2">Selecciona al menos uno (por defecto Cliente).</div>
+
+                    <div class="row g-2">
+                        @for (int i = 0; i < (Model.Roles?.Count ?? 0); i++)
+                        {
+                            var rid = "role_" + i;
+                            <div class="col-12 col-md-6">
+                                <div class="form-check">
+                                    @Html.HiddenFor(m => m.Roles[i].RoleName)
+                                    @Html.CheckBoxFor(m => m.Roles[i].Assigned, new { @class = "form-check-input", id = rid })
+                                    <label class="form-check-label" for="@rid">@Model.Roles[i].RoleName</label>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="col-12 col-lg-5">
+                    <label class="form-label fw-semibold">Estado</label>
+                    <div class="text-muted small mb-2">Bloquear evita que inicie sesión.</div>
+
+                    <div class="form-check">
+                        @Html.CheckBoxFor(m => m.Bloqueado, new { @class = "form-check-input", id = "chkLock" })
+                        <label class="form-check-label" for="chkLock">Crear bloqueado</label>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <hr />
+                </div>
+
+                <div class="col-12 d-flex gap-2">
+                    <button class="btn btn-success" type="submit">Crear usuario</button>
+                    <a class="btn btn-outline-secondary" href="@Url.Action("Index","AdminUsuarios")">Cancelar</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Validación simple cliente: password == confirm
+        (function () {
+            const pass = document.querySelector('[name="Password"]');
+            const conf = document.querySelector('[name="ConfirmPassword"]');
+
+            function validate() {
+                if (!pass || !conf) return;
+                if (conf.value && pass.value !== conf.value) {
+                    conf.setCustomValidity("Las contraseñas no coinciden");
+                } else {
+                    conf.setCustomValidity("");
+                }
+            }
+
+            if (pass) pass.addEventListener("input", validate);
+            if (conf) conf.addEventListener("input", validate);
+        })();
+    </script>
+}

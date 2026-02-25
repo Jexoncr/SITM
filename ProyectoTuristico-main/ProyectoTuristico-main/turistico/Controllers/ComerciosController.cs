@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Web.Mvc;
 using turistico.Models;
 
 namespace turistico.Controllers
 {
+
     public class ComerciosController : Controller
     {
         private string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
-
+        private ApplicationDbContext db = new ApplicationDbContext();
         // GET: Comercios
         public ActionResult Index()
         {

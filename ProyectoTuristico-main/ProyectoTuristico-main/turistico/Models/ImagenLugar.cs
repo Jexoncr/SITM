@@ -5,15 +5,16 @@ namespace turistico.Models
 {
     public class ImagenLugar
     {
+        [Key]
         public int Id { get; set; }
 
         [Required]
         public int LugarId { get; set; }
 
-        [ForeignKey(nameof(LugarId))]
-        public virtual Lugar Lugar { get; set; }
-
-        [Required, StringLength(255)]
+        [Required]
         public string UrlImagen { get; set; }
+
+        [ForeignKey("LugarId")]
+        public virtual Lugar Lugar { get; set; }
     }
 }

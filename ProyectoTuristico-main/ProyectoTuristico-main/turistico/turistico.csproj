@@ -142,11 +142,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\DbConfig.cs" />
     <Compile Include="App_Start\IdentitySeed.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AdminComerciosController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\AdminRolesController.cs" />
+    <Compile Include="Controllers\AdminUsuariosController.cs" />
     <Compile Include="Controllers\ComerciosController.cs" />
     <Compile Include="Controllers\EventosController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -176,6 +180,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccionAuditoria.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\AdminDashboardVM.cs" />
     <Compile Include="Models\Categoria.cs" />
     <Compile Include="Models\CategoriaEvento.cs" />
     <Compile Include="Models\Comercio.cs" />
@@ -210,6 +215,8 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\im\img1.png" />
+    <Content Include="Content\im\img2.jpg" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -242,7 +249,6 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Home\login.cshtml" />
     <Content Include="Views\Home\home.cshtml" />
     <Content Include="Views\Home\Eventos.cshtml" />
     <Content Include="Views\Home\Comercios.cshtml" />
@@ -261,11 +267,18 @@
     <Content Include="Views\Admin\Eventos.cshtml" />
     <Content Include="Views\Admin\Resenas.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
-    <Content Include="Views\Home\Register.cshtml" />
+    <Content Include="Views\Account\Register.cshtml" />
+    <Content Include="Views\AdminComercios\Index.cshtml" />
+    <Content Include="Views\AdminComercios\Create.cshtml" />
+    <Content Include="Views\AdminComercios\Edit.cshtml" />
+    <Content Include="Views\AdminRoles\Index.cshtml" />
+    <Content Include="Views\AdminUsuarios\Index.cshtml" />
+    <Content Include="Views\AdminUsuarios\EditRoles.cshtml" />
+    <Content Include="Views\AdminUsuarios\Edit.cshtml" />
+    <Content Include="Views\AdminUsuarios\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
-    <Content Include="Views\Comercios\index.cshtml" />
+    <Content Include="Views\Comercios\Index.cshtml" />
     <Content Include="Views\Comercios\Perfil.cshtml" />
   </ItemGroup>
   <ItemGroup>

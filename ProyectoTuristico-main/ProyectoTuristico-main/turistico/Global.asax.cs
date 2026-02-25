@@ -16,6 +16,9 @@ namespace turistico
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            App_Start.DbConfig.Configure(); // ✅ IMPORTANTE
+
             turistico.App_Start.IdentitySeed.CreateRolesAndAdmin();
         }
     }

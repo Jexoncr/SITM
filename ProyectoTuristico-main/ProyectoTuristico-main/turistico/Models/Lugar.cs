@@ -37,6 +37,7 @@ namespace turistico.Models
         [StringLength(50)]
         public string Estado { get; set; } // Activo / Inactivo
 
-        public virtual ICollection<ImagenLugar> Imagenes { get; set; }
+       
+        public virtual ICollection<ImagenLugar> ImagenesLugar { get; set; }
     }
 }
