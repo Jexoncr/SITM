@@ -8,31 +8,47 @@ using turistico.Models;
 
 namespace turistico.Controllers
 {
-
     public class ComerciosController : Controller
     {
         private string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
         private ApplicationDbContext db = new ApplicationDbContext();
+
         // GET: Comercios
         public ActionResult Index()
         {
             List<ComercioDTO> comercios = ObtenerComercios();
+
+            System.Diagnostics.Debug.WriteLine("==============================");
+            System.Diagnostics.Debug.WriteLine("TOTAL: " + comercios.Count);
+            foreach (var c in comercios)
+            {
+                System.Diagnostics.Debug.WriteLine($"  >> {c.Nombre} | WA: [{c.LinkWhatsApp}]");
+            }
+            System.Diagnostics.Debug.WriteLine("==============================");
+
             return View(comercios);
         }
 
         // GET: Comercios/Perfil/5
-        public ActionResult Perfil(int id)
+        // Cambiado a int? para evitar crasheos por parámetros nulos
+        public ActionResult Perfil(int? id)
         {
-            ComercioDTO comercio = ObtenerComercioPorId(id);
+            if (id == null) return HttpNotFound();
+
+            ComercioDTO comercio = ObtenerComercioPorId(id.Value);
             if (comercio == null) return HttpNotFound();
+
             return View(comercio);
         }
 
         // GET: Comercios/Contacto/5
-        public ActionResult Contacto(int id)
+        public ActionResult Contacto(int? id)
         {
-            ComercioDTO comercio = ObtenerComercioPorId(id);
+            if (id == null) return HttpNotFound();
+
+            ComercioDTO comercio = ObtenerComercioPorId(id.Value);
             if (comercio == null) return HttpNotFound();
+
             return View(comercio);
         }
 
@@ -40,23 +56,25 @@ namespace turistico.Controllers
         {
             List<ComercioDTO> comercios = new List<ComercioDTO>();
 
-            // QUERY CORREGIDO: Une Lugares con Comercios
             string query = @"
-                SELECT 
-                    L.Id,
-                    COM.Nombre,        
-                    COM.Descripcion,   
-                    CAT.Nombre AS Categoria,
-                    L.Direccion,
-                    L.Telefono,
-                    L.Horario,
-                    L.SitioWeb,
-                    (SELECT TOP 1 UrlImagen FROM ImagenesLugar WHERE LugarId = L.Id) AS ImagenUrl
-                FROM Lugares L
-                INNER JOIN Categorias CAT ON L.CategoriaId = CAT.Id
-                INNER JOIN Comercios COM ON L.Id = COM.LugarId
-                WHERE L.Estado = 'Aprobado'
-                ORDER BY COM.Nombre";
+    SELECT 
+        COM.Id,
+        COM.Nombre,        
+        COM.Descripcion,   
+        COM.LinkWhatsApp,
+        COM.Telefono,
+        ISNULL(CAT.Nombre, 'General') AS Categoria,
+        ISNULL(L.Direccion, '')       AS Direccion,
+        ISNULL(L.Telefono, '')        AS Telefono,
+        ISNULL(L.Horario, '')         AS Horario,
+        ISNULL(L.SitioWeb, '')        AS SitioWeb,
+        (SELECT TOP 1 UrlImagen 
+         FROM ImagenesLugar 
+         WHERE LugarId = COM.LugarId) AS ImagenUrl
+    FROM Comercios COM
+    LEFT JOIN Lugares L   ON COM.LugarId = L.Id
+    LEFT JOIN Categorias CAT ON L.CategoriaId = CAT.Id
+    ORDER BY COM.Nombre";
 
             try
             {
@@ -77,9 +95,14 @@ namespace turistico.Controllers
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine("Error SQL: " + ex.Message);
+                System.Diagnostics.Debug.WriteLine("Error SQL Index: " + ex.Message);
             }
 
+            System.Diagnostics.Debug.WriteLine("TOTAL COMERCIOS: " + comercios.Count);
+            if (comercios.Any())
+            {
+                System.Diagnostics.Debug.WriteLine("LINK DEL PRIMERO: " + comercios.First().LinkWhatsApp);
+            }
             return comercios;
         }
 
@@ -87,14 +110,24 @@ namespace turistico.Controllers
         {
             ComercioDTO comercio = null;
             string query = @"
-                SELECT L.Id, COM.Nombre, COM.Descripcion, CAT.Nombre AS Categoria,
-                       L.Direccion, L.Telefono, L.Horario, L.SitioWeb,
-                       (SELECT TOP 1 UrlImagen FROM ImagenesLugar WHERE LugarId = L.Id) AS ImagenUrl
-                FROM Lugares L
-                INNER JOIN Categorias CAT ON L.CategoriaId = CAT.Id
-                INNER JOIN Comercios COM ON L.Id = COM.LugarId
-                WHERE L.Id = @Id";
-
+    SELECT 
+        COM.Id,
+        COM.Nombre,
+        COM.Descripcion,
+        COM.LinkWhatsApp,
+        COM.Telefono,
+        ISNULL(CAT.Nombre, 'General') AS Categoria,
+        ISNULL(L.Direccion, '')       AS Direccion,
+        ISNULL(L.Telefono, '')        AS Telefono,
+        ISNULL(L.Horario, '')         AS Horario,
+        ISNULL(L.SitioWeb, '')        AS SitioWeb,
+        (SELECT TOP 1 UrlImagen 
+         FROM ImagenesLugar 
+         WHERE LugarId = COM.LugarId) AS ImagenUrl
+    FROM Comercios COM
+    LEFT JOIN Lugares L   ON COM.LugarId = L.Id
+    LEFT JOIN Categorias CAT ON L.CategoriaId = CAT.Id
+    WHERE COM.Id = @Id";
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -112,26 +145,29 @@ namespace turistico.Controllers
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine("Error SQL: " + ex.Message);
+                System.Diagnostics.Debug.WriteLine("Error SQL Detalle: " + ex.Message);
             }
             return comercio;
         }
 
-        // Método auxiliar para no repetir código de mapeo
         private ComercioDTO MapearComercio(SqlDataReader reader)
         {
             return new ComercioDTO
             {
-                Id = Convert.ToInt32(reader["Id"]),
+                Id = reader["Id"] != DBNull.Value ? Convert.ToInt32(reader["Id"]) : 0,
                 Nombre = reader["Nombre"].ToString(),
                 Descripcion = reader["Descripcion"]?.ToString() ?? "",
+
+                LinkWhatsApp = reader["LinkWhatsApp"] == DBNull.Value
+               ? ""
+               : reader["LinkWhatsApp"].ToString(),
+
                 Categoria = reader["Categoria"].ToString(),
                 Direccion = reader["Direccion"]?.ToString() ?? "",
                 Ubicacion = reader["Direccion"]?.ToString() ?? "No especificada",
                 Telefono = reader["Telefono"]?.ToString() ?? "",
                 Horario = reader["Horario"]?.ToString() ?? "",
                 SitioWeb = reader["SitioWeb"]?.ToString() ?? "",
-                // Quitamos el ~ para evitar errores de renderizado en el navegador
                 ImagenUrl = reader["ImagenUrl"] == DBNull.Value
                             ? "/Content/img/comercios/default.jpg"
                             : reader["ImagenUrl"].ToString().Replace("~", "")

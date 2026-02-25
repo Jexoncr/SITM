@@ -215,6 +215,12 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\img\comercios\763eb9ab.jpg" />
+    <Content Include="Content\img\comercios\caption.jpg" />
+    <Content Include="Content\img\comercios\caption1.jpg" />
+    <Content Include="Content\img\comercios\san-bosco-inn.jpg" />
+    <Content Include="Content\img\lugares\5525d10e-2753-40be-865a-1326cd100dad.png" />
+    <Content Include="Content\img\mapa-sancarlos.png" />
     <Content Include="Content\im\img1.png" />
     <Content Include="Content\im\img2.jpg" />
     <Content Include="favicon.ico" />

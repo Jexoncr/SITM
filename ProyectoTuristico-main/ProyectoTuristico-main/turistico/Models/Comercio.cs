@@ -18,6 +18,8 @@ namespace turistico.Models
 
         [StringLength(500)]
         public string Descripcion { get; set; }
+        public string LinkWhatsApp { get; set; }
+
 
         public virtual ICollection<ProductoServicio> ProductosServicios { get; set; }
         public virtual ComercioRegulado ComercioRegulado { get; set; } // 1 a 1 (opcional)

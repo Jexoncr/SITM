@@ -40,9 +40,10 @@ namespace turistico.Controllers
                     .OrderBy(c => c.Nombre)
                     .Select(c => new ComercioDTO
                     {
-                        Id = c.LugarId, // o c.Lugar.Id
+                        Id = c.Id,
                         Nombre = c.Nombre,
                         Descripcion = c.Descripcion,
+                        LinkWhatsApp = c.LinkWhatsApp,  // ← ESTA ES LA LÍNEA QUE FALTABA
                         Categoria = c.Lugar.Categoria.Nombre,
                         Direccion = c.Lugar.Direccion,
                         Ubicacion = c.Lugar.Direccion,
@@ -54,8 +55,7 @@ namespace turistico.Controllers
                             .FirstOrDefault()
                     })
                     .ToListAsync();
-
-                return View(model); // ✅ ahora sí ComercioDTO
+                return View(model);
             }
         }
         public ActionResult Resenas() => View();
