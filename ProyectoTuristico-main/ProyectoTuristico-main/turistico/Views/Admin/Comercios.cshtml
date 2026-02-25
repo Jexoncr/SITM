@@ -20,30 +20,77 @@
 </div>
 
 <!-- ===================== -->
-<!-- FILTROS -->
+<!-- FILTROS: BUSCADOR | TIPO | ESTADO -->
 <!-- ===================== -->
 <div class="card shadow-sm border-0 mb-4">
-    <div class="card-body d-flex gap-2 flex-wrap">
+    <div class="card-body">
 
-        <button class="btn btn-outline-success btn-sm rounded-pill filter-btn active"
-                data-status="all">
-            Todos
-        </button>
+        <div class="row g-3 align-items-end">
 
-        <button class="btn btn-outline-warning btn-sm rounded-pill filter-btn"
-                data-status="Pendiente">
-            Pendientes
-        </button>
+            <!-- BUSCAR -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <label class="form-label fw-semibold">Buscar comercio</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-white">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input id="searchInput" type="text" class="form-control"
+                           placeholder="Nombre, propietario, ubicación..." />
+                </div>
+            </div>
 
-        <button class="btn btn-outline-success btn-sm rounded-pill filter-btn"
-                data-status="Aprobado">
-            Aprobados
-        </button>
+            <!-- TIPO -->
+            <div class="col-12 col-md-6 col-lg-3">
+                <label class="form-label fw-semibold">Tipo de comercio</label>
+                <select id="typeSelect" class="form-select">
+                    <option value="all" selected>Todos los tipos</option>
+                    <!-- Se llena con JS automáticamente -->
+                </select>
+            </div>
 
-        <button class="btn btn-outline-danger btn-sm rounded-pill filter-btn"
-                data-status="Rechazado">
-            Rechazados
-        </button>
+            <!-- ESTADO (a la derecha de Tipo, sin pegarse al borde) -->
+            <div class="col-12 col-lg-5">
+
+                <label class="form-label fw-semibold mb-2">
+                    Filtrar por estado
+                </label>
+
+                <div class="d-flex gap-2 flex-wrap mb-3">
+                    <button class="btn btn-outline-success btn-sm rounded-pill filter-btn active"
+                            data-status="all">
+                        Todos
+                    </button>
+
+                    <button class="btn btn-outline-warning btn-sm rounded-pill filter-btn"
+                            data-status="Pendiente">
+                        Pendientes
+                    </button>
+
+                    <button class="btn btn-outline-success btn-sm rounded-pill filter-btn"
+                            data-status="Aprobado">
+                        Aprobados
+                    </button>
+
+                    <button class="btn btn-outline-danger btn-sm rounded-pill filter-btn"
+                            data-status="Rechazado">
+                        Rechazados
+                    </button>
+                </div>
+
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <span class="chip-muted">
+                        <i class="bi bi-funnel me-1"></i>
+                        Mostrando <span id="countVisible">0</span> de <span id="countTotal">0</span>
+                    </span>
+
+                    <button id="clearFiltersBtn" class="btn btn-sm btn-outline-secondary rounded-pill">
+                        <i class="bi bi-x-circle me-1"></i> Limpiar filtros
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
 </div>
@@ -67,57 +114,61 @@
                     </tr>
                 </thead>
 
-                <tbody>
+                <tbody id="comercioTbody">
 
-                    <!-- COMERCIO -->
-                    <tr data-status="Pendiente">
+                    <!-- Mock: Pendiente -->
+                    <tr data-status="Pendiente" data-type="Restaurante">
                         <td class="fw-semibold">Restaurante Sabores Típicos</td>
                         <td>Restaurante</td>
                         <td>María González</td>
                         <td>Barrio Central</td>
-                        <td>
-                            <span class="badge badge-pending">
-                                Pendiente
-                            </span>
-                        </td>
+                        <td><span class="badge badge-pending">Pendiente</span></td>
                         <td class="text-end">
                             <button class="btn btn-sm btn-light action-btn"
                                     data-bs-toggle="modal"
                                     data-bs-target="#modalDetalle">
                                 <i class="bi bi-eye"></i>
                             </button>
-
                             <button class="btn btn-sm btn-success action-btn">
                                 <i class="bi bi-check-lg"></i>
                             </button>
-
                             <button class="btn btn-sm btn-danger action-btn">
                                 <i class="bi bi-x-lg"></i>
                             </button>
                         </td>
                     </tr>
 
-                    <tr data-status="Pendiente">
+                    <!-- Mock: Aprobado -->
+                    <tr data-status="Aprobado" data-type="Hospedaje">
                         <td class="fw-semibold">Hotel Mirador Verde</td>
                         <td>Hospedaje</td>
                         <td>Carlos Rodríguez</td>
                         <td>Zona Turística</td>
-                        <td>
-                            <span class="badge badge-pending">
-                                Pendiente
-                            </span>
-                        </td>
+                        <td><span class="badge badge-approved">Aprobado</span></td>
                         <td class="text-end">
                             <button class="btn btn-sm btn-light action-btn"
                                     data-bs-toggle="modal"
                                     data-bs-target="#modalDetalle">
                                 <i class="bi bi-eye"></i>
                             </button>
-                            <button class="btn btn-sm btn-success action-btn">
-                                <i class="bi bi-check-lg"></i>
+                            <button class="btn btn-sm btn-outline-secondary action-btn" title="Desactivar">
+                                <i class="bi bi-slash-circle"></i>
                             </button>
-                            <button class="btn btn-sm btn-danger action-btn">
-                                <i class="bi bi-x-lg"></i>
+                        </td>
+                    </tr>
+
+                    <!-- Mock: Rechazado -->
+                    <tr data-status="Rechazado" data-type="Cafetería">
+                        <td class="fw-semibold">Café Montaña Verde</td>
+                        <td>Cafetería</td>
+                        <td>Sofía Ramírez</td>
+                        <td>Centro del cantón</td>
+                        <td><span class="badge badge-rejected">Rechazado</span></td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-light action-btn"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalDetalle">
+                                <i class="bi bi-eye"></i>
                             </button>
                         </td>
                     </tr>
@@ -126,22 +177,27 @@
             </table>
         </div>
 
+        <!-- Empty state -->
+        <div id="emptyState" class="p-5 text-center d-none">
+            <div class="empty-illustration mx-auto mb-3">
+                <i class="bi bi-shop"></i>
+            </div>
+            <h5 class="fw-semibold mb-1">Sin resultados</h5>
+            <p class="text-muted mb-0">Probá ajustando los filtros o cambiando la búsqueda.</p>
+        </div>
     </div>
 </div>
 
 <!-- ===================== -->
-<!-- MODAL DETALLE -->
+<!-- MODAL DETALLE (Mock) -->
 <!-- ===================== -->
 <div class="modal fade" id="modalDetalle" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
 
             <div class="modal-header bg-success text-white">
-                <h5 class="modal-title">
-                    Detalle del Comercio
-                </h5>
-                <button class="btn-close btn-close-white"
-                        data-bs-dismiss="modal"></button>
+                <h5 class="modal-title">Detalle del Comercio</h5>
+                <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
 
             <div class="modal-body">
@@ -149,8 +205,7 @@
 
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Nombre</label>
-                        <input class="form-control" disabled
-                               value="Restaurante Sabores Típicos" />
+                        <input class="form-control" disabled value="Restaurante Sabores Típicos" />
                     </div>
 
                     <div class="col-md-6">
@@ -170,9 +225,7 @@
 
                     <div class="col-12">
                         <label class="form-label fw-semibold">Descripción</label>
-                        <textarea class="form-control" rows="3" disabled>
-Restaurante especializado en comida típica costarricense.
-                        </textarea>
+                        <textarea class="form-control" rows="3" disabled>Restaurante especializado en comida típica costarricense.</textarea>
                     </div>
 
                 </div>
@@ -185,9 +238,7 @@ Restaurante especializado en comida típica costarricense.
                 <button class="btn btn-danger">
                     <i class="bi bi-x-lg me-1"></i> Rechazar
                 </button>
-                <button class="btn btn-secondary" data-bs-dismiss="modal">
-                    Cerrar
-                </button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
 
         </div>
@@ -202,23 +253,16 @@ Restaurante especializado en comida típica costarricense.
         background: #f6f8f7;
         font-weight: 600;
         border-bottom: 1px solid #e0e0e0;
+        white-space: nowrap;
     }
 
     .comercio-table tbody tr {
-        transition: background .25s ease;
+        transition: background .25s ease, transform .2s ease;
     }
 
         .comercio-table tbody tr:hover {
             background: #f3faf7;
         }
-
-    .badge-pending {
-        background: rgba(255,193,7,.15);
-        color: #856404;
-        padding: .45em .75em;
-        border-radius: 999px;
-        font-weight: 500;
-    }
 
     .action-btn {
         border-radius: 50%;
@@ -235,29 +279,138 @@ Restaurante especializado en comida típica costarricense.
         color: #fff;
         border-color: #198754;
     }
+
+    .badge {
+        padding: .45em .75em;
+        border-radius: 999px;
+        font-weight: 600;
+        letter-spacing: .2px;
+    }
+
+    .badge-pending {
+        background: rgba(255,193,7,.15);
+        color: #856404;
+    }
+
+    .badge-approved {
+        background: rgba(25,135,84,.12);
+        color: #0f5132;
+    }
+
+    .badge-rejected {
+        background: rgba(220,53,69,.12);
+        color: #842029;
+    }
+
+    .chip-muted {
+        background: #f6f8f7;
+        border: 1px solid #e6ece9;
+        color: #344;
+        padding: .35rem .65rem;
+        border-radius: 999px;
+        font-size: .875rem;
+    }
+
+    .empty-illustration {
+        width: 64px;
+        height: 64px;
+        border-radius: 18px;
+        display: grid;
+        place-items: center;
+        border: 1px solid #e6ece9;
+        background: #f6f8f7;
+        font-size: 1.7rem;
+        color: #198754;
+    }
 </style>
 
 <!-- ===================== -->
-<!-- JS FILTROS -->
+<!-- JS: FILTROS + BUSCADOR + TIPO -->
 <!-- ===================== -->
 <script>
     const filterButtons = document.querySelectorAll('.filter-btn');
-    const rows = document.querySelectorAll('tbody tr');
+    const rows = Array.from(document.querySelectorAll('#comercioTbody tr'));
+    const searchInput = document.getElementById('searchInput');
+    const typeSelect = document.getElementById('typeSelect');
+    const clearFiltersBtn = document.getElementById('clearFiltersBtn');
 
+    const countVisible = document.getElementById('countVisible');
+    const countTotal = document.getElementById('countTotal');
+    const emptyState = document.getElementById('emptyState');
+
+    let currentStatus = 'all';
+
+    // Fill dropdown types from existing rows (mock-friendly)
+    function populateTypes() {
+        const types = new Set(rows.map(r => (r.dataset.type || '').trim()).filter(Boolean));
+        [...types].sort().forEach(t => {
+            const opt = document.createElement('option');
+            opt.value = t;
+            opt.textContent = t;
+            typeSelect.appendChild(opt);
+        });
+    }
+
+    function normalize(text) {
+        return (text || '')
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
+    }
+
+    function applyFilters() {
+        const query = normalize(searchInput.value.trim());
+        const selectedType = typeSelect.value;
+
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const statusOk = (currentStatus === 'all' || row.dataset.status === currentStatus);
+            const typeOk = (selectedType === 'all' || row.dataset.type === selectedType);
+
+            const rowText = normalize(row.innerText);
+            const searchOk = (!query || rowText.includes(query));
+
+            const show = statusOk && typeOk && searchOk;
+
+            row.style.display = show ? '' : 'none';
+            if (show) visibleCount++;
+        });
+
+        // Counts + empty state
+        countTotal.textContent = rows.length.toString();
+        countVisible.textContent = visibleCount.toString();
+
+        emptyState.classList.toggle('d-none', visibleCount !== 0);
+    }
+
+    // Status buttons
     filterButtons.forEach(btn => {
         btn.addEventListener('click', () => {
-
             filterButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
-            const status = btn.dataset.status;
-
-            rows.forEach(row => {
-                row.style.display =
-                    status === 'all' || row.dataset.status === status
-                        ? ''
-                        : 'none';
-            });
+            currentStatus = btn.dataset.status || 'all';
+            applyFilters();
         });
     });
+
+    // Search + type
+    searchInput.addEventListener('input', applyFilters);
+    typeSelect.addEventListener('change', applyFilters);
+
+    // Clear
+    clearFiltersBtn.addEventListener('click', () => {
+        currentStatus = 'all';
+        filterButtons.forEach(b => b.classList.remove('active'));
+        document.querySelector('.filter-btn[data-status="all"]')?.classList.add('active');
+
+        searchInput.value = '';
+        typeSelect.value = 'all';
+        applyFilters();
+    });
+
+    // Init
+    populateTypes();
+    applyFilters();
 </script>
