@@ -18,7 +18,8 @@
 
 <div class="card border-0 shadow-sm">
     <div class="card-body">
-        @using (Html.BeginForm("Create", "AdminComercios", FormMethod.Post, new { autocomplete = "off" }))
+        @using (Html.BeginForm("Create", "AdminComercios", FormMethod.Post,
+            new { autocomplete = "off", enctype = "multipart/form-data" }))
         {
             @Html.AntiForgeryToken()
 
@@ -42,6 +43,13 @@
                     <label class="form-label">Descripción</label>
                     @Html.TextAreaFor(m => m.Descripcion, 3, 1, new { @class = "form-control", placeholder = "Descripción corta del comercio..." })
                     @Html.ValidationMessageFor(m => m.Descripcion, "", new { @class = "text-danger small" })
+                </div>
+
+                <!-- ✅ IMAGEN -->
+                <div class="col-12">
+                    <label class="form-label">Imagen del comercio</label>
+                    <input type="file" name="Imagen" class="form-control" accept="image/*" />
+                    <div class="form-text">Sugerido: JPG/PNG/WEBP (máx. 5MB).</div>
                 </div>
 
                 <!-- Ubicación / contacto -->
@@ -135,7 +143,6 @@
                 if (patente) patente.disabled = !on;
                 if (vence) vence.disabled = !on;
 
-                // Limpieza opcional al desactivar
                 if (!on) {
                     if (patente) patente.value = "";
                     if (vence) vence.value = "";

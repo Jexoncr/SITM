@@ -26,9 +26,10 @@
             }
 
             <!-- FORMULARIO -->
-            @using (Html.BeginForm("Register", "Home", FormMethod.Post))
+            @using (Html.BeginForm("Register", "Account", FormMethod.Post))
             {
                 @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
                 <div class="mb-3">
                     <label class="form-label">Nombre</label>
@@ -124,12 +125,12 @@
             }
 
             <!-- VOLVER A LOGIN -->
-            <div class="d-grid mb-2">
-                <a href="@Url.Action("Login", "Home")"
-                   class="btn btn-outline-success fw-semibold">
-                    Ya tengo cuenta
-                </a>
-            </div>
+        <div class="d-grid mb-2">
+            <a href="@Url.Action("Login", "Account")"
+               class="btn btn-outline-success fw-semibold">
+                Ya tengo cuenta
+            </a>
+        </div>
 
             <div class="text-center mt-4">
                 <small class="text-muted">

@@ -32,14 +32,30 @@ namespace turistico.Controllers
         {
             using (var db = new ApplicationDbContext())
             {
-                var comercios = await db.Comercios
+                var model = await db.Comercios
                     .Include(c => c.Lugar)
                     .Include(c => c.Lugar.Categoria)
+                    .Include(c => c.Lugar.ImagenesLugar)
                     .Where(c => c.Lugar.Estado == "Aprobado")
                     .OrderBy(c => c.Nombre)
+                    .Select(c => new ComercioDTO
+                    {
+                        Id = c.LugarId, // o c.Lugar.Id
+                        Nombre = c.Nombre,
+                        Descripcion = c.Descripcion,
+                        Categoria = c.Lugar.Categoria.Nombre,
+                        Direccion = c.Lugar.Direccion,
+                        Ubicacion = c.Lugar.Direccion,
+                        Telefono = c.Lugar.Telefono,
+                        Horario = c.Lugar.Horario,
+                        SitioWeb = c.Lugar.SitioWeb,
+                        ImagenUrl = c.Lugar.ImagenesLugar
+                            .Select(i => i.UrlImagen)
+                            .FirstOrDefault()
+                    })
                     .ToListAsync();
 
-                return View(comercios);
+                return View(model); // ✅ ahora sí ComercioDTO
             }
         }
         public ActionResult Resenas() => View();

@@ -403,9 +403,20 @@
             <input type="text" placeholder="Buscar lugares, eventos..." />
             <button>Buscar →</button>
         </div>
+
         <p class="hero-subtitle">
-            Descubre  eventos y experiencias únicas en San Carlos
+            Descubre eventos y experiencias únicas en San Carlos
         </p>
+
+        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+        {
+            <div style="margin-top:25px;">
+                <a href="@Url.Action("Dashboard","Admin")"
+                   class="btn btn-success btn-lg shadow">
+                    Ir al Panel Administrativo
+                </a>
+            </div>
+        }
 
     </div>
 </section>

@@ -60,7 +60,7 @@ namespace turistico.Models
         public DbSet<ProductoServicio> ProductosServicios { get; set; }
 
         public DbSet<AccionAuditoria> AccionesAuditoria { get; set; }
-
+       
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

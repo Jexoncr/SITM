@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -90,7 +91,55 @@ namespace turistico.Controllers
 
                 await db.SaveChangesAsync();
             }
+            // 4) Imagen (opcional)
+            if (vm.Imagen != null && vm.Imagen.ContentLength > 0)
+            {
+                var ext = System.IO.Path.GetExtension(vm.Imagen.FileName)?.ToLower();
+                var allowed = new[] { ".jpg", ".jpeg", ".png", ".webp" };
 
+                if (!allowed.Contains(ext))
+                {
+                    ModelState.AddModelError("", "Formato de imagen no permitido. Usa jpg, png o webp.");
+
+                    ViewBag.Categorias = new SelectList(
+                        await db.Categorias.OrderBy(x => x.Nombre).ToListAsync(),
+                        "Id", "Nombre", vm.CategoriaId
+                    );
+
+                    return View(vm);
+                }
+
+                // (Opcional) tamaño max 5MB
+                if (vm.Imagen.ContentLength > 5 * 1024 * 1024)
+                {
+                    ModelState.AddModelError("", "La imagen es muy pesada (máx. 5MB).");
+
+                    ViewBag.Categorias = new SelectList(
+                        await db.Categorias.OrderBy(x => x.Nombre).ToListAsync(),
+                        "Id", "Nombre", vm.CategoriaId
+                    );
+
+                    return View(vm);
+                }
+
+                var fileName = $"{System.Guid.NewGuid()}{ext}";
+                var folder = Server.MapPath("~/Content/img/lugares");
+                System.IO.Directory.CreateDirectory(folder);
+
+                var physicalPath = System.IO.Path.Combine(folder, fileName);
+                vm.Imagen.SaveAs(physicalPath);
+
+                // ✅ AJUSTA ESTOS 2 NOMBRES a tu proyecto:
+                // - DbSet: db.ImagenesLugar
+                // - Clase: ImagenLugar
+                db.ImagenesLugar.Add(new ImagenLugar
+                {
+                    LugarId = lugar.Id,
+                    UrlImagen = "/Content/img/lugares/" + fileName
+                });
+
+                await db.SaveChangesAsync();
+            }
             return RedirectToAction("Index");
         }
 
@@ -131,6 +180,7 @@ namespace turistico.Controllers
         // EDIT (GET)
         public async Task<ActionResult> Edit(int id)
         {
+
             var comercio = await db.Comercios
                 .Include(c => c.Lugar)
                 .Include(c => c.ComercioRegulado)
@@ -163,6 +213,13 @@ namespace turistico.Controllers
                 FechaVencimiento = comercio.ComercioRegulado?.FechaVencimiento
             };
 
+            // Imagen actual (para preview)
+            var img = await db.ImagenesLugar
+                .Where(i => i.LugarId == comercio.LugarId)
+                .OrderByDescending(i => i.Id)
+                .FirstOrDefaultAsync();
+
+            ViewBag.ImagenActual = img?.UrlImagen;
             ViewBag.ComercioId = comercio.Id;
             return View(vm);
         }
@@ -189,7 +246,7 @@ namespace turistico.Controllers
                 return View(vm);
             }
 
-            // Lugar
+            // ====== Lugar ======
             comercio.Lugar.CategoriaId = vm.CategoriaId;
             comercio.Lugar.Nombre = vm.Nombre;
             comercio.Lugar.Descripcion = vm.Descripcion;
@@ -201,11 +258,11 @@ namespace turistico.Controllers
             comercio.Lugar.Longitud = vm.Longitud;
             comercio.Lugar.Estado = vm.Estado;
 
-            // Comercio
+            // ====== Comercio ======
             comercio.Nombre = vm.Nombre;
             comercio.Descripcion = vm.Descripcion;
 
-            // Regulado
+            // ====== Regulado ======
             if (vm.EsRegulado)
             {
                 if (comercio.ComercioRegulado == null)
@@ -227,9 +284,56 @@ namespace turistico.Controllers
             else
             {
                 if (comercio.ComercioRegulado != null)
-                {
                     db.ComerciosRegulados.Remove(comercio.ComercioRegulado);
+            }
+
+            // ====== Imagen (opcional) ======
+            if (vm.Imagen != null && vm.Imagen.ContentLength > 0)
+            {
+                var ext = System.IO.Path.GetExtension(vm.Imagen.FileName)?.ToLower();
+                var permitidas = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+
+                if (!permitidas.Contains(ext))
+                {
+                    ModelState.AddModelError("", "Formato de imagen no permitido. Usa jpg, png o webp.");
+
+                    ViewBag.Categorias = new SelectList(
+                        await db.Categorias.OrderBy(x => x.Nombre).ToListAsync(),
+                        "Id", "Nombre", vm.CategoriaId
+                    );
+                    ViewBag.ComercioId = id;
+                    return View(vm);
                 }
+
+                if (vm.Imagen.ContentLength > 5 * 1024 * 1024)
+                {
+                    ModelState.AddModelError("", "La imagen es muy pesada (máx. 5MB).");
+
+                    ViewBag.Categorias = new SelectList(
+                        await db.Categorias.OrderBy(x => x.Nombre).ToListAsync(),
+                        "Id", "Nombre", vm.CategoriaId
+                    );
+                    ViewBag.ComercioId = id;
+                    return View(vm);
+                }
+
+                var nombreArchivo = System.Guid.NewGuid() + ext;
+                var carpeta = Server.MapPath("~/Content/img/lugares");
+                System.IO.Directory.CreateDirectory(carpeta);
+
+                var rutaFisica = System.IO.Path.Combine(carpeta, nombreArchivo);
+                vm.Imagen.SaveAs(rutaFisica);
+
+                // Reemplazar: borrar imágenes anteriores del lugar
+                var anteriores = db.ImagenesLugar.Where(i => i.LugarId == comercio.LugarId);
+                db.ImagenesLugar.RemoveRange(anteriores);
+
+                // Insertar nueva imagen
+                db.ImagenesLugar.Add(new ImagenLugar
+                {
+                    LugarId = comercio.LugarId,
+                    UrlImagen = "/Content/img/lugares/" + nombreArchivo
+                });
             }
 
             await db.SaveChangesAsync();
@@ -237,25 +341,35 @@ namespace turistico.Controllers
         }
 
         // DELETE (POST)
+        // DELETE (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(int id)
         {
             var comercio = await db.Comercios
-                .Include(c => c.Lugar)
                 .Include(c => c.ComercioRegulado)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
-            if (comercio == null) return HttpNotFound();
+            if (comercio == null)
+                return HttpNotFound();
 
+            var lugarId = comercio.LugarId;
+
+            // eliminar regulado si existe
             if (comercio.ComercioRegulado != null)
                 db.ComerciosRegulados.Remove(comercio.ComercioRegulado);
 
-            // IMPORTANTE: primero se elimina el Comercio y luego el Lugar
+            // eliminar comercio
             db.Comercios.Remove(comercio);
-            db.Lugares.Remove(comercio.Lugar);
+
+            // buscar lugar manualmente
+            var lugar = await db.Lugares.FirstOrDefaultAsync(l => l.Id == lugarId);
+
+            if (lugar != null)
+                db.Lugares.Remove(lugar);
 
             await db.SaveChangesAsync();
+
             return RedirectToAction("Index");
         }
 
@@ -273,7 +387,7 @@ namespace turistico.Controllers
         public string Descripcion { get; set; }
 
         public int CategoriaId { get; set; }
-
+        public System.Web.HttpPostedFileBase Imagen { get; set; } 
         public string Direccion { get; set; }
         public string Telefono { get; set; }
         public string Horario { get; set; }
@@ -287,7 +401,22 @@ namespace turistico.Controllers
         public string NumeroPatente { get; set; }
         public System.DateTime? FechaVencimiento { get; set; }
     }
+    public class CreateUsuarioVM
+    {
+        public string Email { get; set; }
+        public string Nombre { get; set; }
+        public string Apellido { get; set; }
+        public string PhoneNumber { get; set; }
+
+        public string Password { get; set; }
+        public string ConfirmPassword { get; set; }
+
+        public bool Bloqueado { get; set; }
+
+        public List<RoleCheckVM> Roles { get; set; } = new List<RoleCheckVM>();
+    }
 }
+
 
 
 
