@@ -1,348 +1,596 @@
-﻿@{
-    ViewBag.Title = "Opiniones y Reseñas";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+﻿@using System
+@using System.Collections.Generic
+@using System.Linq
+
+@{
+    Layout = ViewBag.Layout ?? Layout;
+
+    // =========================
+    // Datos (ViewBag o fallback)
+    // =========================
+    string entidadNombre = (string)(ViewBag.EntidadNombre ?? "Comercio / Evento");
+    string entidadTipo = (string)(ViewBag.EntidadTipo ?? "Comercio");
+    string entidadUbicacion = (string)(ViewBag.EntidadUbicacion ?? "Municipio");
+    decimal promedio = (decimal)(ViewBag.Promedio ?? 4.6m);
+    int total = (int)(ViewBag.Total ?? 23);
+
+    // Id/Key del usuario actual (ajústalo a tu lógica real)
+    string currentUserKey = (string)(ViewBag.CurrentUserKey ?? "yo");
+
+    // Reseñas: esperado como IEnumerable<dynamic> en ViewBag.Resenas
+    IEnumerable<dynamic> resenasBag = ViewBag.Resenas as IEnumerable<dynamic>;
+
+    // Mock para que se vea el diseño aunque no venga Model/ViewBag
+    var mock = new List<dynamic>
+{
+        new { Id=101, UserKey="yo", Usuario="Tú", Fecha=DateTime.Now.AddDays(-2), Rating=4, Comentario="Lugar muy ordenado. Personal amable. Podría mejorar el parqueo.", Estado="Pendiente" },
+        new { Id=102, UserKey="u2", Usuario="María G.", Fecha=DateTime.Now.AddDays(-8), Rating=5, Comentario="Excelente atención y limpieza. Recomendado para familias.", Estado="Publicada" },
+        new { Id=103, UserKey="u3", Usuario="Carlos R.", Fecha=DateTime.Now.AddDays(-15), Rating=3, Comentario="Bien, pero el tiempo de espera fue alto.", Estado="Publicada" },
+        new { Id=104, UserKey="u4", Usuario="Ana P.", Fecha=DateTime.Now.AddDays(-20), Rating=2, Comentario="No coincidió con la información del horario publicada.", Estado="Moderada" },
+    };
+
+    var resenas = (resenasBag != null) ? resenasBag.ToList() : mock;
+
+    Func<DateTime, string> fmtFecha = d => d.ToString("dd MMM yyyy");
+    Func<decimal, string> fmtProm = p => p.ToString("0.0");
+
+    // ============
+    // Distribución
+    // ============
+    int[] dist = new int[6]; // 1..5
+    foreach (var it in resenas)
+    {
+        int r = 0;
+        try { r = (int)it.Rating; } catch { r = 0; }
+
+        if (r >= 1 && r <= 5)
+        {
+            dist[r]++;
+        }
+    }
+
+    int maxDist = 1;
+    for (int i = 1; i <= 5; i++)
+    {
+        if (dist[i] > maxDist)
+        {
+            maxDist = dist[i];
+        }
+    }
+
+    // =========
+    // Mi reseña
+    // =========
+    dynamic miResena = null;
+    foreach (var it in resenas)
+    {
+        string uk = "";
+        try { uk = (string)it.UserKey; } catch { uk = ""; }
+
+        if (string.Equals(uk, currentUserKey, StringComparison.OrdinalIgnoreCase))
+        {
+            miResena = it;
+            break;
+        }
+    }
+
+    bool sinResenas = (resenas == null || resenas.Count == 0);
 }
 
-<div class="container">
-    <!-- ===================== -->
-    <!-- TABS -->
-    <!-- ===================== -->
-    <ul class="nav nav-tabs mb-4" role="tablist">
-        <li class="nav-item">
-            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabHoteles">
-                <i class="fa-solid fa-hotel me-2"></i>
-                Hoteles mejor valorados
-            </button>
-        </li>
-        <li class="nav-item">
-            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabRestaurantes">
-                <i class="fa-solid fa-utensils me-2"></i>
-                Restaurantes mejor valorados
-            </button>
-        </li>
-        <li class="nav-item">
-            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabEventos">
-                <i class="fa-solid fa-calendar-days me-2"></i>
-                Eventos y actividades mejor valorados
-            </button>
-        </li>
-    </ul>
+<style>
+    :root{
+        --sitm-green:#0f3d2e;
+        --sitm-ink:#0f172a;
+        --sitm-muted:#64748b;
+        --sitm-border:#e7ebf0;
+        --sitm-card:#ffffff;
+        --sitm-soft:#eef6f1;
+        --sitm-warn:#8a6a00;
+        --sitm-warn-bg:#fff7da;
+        --sitm-gray-bg:#f2f4f7;
+        --sitm-danger:#8b1c1c;
+        --sitm-danger-bg:#fdecec;
+        --radius: 16px;
+    }
 
-    <!-- ===================== -->
-    <!-- CONTENIDO DE TABS -->
-    <!-- ===================== -->
-    <div class="tab-content">
+    .sitm-header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:.25rem 0 1rem;}
+    .sitm-title{margin:0;font-weight:800;color:var(--sitm-ink);}
+    .sitm-sub{color:var(--sitm-muted);margin:.15rem 0 0;font-size:.95rem;}
+    .sitm-pill{display:inline-flex;align-items:center;gap:.45rem;padding:.35rem .6rem;border-radius:999px;background:var(--sitm-soft);color:var(--sitm-green);border:1px solid rgba(15,61,46,.12);font-weight:700;font-size:.85rem;white-space:nowrap;}
 
-        <!-- HOTELES -->
-        <div class="tab-pane fade show active" id="tabHoteles">
-            <div class="row g-4 row-cols-1 row-cols-md-2 row-cols-lg-3">
+    .sitm-card{background:var(--sitm-card);border:1px solid var(--sitm-border);border-radius:var(--radius);box-shadow:0 10px 26px rgba(15,23,42,.06);}
+    .sitm-card .card-header{background:transparent;border-bottom:1px solid var(--sitm-border);border-top-left-radius:var(--radius);border-top-right-radius:var(--radius);}
 
-                <div class="col">
-                    <div class="card h-100 shadow-sm border-success">
-                        <div class="card-body">
-                            <h5 class="fw-bold">Hotel Mirador Verde</h5>
+    .sitm-summary{display:grid;grid-template-columns:1.1fr 1.3fr;gap:1rem;}
+    @@media (max-width: 991.98px){ .sitm-summary{grid-template-columns:1fr;} }
 
-                            <p class="text-success mb-1">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                            </p>
+    .rating-big{display:flex;align-items:center;gap:1rem;padding:1.1rem;}
+    .rating-value{font-size:2.2rem;font-weight:900;color:var(--sitm-ink);line-height:1;}
+    .rating-meta{color:var(--sitm-muted);font-size:.92rem;}
+    .stars{display:inline-flex;align-items:center;gap:.1rem;line-height:1;}
+    .stars i{font-size:1.05rem;color:rgba(15,61,46,.18);}
+    .stars i.on{color:var(--sitm-green);}
 
-                            <p class="fs-6">
-                                Excelente atención, habitaciones limpias y vista panorámica.
-                            </p>
+    .dist{padding:1.1rem;}
+    .dist-row{display:grid;grid-template-columns:56px 1fr 42px;align-items:center;gap:.65rem;padding:.25rem 0;font-size:.9rem;color:var(--sitm-muted);}
+    .dist-bar{height:10px;border-radius:999px;background:var(--sitm-gray-bg);overflow:hidden;border:1px solid rgba(15,61,46,.08);}
+    .dist-fill{height:100%;background:rgba(15,61,46,.55);border-radius:999px;}
 
-                            <small class="text-muted">
-                                <i class="fa-solid fa-user me-1"></i> Juan Pérez ·
-                                <i class="fa-solid fa-clock ms-1 me-1"></i> Agosto 2025
-                            </small>
-                        </div>
-                    </div>
-                </div>
+    .sitm-main{display:grid;grid-template-columns:1.6fr .9fr;gap:1rem;margin-top:1rem;align-items:start;}
+    @@media (max-width: 991.98px){ .sitm-main{grid-template-columns:1fr;} .sitm-sticky{position:static !important;top:auto !important;} }
 
-                <div class="col">
-                    <div class="card h-100 shadow-sm border-success">
-                        <div class="card-body">
-                            <h5 class="fw-bold">Eco Lodge Montaña Azul</h5>
+    .review{padding:1rem 1.05rem;border-bottom:1px solid var(--sitm-border);transition:background .12s ease;}
+    .review:last-child{border-bottom:none;border-bottom-left-radius:var(--radius);border-bottom-right-radius:var(--radius);}
+    .review:hover{background:rgba(246,248,251,.65);}
 
-                            <p class="text-success mb-1">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-regular fa-star"></i>
-                            </p>
+    .review-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;}
+    .review-who{display:flex;align-items:center;gap:.65rem;}
+    .avatar{width:36px;height:36px;border-radius:999px;background:rgba(15,61,46,.08);border:1px solid rgba(15,61,46,.12);display:grid;place-items:center;color:var(--sitm-green);font-weight:900;flex:0 0 auto;}
+    .who-name{font-weight:800;color:var(--sitm-ink);}
+    .who-date{color:var(--sitm-muted);font-size:.85rem;}
 
-                            <p class="fs-6">
-                                Hospedaje ecológico con excelente organización y contacto natural.
-                            </p>
+    .badge-soft{border-radius:999px;padding:.35rem .6rem;font-weight:800;font-size:.78rem;border:1px solid transparent;display:inline-flex;align-items:center;gap:.4rem;white-space:nowrap;}
+    .b-pub{background:var(--sitm-soft);color:var(--sitm-green);border-color:rgba(15,61,46,.12);}
+    .b-pen{background:var(--sitm-warn-bg);color:var(--sitm-warn);border-color:rgba(138,106,0,.18);}
+    .b-mod{background:var(--sitm-danger-bg);color:var(--sitm-danger);border-color:rgba(139,28,28,.18);}
 
-                            <small class="text-muted">
-                                <i class="fa-solid fa-user me-1"></i> Andrés Rojas ·
-                                <i class="fa-solid fa-clock ms-1 me-1"></i> Octubre 2025
-                            </small>
-                        </div>
-                    </div>
-                </div>
+    .review-body{margin-top:.65rem;color:#334155;}
 
-                <div class="col">
-                    <div class="card h-100 shadow-sm border-success">
-                        <div class="card-body">
-                            <h5 class="fw-bold">Hotel Valle Dorado</h5>
+    .btn-sitm{border-radius:12px;font-weight:800;padding:.5rem .75rem;}
+    .btn-outline-sitm{border:1px solid rgba(15,61,46,.25);color:var(--sitm-green);background:#fff;}
+    .btn-outline-sitm:hover{background:rgba(15,61,46,.06);border-color:rgba(15,61,46,.35);color:var(--sitm-green);}
+    .btn-danger-soft{border:1px solid rgba(139,28,28,.22);color:var(--sitm-danger);background:#fff;}
+    .btn-danger-soft:hover{background:rgba(139,28,28,.06);border-color:rgba(139,28,28,.32);color:var(--sitm-danger);}
 
-                            <p class="text-success mb-1">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-regular fa-star"></i>
-                            </p>
+    .mine{outline:2px solid rgba(15,61,46,.12);background:rgba(238,246,241,.35);border-radius:var(--radius);margin:.9rem;}
+    .mine .review{border-bottom:none;padding:1rem;background:transparent;}
+    .mine-label{display:inline-flex;align-items:center;gap:.45rem;font-weight:900;color:var(--sitm-green);font-size:.85rem;margin:.9rem .9rem 0;}
 
-                            <p class="fs-6">
-                                Ubicación céntrica, habitaciones cómodas y buena relación precio-calidad.
-                            </p>
+    .sitm-form-wrap{padding:1rem;}
+    .sitm-sticky{position:sticky;top:92px;}
 
-                            <small class="text-muted">
-                                <i class="fa-solid fa-user me-1"></i> Laura Jiménez ·
-                                <i class="fa-solid fa-clock ms-1 me-1"></i> Septiembre 2025
-                            </small>
-                        </div>
-                    </div>
-                </div>
+    .star-picker{display:flex;align-items:center;gap:.25rem;padding:.35rem .55rem;border:1px solid var(--sitm-border);border-radius:12px;background:#fff;}
+    .star-btn{width:34px;height:34px;border-radius:10px;border:1px solid transparent;background:transparent;display:grid;place-items:center;cursor:pointer;transition:background .12s ease,transform .12s ease;}
+    .star-btn:hover{background:rgba(15,61,46,.06);transform:translateY(-1px);}
+    .star-btn i{font-size:1.05rem;color:rgba(15,61,46,.22);}
+    .star-btn.on i{color:var(--sitm-green);}
+    .star-btn:focus{outline:none;box-shadow:0 0 0 .2rem rgba(15,61,46,.12);}
 
-                <div class="col">
-                    <div class="card h-100 shadow-sm border-success">
-                        <div class="card-body">
-                            <h5 class="fw-bold">Hotel Bosque Alto</h5>
+    .hint{color:var(--sitm-muted);font-size:.88rem;}
+    .empty{padding:1.2rem;text-align:center;color:var(--sitm-muted);}
+    .empty i{font-size:1.5rem;color:rgba(15,61,46,.35);}
+</style>
 
-                            <p class="text-success mb-1">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                            </p>
+<div class="container-xxl py-3 py-lg-4">
 
-                            <p class="fs-6">
-                                Tranquilidad total, excelente servicio y entorno natural.
-                            </p>
-
-                            <small class="text-muted">
-                                <i class="fa-solid fa-user me-1"></i> Diego Vargas ·
-                                <i class="fa-solid fa-clock ms-1 me-1"></i> Noviembre 2025
-                            </small>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="card h-100 shadow-sm border-success">
-                        <div class="card-body">
-                            <h5 class="fw-bold">Hotel Río Claro</h5>
-
-                            <p class="text-success mb-1">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                            </p>
-
-                            <p class="fs-6">
-                                Excelente para turismo rural con atención personalizada.
-                            </p>
-
-                            <small class="text-muted">
-                                <i class="fa-solid fa-user me-1"></i> Sofía Ramírez ·
-                                <i class="fa-solid fa-clock ms-1 me-1"></i> Enero 2026
-                            </small>
-                        </div>
-                    </div>
-                </div>
-
+    <div class="sitm-header">
+        <div>
+            <h2 class="sitm-title">Reseñas</h2>
+            <p class="sitm-sub mb-0">
+                <span class="fw-semibold text-dark">@entidadNombre</span>
+                <span class="text-muted">· @entidadUbicacion</span>
+            </p>
+            <div class="mt-2 d-flex flex-wrap gap-2">
+                <span class="sitm-pill"><i class="bi bi-shield-check"></i> Portal municipal · Opiniones ciudadanas</span>
+                <span class="sitm-pill"><i class="bi bi-tag"></i> Tipo: @entidadTipo</span>
             </div>
         </div>
 
+        <div class="d-flex gap-2">
+            <a href="javascript:history.back()" class="btn btn-light btn-sitm">
+                <i class="bi bi-arrow-left"></i> 
+            </a>
+        </div>
+    </div>
 
+    <!-- Summary -->
+    <div class="sitm-card p-0">
+        <div class="sitm-summary">
+            <div class="rating-big">
+                <div>
+                    <div class="rating-value">@fmtProm(promedio)</div>
 
-        <!-- RESTAURANTES -->
-        <div class="tab-pane fade" id="tabRestaurantes">
-            <div class="row g-4 row-cols-1 row-cols-md-2 row-cols-lg-3">
+                    <div class="stars" aria-label="Promedio @fmtProm(promedio) de 5">
+                        @{
+                            int round = (int)Math.Round((double)promedio, MidpointRounding.AwayFromZero);
 
-                <div class="col">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="fw-bold">Café Montaña Verde</h5>
+                            if (round < 0)
+                            {
+                                round = 0;
+                            }
 
-                            <p class="text-success mb-1">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                            </p>
+                            if (round > 5)
+                            {
+                                round = 5;
+                            }
 
-                            <p class="fs-6">
-                                Ambiente acogedor y excelente café artesanal.
-                            </p>
+                            for (int s = 1; s <= 5; s++)
+                            {
+                                <i class="bi bi-star-fill @(s <= round ? "on" : "")"></i>
+                            }
+                        }
+                    </div>
 
-                            <small class="text-muted">
-                                <i class="fa-solid fa-user me-1"></i> Sofía Ramírez ·
-                                <i class="fa-solid fa-clock ms-1 me-1"></i> Enero 2026
-                            </small>
-                        </div>
+                    <div class="rating-meta mt-1">
+                        Basado en <span class="fw-semibold text-dark">@total</span> reseña(s)
+                    </div>
+
+                    <div class="hint mt-2">
+                        Las reseñas pueden estar sujetas a <span class="fw-semibold">moderación</span>.
                     </div>
                 </div>
+            </div>
 
-                <div class="col">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="fw-bold">Restaurante Sabores Típicos</h5>
-
-                            <p class="text-success mb-1">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-regular fa-star"></i>
-                            </p>
-
-                            <p class="fs-6">
-                                Comida tradicional de alta calidad y buen servicio.
-                            </p>
-
-                            <small class="text-muted">
-                                <i class="fa-solid fa-user me-1"></i> Ana Morales ·
-                                <i class="fa-solid fa-clock ms-1 me-1"></i> Noviembre 2025
-                            </small>
-                        </div>
-                    </div>
+            <div class="dist">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <div class="fw-bold text-dark">Distribución</div>
+                    <div class="text-muted small"><i class="bi bi-info-circle"></i> 5 a 1 estrellas</div>
                 </div>
 
+                @for (int star = 5; star >= 1; star--)
+                {
+                    int pct = (int)Math.Round((dist[star] * 100.0) / (maxDist * 1.0));
+                    string width = pct.ToString() + "%";
+
+                    <div class="dist-row">
+                        <div class="text-nowrap">@star <i class="bi bi-star-fill" style="color: rgba(15,61,46,.55)"></i></div>
+                        <div class="dist-bar">
+                            <div class="dist-fill" style="width:@width;"></div>
+                        </div>
+                        <div class="text-end">@dist[star]</div>
+                    </div>
+                }
             </div>
         </div>
+    </div>
 
-        <!-- EVENTOS -->
-        <div class="tab-pane fade" id="tabEventos">
-            <div class="row g-4 row-cols-1 row-cols-md-2 row-cols-lg-3">
+    <div class="sitm-main">
 
-                <div class="col">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="fw-bold">Festival Cultural Municipal</h5>
+        <!-- List -->
+        <div class="sitm-card p-0">
+            <div class="card-header px-3 py-3 d-flex align-items-center justify-content-between">
+                <div class="fw-bold text-dark"><i class="bi bi-chat-quote"></i> Opiniones</div>
+                <div class="text-muted small"><i class="bi bi-sort-down"></i> Más recientes primero</div>
+            </div>
 
-                            <p class="text-success mb-1">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                            </p>
+            @if (sinResenas)
+            {
+                <div class="empty">
+                    <i class="bi bi-chat-square-text"></i>
+                    <div class="mt-2 fw-bold text-dark">Aún no hay reseñas</div>
+                    <div class="mt-1">Sé el primero en compartir tu experiencia.</div>
+                </div>
+            }
+            else
+            {
+                if (miResena != null)
+                {
+                    int mId = (int)miResena.Id;
+                    string mUsuario = (string)miResena.Usuario;
+                    DateTime mFecha = (DateTime)miResena.Fecha;
+                    int mRating = (int)miResena.Rating;
+                    string mComent = (string)miResena.Comentario;
+                    string mEstado = (string)miResena.Estado;
 
-                            <p class="fs-6">
-                                Excelente organización y actividades para toda la familia.
-                            </p>
+                    string cls = "b-pub";
+                    string icon = "bi-check2-circle";
+                    string label = "Publicada";
 
-                            <small class="text-muted">
-                                <i class="fa-solid fa-user me-1"></i> Luis Fernández ·
-                                <i class="fa-solid fa-clock ms-1 me-1"></i> Diciembre 2025
-                            </small>
+                    if (mEstado == "Pendiente")
+                    {
+                        cls = "b-pen";
+                        icon = "bi-hourglass-split";
+                        label = "En revisión";
+                    }
+                    else if (mEstado == "Moderada")
+                    {
+                        cls = "b-mod";
+                        icon = "bi-shield-exclamation";
+                        label = "Moderada";
+                    }
+
+                    <div class="mine">
+                        <div class="mine-label"><i class="bi bi-person-check"></i> Tu reseña</div>
+
+                        <div class="review">
+                            <div class="review-top">
+                                <div class="review-who">
+                                    <div class="avatar">T</div>
+                                    <div>
+                                        <div class="who-name">@mUsuario</div>
+                                        <div class="who-date">@fmtFecha(mFecha)</div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="stars" aria-label="@mRating de 5">
+                                        @for (int s = 1; s <= 5; s++)
+                                        {
+                                            <i class="bi bi-star-fill @(s <= mRating ? "on" : "")"></i>
+                                        }
+                                    </span>
+
+                                    <span class="badge-soft @cls">
+                                        <i class="bi @icon"></i> @label
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="review-body">@mComent</div>
+
+                            <div class="mt-3 d-flex justify-content-end gap-2 flex-wrap">
+                                <button type="button"
+                                        class="btn btn-outline-sitm btn-sitm"
+                                        data-edit="1"
+                                        data-id="@mId"
+                                        data-rating="@mRating"
+                                        data-comment="@mComent">
+                                    <i class="bi bi-pencil-square"></i> Editar
+                                </button>
+
+                                <button type="button"
+                                        class="btn btn-danger-soft btn-sitm"
+                                        data-delete="1"
+                                        data-id="@mId">
+                                    <i class="bi bi-trash3"></i> Eliminar
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
+                }
 
-                <div class="col">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="fw-bold">Caminata Ecológica Guiada</h5>
+                foreach (var r in resenas)
+                {
+                    string uk = "";
+                    try { uk = (string)r.UserKey; } catch { uk = ""; }
 
-                            <p class="text-success mb-1">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                            </p>
+                    if (miResena != null && string.Equals(uk, currentUserKey, StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
 
-                            <p class="fs-6">
-                                Experiencia educativa, bien organizada y segura.
-                            </p>
+                    int id = (int)r.Id;
+                    string usuario = (string)r.Usuario;
+                    DateTime fecha = (DateTime)r.Fecha;
+                    int rating = (int)r.Rating;
+                    string comentario = (string)r.Comentario;
+                    string estado = (string)r.Estado;
 
-                            <small class="text-muted">
-                                <i class="fa-solid fa-user me-1"></i> Carlos Rodríguez ·
-                                <i class="fa-solid fa-clock ms-1 me-1"></i> Octubre 2025
-                            </small>
+                    string badgeClass = "b-pub";
+                    string badgeIcon = "bi-check2-circle";
+                    string badgeLabel = "Publicada";
+
+                    if (estado == "Pendiente")
+                    {
+                        badgeClass = "b-pen";
+                        badgeIcon = "bi-hourglass-split";
+                        badgeLabel = "En revisión";
+                    }
+                    else if (estado == "Moderada")
+                    {
+                        badgeClass = "b-mod";
+                        badgeIcon = "bi-shield-exclamation";
+                        badgeLabel = "Moderada";
+                    }
+
+                    string initial = "U";
+                    if (!string.IsNullOrWhiteSpace(usuario))
+                    {
+                        initial = usuario.Substring(0, 1).ToUpper();
+                    }
+
+                    <div class="review">
+                        <div class="review-top">
+                            <div class="review-who">
+                                <div class="avatar">@initial</div>
+                                <div>
+                                    <div class="who-name">@usuario</div>
+                                    <div class="who-date">@fmtFecha(fecha)</div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="stars" aria-label="@rating de 5">
+                                    @for (int s = 1; s <= 5; s++)
+                                    {
+                                        <i class="bi bi-star-fill @(s <= rating ? "on" : "")"></i>
+                                    }
+                                </span>
+
+                                <span class="badge-soft @badgeClass">
+                                    <i class="bi @badgeIcon"></i> @badgeLabel
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="review-body">@comentario</div>
+                    </div>
+                }
+            }
+        </div>
+
+        <!-- Form -->
+        <div class="sitm-card sitm-sticky">
+            <div class="card-header px-3 py-3">
+                <div class="fw-bold text-dark"><i class="bi bi-pencil"></i> Escribir reseña</div>
+                <div class="text-muted small">Comparte tu experiencia de forma respetuosa.</div>
+            </div>
+
+            <div class="sitm-form-wrap">
+                <form method="post" id="reviewForm" autocomplete="off">
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden" name="Command" id="Command" value="upsert" />
+                    <input type="hidden" name="ReviewId" id="ReviewId" value="" />
+
+                    <div class="mb-3">
+                        <label class="form-label">Calificación</label>
+                        <div class="star-picker" role="group" aria-label="Seleccionar calificación">
+                            <input type="hidden" name="Rating" id="Rating" value="0" />
+
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <button type="button" class="star-btn" data-star="@i" aria-label="@i estrellas">
+                                    <i class="bi bi-star-fill"></i>
+                                </button>
+                            }
+
+                            <span class="ms-2 small text-muted" id="ratingText">Selecciona de 1 a 5</span>
                         </div>
                     </div>
-                </div>
 
+                    <div class="mb-3">
+                        <label for="Comentario" class="form-label">Comentario</label>
+                        <textarea id="Comentario" name="Comentario" class="form-control"
+                                  rows="4" placeholder="Describe tu experiencia (máx. 500 caracteres)"
+                                  maxlength="500"></textarea>
+
+                        <div class="d-flex justify-content-between mt-1">
+                            <span class="hint">Evita datos personales y lenguaje ofensivo.</span>
+                            <span class="hint" id="count">0/500</span>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit"
+                                class="btn btn-sitm"
+                                style="background:var(--sitm-green);border-color:var(--sitm-green);color:#fff;">
+                            <i class="bi bi-send"></i> <span id="submitText">Publicar reseña</span>
+                        </button>
+
+                        <button type="button" class="btn btn-light btn-sitm d-none" id="cancelEdit">
+                            <i class="bi bi-x-circle"></i> Cancelar edición
+                        </button>
+                    </div>
+                </form>
+
+                <hr class="my-3" />
+                <div class="hint"><i class="bi bi-info-circle"></i> Si queda <b>En revisión</b>, se publicará tras validación.</div>
             </div>
         </div>
 
     </div>
 
-
-
-    <!-- FORMULARIO DE RESEÑA -->
-    <div class="mt-5 p-4 rounded shadow-sm border"
-         style="background-color:#e8f5e9; border-color:#66bb6a;">
-
-        <h4 class="fw-bold text-success mb-3">Dejá tu opinión</h4>
-
-        <form>
-
-            <div class="mb-3">
-                <label class="form-label">Nombre</label>
-                <input type="text" class="form-control" placeholder="Tu nombre">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Tipo de servicio</label>
-                <select class="form-select">
-                    <option selected disabled>Seleccioná una opción</option>
-                    <option>Restaurante</option>
-                    <option>Hotel</option>
-                    <option>Evento</option>
-                    <option>Actividad turística</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Restaurante / Hotel / Evento</label>
-                <select class="form-select">
-                    <option selected disabled>Seleccioná el lugar o actividad</option>
-                    <option>Hotel Mirador Verde</option>
-                    <option>Restaurante Sabores Típicos</option>
-                    <option>Café Montaña Verde</option>
-                    <option>Festival Cultural Municipal</option>
-                    <option>Feria Gastronómica</option>
-                    <option>Caminata Ecológica Guiada</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Calificación</label>
-                <select class="form-select">
-                    <option>★★★★★ Excelente</option>
-                    <option>★★★★☆ Muy bueno</option>
-                    <option>★★★☆☆ Bueno</option>
-                    <option>★★☆☆☆ Regular</option>
-                    <option>★☆☆☆☆ Malo</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Comentario</label>
-                <textarea class="form-control" rows="3" placeholder="Escribí tu opinión"></textarea>
-            </div>
-
-            <button type="button" class="btn btn-success">
-                Enviar reseña
-            </button>
-
-        </form>
-    </div>
-
+    <form method="post" id="deleteForm" class="d-none">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="Command" value="delete" />
+        <input type="hidden" name="ReviewId" id="DeleteReviewId" value="" />
+    </form>
 </div>
+
+<script>
+    (function () {
+        "use strict";
+
+        // Star Picker
+        const ratingInput = document.getElementById("Rating");
+        const ratingText = document.getElementById("ratingText");
+        const starButtons = Array.from(document.querySelectorAll(".star-btn"));
+
+        function setStars(val) {
+            const v = parseInt(val || "0", 10);
+            ratingInput.value = String(v);
+
+            starButtons.forEach(btn => {
+                const s = parseInt(btn.dataset.star, 10);
+                if (s <= v) { btn.classList.add("on"); }
+                else { btn.classList.remove("on"); }
+            });
+
+            if (v > 0) { ratingText.textContent = v + " / 5"; }
+            else { ratingText.textContent = "Selecciona de 1 a 5"; }
+        }
+
+        starButtons.forEach(btn => {
+            btn.addEventListener("click", () => setStars(btn.dataset.star));
+        });
+
+        // Counter
+        const txt = document.getElementById("Comentario");
+        const counter = document.getElementById("count");
+
+        function updateCount() {
+            const len = (txt.value || "").length;
+            counter.textContent = len + "/500";
+        }
+
+        txt.addEventListener("input", updateCount);
+        updateCount();
+
+        // Edit mode
+        const reviewIdInput = document.getElementById("ReviewId");
+        const submitText = document.getElementById("submitText");
+        const cancelBtn = document.getElementById("cancelEdit");
+
+        function enterEditMode(id, rating, comment) {
+            reviewIdInput.value = String(id || "");
+            setStars(rating || 0);
+            txt.value = comment || "";
+            updateCount();
+
+            submitText.textContent = "Guardar cambios";
+            cancelBtn.classList.remove("d-none");
+
+            document.getElementById("reviewForm").scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+
+        function exitEditMode() {
+            reviewIdInput.value = "";
+            setStars(0);
+            txt.value = "";
+            updateCount();
+
+            submitText.textContent = "Publicar reseña";
+            cancelBtn.classList.add("d-none");
+        }
+
+        cancelBtn.addEventListener("click", exitEditMode);
+
+        document.querySelectorAll("[data-edit='1']").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const id = btn.dataset.id;
+                const rating = parseInt(btn.dataset.rating || "0", 10);
+                const comment = btn.dataset.comment || "";
+                enterEditMode(id, rating, comment);
+            });
+        });
+
+        // Delete flow
+        const deleteForm = document.getElementById("deleteForm");
+        const deleteId = document.getElementById("DeleteReviewId");
+
+        document.querySelectorAll("[data-delete='1']").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const id = btn.dataset.id;
+                if (!id) { return; }
+
+                const ok = confirm("¿Eliminar tu reseña? Esta acción no se puede deshacer.");
+                if (!ok) { return; }
+
+                deleteId.value = String(id);
+                deleteForm.submit();
+            });
+        });
+
+        // Client validation
+        const form = document.getElementById("reviewForm");
+        form.addEventListener("submit", (e) => {
+            const r = parseInt(ratingInput.value || "0", 10);
+            const c = (txt.value || "").trim();
+
+            if (r < 1 || r > 5) {
+                e.preventDefault();
+                alert("Selecciona una calificación de 1 a 5.");
+                return;
+            }
+
+            if (c.length < 5) {
+                e.preventDefault();
+                alert("Escribe un comentario un poco más descriptivo (mínimo 5 caracteres).");
+                return;
+            }
+        });
+
+        setStars(0);
+    })();
+</script>
