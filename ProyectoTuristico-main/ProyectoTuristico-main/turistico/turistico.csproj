@@ -244,6 +244,7 @@
     <Content Include="Content\img\mapa-sancarlos.png" />
     <Content Include="Content\im\img1.png" />
     <Content Include="Content\im\img2.jpg" />
+    <Content Include="Content\im\img3.png" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />

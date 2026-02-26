@@ -1,136 +1,405 @@
-﻿@model IEnumerable<turistico.Models.Comercio>
+@model IEnumerable<turistico.Models.Comercio>
 
 @{
-    ViewBag.Title = "Validación de Comercios";
+    ViewBag.Title = "Gestión de Comercios";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
-<h2 class="fw-bold text-success mb-2">Validación de Comercios</h2>
-<p class="text-muted mb-4">
-    Listado de comercios para aprobar o rechazar.
-</p>
+<!-- ===================== -->
+<!-- HEADER DE SECCIÓN -->
+<!-- ===================== -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-success mb-1">Gestión de Comercios</h2>
+        <p class="text-muted mb-0">
+            Revisión, aprobación y control de comercios registrados en la municipalidad.
+        </p>
+    </div>
 
-<div class="card shadow-sm">
+    <a href="@Url.Action("Create", "AdminComercios")" class="btn btn-success rounded-pill px-4">
+        <i class="bi bi-plus-lg me-2"></i> Nuevo comercio
+    </a>
+</div>
+
+<!-- ===================== -->
+<!-- FILTROS: BUSCADOR | TIPO | ESTADO -->
+<!-- ===================== -->
+<div class="card shadow-sm border-0 mb-4">
     <div class="card-body">
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <div>
-                <a href="@Url.Action("Create", "AdminComercios")" class="btn btn-success">
-                    + Agregar comercio
-                </a>
+        <div class="row g-3 align-items-end">
+
+            <!-- BUSCAR -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <label class="form-label fw-semibold">Buscar comercio</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-white">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input id="searchInput" type="text" class="form-control"
+                           placeholder="Nombre, descripción, categoría, dirección..." />
+                </div>
             </div>
 
-            <div class="text-muted">
-                Total: <strong>@(Model?.Count() ?? 0)</strong>
+            <!-- TIPO -->
+            <div class="col-12 col-md-6 col-lg-3">
+                <label class="form-label fw-semibold">Tipo de comercio</label>
+                <select id="typeSelect" class="form-select">
+                    <option value="all" selected>Todos los tipos</option>
+                    <!-- Se llena con JS automáticamente -->
+                </select>
             </div>
+
+            <!-- ESTADO -->
+            <div class="col-12 col-lg-5">
+                <label class="form-label fw-semibold mb-2">
+                    Filtrar por estado
+                </label>
+
+                <div class="d-flex gap-2 flex-wrap mb-3">
+                    <button class="btn btn-outline-success btn-sm rounded-pill filter-btn active"
+                            data-status="all">
+                        Todos
+                    </button>
+
+                    <button class="btn btn-outline-warning btn-sm rounded-pill filter-btn"
+                            data-status="Pendiente">
+                        Pendientes
+                    </button>
+
+                    <button class="btn btn-outline-success btn-sm rounded-pill filter-btn"
+                            data-status="Aprobado">
+                        Aprobados
+                    </button>
+
+                    <button class="btn btn-outline-danger btn-sm rounded-pill filter-btn"
+                            data-status="Rechazado">
+                        Rechazados
+                    </button>
+                </div>
+
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <span class="chip-muted">
+                        <i class="bi bi-funnel me-1"></i>
+                        Mostrando <span id="countVisible">0</span> de <span id="countTotal">0</span>
+                    </span>
+
+                    <button id="clearFiltersBtn" class="btn btn-sm btn-outline-secondary rounded-pill">
+                        <i class="bi bi-x-circle me-1"></i> Limpiar filtros
+                    </button>
+
+                    <span class="text-muted ms-auto">
+                        Total (modelo): <strong>@(Model?.Count() ?? 0)</strong>
+                    </span>
+                </div>
+            </div>
+
         </div>
-
-        <table class="table table-hover align-middle">
-            <thead class="table-success">
-                <tr>
-                    <th style="width: 28%;">Comercio</th>
-                    <th style="width: 14%;">Categoría</th>
-                    <th style="width: 18%;">Dirección</th>
-                    <th style="width: 10%;">Estado</th>
-                    <th style="width: 10%;">Regulado</th>
-                    <th class="text-center" style="width: 20%;">Acciones</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                @if (Model == null || !Model.Any())
-                {
-                    <tr>
-                        <td colspan="6" class="text-center text-muted py-4">
-                            No hay comercios para mostrar.
-                        </td>
-                    </tr>
-                }
-                else
-                {
-                    foreach (var item in Model)
-                    {
-                        var estado = item.Lugar != null ? item.Lugar.Estado : "Pendiente";
-                        var esRegulado = item.ComercioRegulado != null;
-
-                        <tr>
-                            <td>
-                                <div class="fw-semibold">@item.Nombre</div>
-                                <div class="text-muted small">@item.Descripcion</div>
-                            </td>
-
-                            <td>
-                                @(item.Lugar?.Categoria?.Nombre ?? "—")
-                            </td>
-
-                            <td>
-                                @(item.Lugar?.Direccion ?? "—")
-                            </td>
-
-                            <td>
-                                @if (estado == "Aprobado")
-                                {
-                                    <span class="badge bg-success">Aprobado</span>
-                                }
-                                else if (estado == "Rechazado")
-                                {
-                                    <span class="badge bg-danger">Rechazado</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-warning text-dark">Pendiente</span>
-                                }
-                            </td>
-
-                            <td>
-                                @if (esRegulado)
-                                {
-                                    <span class="badge bg-secondary">Sí</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-dark">No</span>
-                                }
-                            </td>
-
-                            <td class="text-center">
-                                <div class="d-flex justify-content-center flex-wrap gap-2">
-
-                                    <a class="btn btn-outline-primary btn-sm"
-                                       href="@Url.Action("Edit", "AdminComercios", new { id = item.Id })">
-                                        Editar
-                                    </a>
-
-                                    @using (Html.BeginForm("Aprobar", "AdminComercios", new { id = item.Id }, FormMethod.Post, new { style = "display:inline" }))
-                                    {
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-outline-success btn-sm">
-                                            Aprobar
-                                        </button>
-                                    }
-
-                                    @using (Html.BeginForm("Rechazar", "AdminComercios", new { id = item.Id }, FormMethod.Post, new { style = "display:inline" }))
-                                    {
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-outline-danger btn-sm">
-                                            Rechazar
-                                        </button>
-                                    }
-
-                                    @using (Html.BeginForm("Delete", "AdminComercios", new { id = item.Id }, FormMethod.Post, new { style = "display:inline", onsubmit = "return confirm('¿Eliminar este comercio?');" }))
-                                    {
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-danger btn-sm">
-                                            Eliminar
-                                        </button>
-                                    }
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                }
-            </tbody>
-        </table>
 
     </div>
 </div>
+
+<!-- ===================== -->
+<!-- LISTADO (REAL, CON MODEL) -->
+<!-- ===================== -->
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 comercio-table">
+                <thead>
+                    <tr>
+                        <th>Comercio</th>
+                        <th>Tipo</th>
+                        <th>Ubicación</th>
+                        <th>Estado</th>
+                        <th>Regulado</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody id="comercioTbody">
+                    @if (Model == null || !Model.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                No hay comercios para mostrar.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model)
+                        {
+                            var estado = item.Lugar != null ? item.Lugar.Estado : "Pendiente";
+                            var esRegulado = item.ComercioRegulado != null;
+
+                            // Tipo/Categoría para filtro (si no hay, "General")
+                            var tipo = item.Lugar?.Categoria?.Nombre ?? "General";
+                            var direccion = item.Lugar?.Direccion ?? "—";
+
+                            <tr data-status="@estado" data-type="@tipo">
+                                <td class="fw-semibold">
+                                    @item.Nombre
+                                    @if (!string.IsNullOrWhiteSpace(item.Descripcion))
+                                    {
+                                        <div class="text-muted small">@item.Descripcion</div>
+                                    }
+                                </td>
+
+                                <td>@tipo</td>
+                                <td>@direccion</td>
+
+                                <td>
+                                    @if (estado == "Aprobado")
+                                    {
+                                        <span class="badge badge-approved">Aprobado</span>
+                                    }
+                                    else if (estado == "Rechazado")
+                                    {
+                                        <span class="badge badge-rejected">Rechazado</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-pending">Pendiente</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (esRegulado)
+                                    {
+                                        <span class="badge bg-secondary">Sí</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-dark">No</span>
+                                    }
+                                </td>
+
+                                <td class="text-end">
+                                    <div class="d-inline-flex gap-2 flex-wrap justify-content-end">
+
+                                        <!-- Editar (DEF) -->
+                                        <a class="btn btn-sm btn-light action-btn"
+                                           title="Editar"
+                                           href="@Url.Action("Edit", "AdminComercios", new { id = item.Id })">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+
+                                        <!-- Aprobar (DEF) -->
+                                        @using (Html.BeginForm("Aprobar", "AdminComercios", new { id = item.Id }, FormMethod.Post, new { style = "display:inline" }))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-success action-btn" title="Aprobar">
+                                                <i class="bi bi-check-lg"></i>
+                                            </button>
+                                        }
+
+                                        <!-- Rechazar (DEF) -->
+                                        @using (Html.BeginForm("Rechazar", "AdminComercios", new { id = item.Id }, FormMethod.Post, new { style = "display:inline" }))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-danger action-btn" title="Rechazar">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                        }
+
+                                        <!-- Eliminar (DEF) -->
+                                        @using (Html.BeginForm("Delete", "AdminComercios", new { id = item.Id }, FormMethod.Post,
+                                            new { style = "display:inline", onsubmit = "return confirm('¿Eliminar este comercio?');" }))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary action-btn" title="Eliminar">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Empty state (cuando filtros dejan 0) -->
+        <div id="emptyState" class="p-5 text-center d-none">
+            <div class="empty-illustration mx-auto mb-3">
+                <i class="bi bi-shop"></i>
+            </div>
+            <h5 class="fw-semibold mb-1">Sin resultados</h5>
+            <p class="text-muted mb-0">Probá ajustando los filtros o cambiando la búsqueda.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== -->
+<!-- ESTILOS SCOPED -->
+<!-- ===================== -->
+<style>
+    .comercio-table thead th {
+        background: #f6f8f7;
+        font-weight: 600;
+        border-bottom: 1px solid #e0e0e0;
+        white-space: nowrap;
+    }
+
+    .comercio-table tbody tr {
+        transition: background .25s ease, transform .2s ease;
+    }
+
+    .comercio-table tbody tr:hover {
+        background: #f3faf7;
+    }
+
+    .action-btn {
+        border-radius: 50%;
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .filter-btn.active {
+        background: #198754;
+        color: #fff;
+        border-color: #198754;
+    }
+
+    .badge {
+        padding: .45em .75em;
+        border-radius: 999px;
+        font-weight: 600;
+        letter-spacing: .2px;
+    }
+
+    .badge-pending {
+        background: rgba(255,193,7,.15);
+        color: #856404;
+    }
+
+    .badge-approved {
+        background: rgba(25,135,84,.12);
+        color: #0f5132;
+    }
+
+    .badge-rejected {
+        background: rgba(220,53,69,.12);
+        color: #842029;
+    }
+
+    .chip-muted {
+        background: #f6f8f7;
+        border: 1px solid #e6ece9;
+        color: #344;
+        padding: .35rem .65rem;
+        border-radius: 999px;
+        font-size: .875rem;
+    }
+
+    .empty-illustration {
+        width: 64px;
+        height: 64px;
+        border-radius: 18px;
+        display: grid;
+        place-items: center;
+        border: 1px solid #e6ece9;
+        background: #f6f8f7;
+        font-size: 1.7rem;
+        color: #198754;
+    }
+</style>
+
+<!-- ===================== -->
+<!-- JS: FILTROS + BUSCADOR + TIPO -->
+<!-- ===================== -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const tbody = document.getElementById('comercioTbody');
+        const rows = Array.from(document.querySelectorAll('#comercioTbody tr')).filter(r => r.querySelector('td')); // evita el row "no hay comercios"
+        const searchInput = document.getElementById('searchInput');
+        const typeSelect = document.getElementById('typeSelect');
+        const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+
+        const countVisible = document.getElementById('countVisible');
+        const countTotal = document.getElementById('countTotal');
+        const emptyState = document.getElementById('emptyState');
+
+        let currentStatus = 'all';
+
+        function populateTypes() {
+            if (!typeSelect) return;
+            const types = new Set(rows.map(r => (r.dataset.type || '').trim()).filter(Boolean));
+            [...types].sort().forEach(t => {
+                const opt = document.createElement('option');
+                opt.value = t;
+                opt.textContent = t;
+                typeSelect.appendChild(opt);
+            });
+        }
+
+        function normalize(text) {
+            return (text || '')
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '');
+        }
+
+        function applyFilters() {
+            const query = normalize(searchInput ? searchInput.value.trim() : '');
+            const selectedType = typeSelect ? typeSelect.value : 'all';
+
+            let visibleCount = 0;
+
+            rows.forEach(row => {
+                const statusOk = (currentStatus === 'all' || row.dataset.status === currentStatus);
+                const typeOk = (selectedType === 'all' || row.dataset.type === selectedType);
+
+                const rowText = normalize(row.innerText);
+                const searchOk = (!query || rowText.includes(query));
+
+                const show = statusOk && typeOk && searchOk;
+
+                row.style.display = show ? '' : 'none';
+                if (show) visibleCount++;
+            });
+
+            if (countTotal) countTotal.textContent = rows.length.toString();
+            if (countVisible) countVisible.textContent = visibleCount.toString();
+
+            if (emptyState) emptyState.classList.toggle('d-none', visibleCount !== 0);
+        }
+
+        // Status buttons
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                currentStatus = btn.dataset.status || 'all';
+                applyFilters();
+            });
+        });
+
+        if (searchInput) searchInput.addEventListener('input', applyFilters);
+        if (typeSelect) typeSelect.addEventListener('change', applyFilters);
+
+        if (clearFiltersBtn) {
+            clearFiltersBtn.addEventListener('click', () => {
+                currentStatus = 'all';
+                filterButtons.forEach(b => b.classList.remove('active'));
+                document.querySelector('.filter-btn[data-status="all"]')?.classList.add('active');
+
+                if (searchInput) searchInput.value = '';
+                if (typeSelect) typeSelect.value = 'all';
+                applyFilters();
+            });
+        }
+
+        populateTypes();
+        applyFilters();
+    });
+</script>
