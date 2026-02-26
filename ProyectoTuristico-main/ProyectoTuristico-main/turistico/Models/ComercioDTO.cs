@@ -14,5 +14,6 @@ namespace turistico.Models
         public string Telefono { get; set; }
         public string Horario { get; set; }
         public string SitioWeb { get; set; }
+        public string LinkWhatsApp { get; set; }
     }
 }

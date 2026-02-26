@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Web.Mvc;
 using turistico.Models;
 
@@ -9,47 +10,69 @@ namespace turistico.Controllers
 {
     public class ComerciosController : Controller
     {
-        private string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+        private readonly string connectionString =
+            ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+
+        private readonly ApplicationDbContext db = new ApplicationDbContext();
 
         public ActionResult Index()
         {
-            return View(ObtenerComercios());
+            var comercios = ObtenerComercios();
+            return View(comercios);
         }
 
-        public ActionResult Perfil(int id)
+        // GET: Comercios/Perfil/5
+        public ActionResult Perfil(int? id)
         {
-            ComercioDTO comercio = ObtenerComercioPorId(id);
+            if (id == null) return HttpNotFound();
+
+            var comercio = ObtenerComercioPorId(id.Value);
             if (comercio == null) return HttpNotFound();
+
             return View(comercio);
         }
 
-        public ActionResult Contacto(int id)
+        // GET: Comercios/Contacto/5
+        public ActionResult Contacto(int? id)
         {
-            ComercioDTO comercio = ObtenerComercioPorId(id);
+            if (id == null) return HttpNotFound();
+
+            var comercio = ObtenerComercioPorId(id.Value);
             if (comercio == null) return HttpNotFound();
+
             return View(comercio);
         }
 
         private List<ComercioDTO> ObtenerComercios()
         {
-            List<ComercioDTO> comercios = new List<ComercioDTO>();
+            var comercios = new List<ComercioDTO>();
+
             string query = @"
-                SELECT L.Id, COM.Nombre, COM.Descripcion, CAT.Nombre AS Categoria,
-                       L.Direccion, L.Telefono, L.Horario, L.SitioWeb,
-                       (SELECT TOP 1 UrlImagen FROM ImagenesLugar WHERE LugarId = L.Id) AS ImagenUrl
-                FROM Lugares L
-                INNER JOIN Categorias CAT ON L.CategoriaId = CAT.Id
-                INNER JOIN Comercios COM ON L.Id = COM.LugarId
-                WHERE L.Estado = 'Aprobado'
-                ORDER BY COM.Nombre";
+                SELECT 
+                    COM.Id,
+                    COM.Nombre,
+                    COM.Descripcion,
+                    COM.LinkWhatsApp,
+                    COALESCE(COM.Telefono, L.Telefono, '') AS Telefono,
+                    ISNULL(CAT.Nombre, 'General') AS Categoria,
+                    ISNULL(L.Direccion, '')       AS Direccion,
+                    ISNULL(L.Horario, '')         AS Horario,
+                    ISNULL(L.SitioWeb, '')        AS SitioWeb,
+                    (SELECT TOP 1 UrlImagen 
+                     FROM ImagenesLugar 
+                     WHERE LugarId = COM.LugarId) AS ImagenUrl
+                FROM Comercios COM
+                LEFT JOIN Lugares L        ON COM.LugarId = L.Id
+                LEFT JOIN Categorias CAT   ON L.CategoriaId = CAT.Id
+                ORDER BY COM.Nombre;";
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (var connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    using (SqlCommand command = new SqlCommand(query, connection))
-                    using (SqlDataReader reader = command.ExecuteReader())
+                    using (var command = new SqlCommand(query, connection))
+                    using (var reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -58,58 +81,83 @@ namespace turistico.Controllers
                     }
                 }
             }
-            catch (Exception ex) { System.Diagnostics.Debug.WriteLine(ex.Message); }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error SQL Index: " + ex.Message);
+            }
+
             return comercios;
         }
 
         private ComercioDTO ObtenerComercioPorId(int id)
         {
             ComercioDTO comercio = null;
+
             string query = @"
-                SELECT L.Id, COM.Nombre, COM.Descripcion, CAT.Nombre AS Categoria,
-                       L.Direccion, L.Telefono, L.Horario, L.SitioWeb,
-                       (SELECT TOP 1 UrlImagen FROM ImagenesLugar WHERE LugarId = L.Id) AS ImagenUrl
-                FROM Lugares L
-                INNER JOIN Categorias CAT ON L.CategoriaId = CAT.Id
-                INNER JOIN Comercios COM ON L.Id = COM.LugarId
-                WHERE L.Id = @Id";
+                SELECT 
+                    COM.Id,
+                    COM.Nombre,
+                    COM.Descripcion,
+                    COM.LinkWhatsApp,
+                    COALESCE(COM.Telefono, L.Telefono, '') AS Telefono,
+                    ISNULL(CAT.Nombre, 'General') AS Categoria,
+                    ISNULL(L.Direccion, '')       AS Direccion,
+                    ISNULL(L.Horario, '')         AS Horario,
+                    ISNULL(L.SitioWeb, '')        AS SitioWeb,
+                    (SELECT TOP 1 UrlImagen 
+                     FROM ImagenesLugar 
+                     WHERE LugarId = COM.LugarId) AS ImagenUrl
+                FROM Comercios COM
+                LEFT JOIN Lugares L        ON COM.LugarId = L.Id
+                LEFT JOIN Categorias CAT   ON L.CategoriaId = CAT.Id
+                WHERE COM.Id = @Id;";
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (var connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (var command = new SqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@Id", id);
-                        using (SqlDataReader reader = command.ExecuteReader())
+
+                        using (var reader = command.ExecuteReader())
                         {
-                            if (reader.Read()) comercio = MapearComercio(reader);
+                            if (reader.Read())
+                                comercio = MapearComercio(reader);
                         }
                     }
                 }
             }
-            catch (Exception ex) { System.Diagnostics.Debug.WriteLine(ex.Message); }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error SQL Detalle: " + ex.Message);
+            }
+
             return comercio;
         }
 
         private ComercioDTO MapearComercio(SqlDataReader reader)
         {
-            string urlDb = reader["ImagenUrl"]?.ToString();
+            string urlDb = reader["ImagenUrl"] == DBNull.Value ? "" : reader["ImagenUrl"].ToString();
+
             return new ComercioDTO
             {
-                Id = Convert.ToInt32(reader["Id"]),
-                Nombre = reader["Nombre"].ToString(),
+                Id = reader["Id"] != DBNull.Value ? Convert.ToInt32(reader["Id"]) : 0,
+                Nombre = reader["Nombre"]?.ToString() ?? "",
                 Descripcion = reader["Descripcion"]?.ToString() ?? "",
-                Categoria = reader["Categoria"].ToString(),
+                LinkWhatsApp = reader["LinkWhatsApp"] == DBNull.Value ? "" : reader["LinkWhatsApp"].ToString(),
+
+                Categoria = reader["Categoria"]?.ToString() ?? "General",
                 Ubicacion = reader["Direccion"]?.ToString() ?? "No especificada",
                 Telefono = reader["Telefono"]?.ToString() ?? "",
                 Horario = reader["Horario"]?.ToString() ?? "",
                 SitioWeb = reader["SitioWeb"]?.ToString() ?? "",
-                // AJUSTE FINAL: La ruta debe empezar con /Content/img/
+
+                // Ajusta el default a lo que exista en tu proyecto
                 ImagenUrl = string.IsNullOrWhiteSpace(urlDb)
-                            ? "/Content/img/default.jpg"
-                            : urlDb.Trim()
+                    ? "/Content/img/comercios/default.jpg"
+                    : urlDb.Replace("~", "").Trim()
             };
         }
     }

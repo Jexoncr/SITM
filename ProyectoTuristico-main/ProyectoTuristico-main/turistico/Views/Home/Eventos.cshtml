@@ -3,115 +3,131 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container">
+<!-- HERO / BANNER -->
+<section class="eventos-hero text-white d-flex align-items-center">
+    <div class="container text-center">
+        <h1 class="fw-bold display-5 mb-3">Eventos y Actividades Turísticas</h1>
+        <p class="fs-5 opacity-90">
+            Conocé los principales eventos culturales, recreativos y turísticos del cantón.
+        </p>
+    </div>
+</section>
 
-    <h2 class="fw-bold text-success mb-3">Eventos y Actividades Turísticas</h2>
-    <p class="text-muted mb-5 fs-5">
-        Conocé los principales eventos culturales, recreativos y turísticos del cantón.
-    </p>
+<!-- CONTENIDO -->
+<div class="container my-5">
 
     <div class="row g-4 row-cols-1 row-cols-md-2 row-cols-lg-3">
 
-        <!-- EVENTO 1 -->
+        <!-- EVENTO -->
         <div class="col">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body d-flex flex-column">
-                    <h4 class="fw-bold text-success">Festival Cultural Municipal</h4>
-                    <p class="fs-6">
+            <div class="evento-card h-100">
+                <div class="evento-body d-flex flex-column">
+                    <span class="evento-tag">Cultural</span>
+                    <h4 class="fw-bold mt-2">Festival Cultural Municipal</h4>
+                    <p>
                         Evento cultural con música, danza y gastronomía típica del cantón.
                     </p>
-                    <ul class="list-unstyled fs-6">
+                    <ul class="list-unstyled small text-muted">
                         <li>📍 Parque Central</li>
                         <li>📅 15 de agosto, 2025</li>
                     </ul>
                     <div class="mt-auto d-flex gap-2">
-                        <a href="@Url.Action("Detalle", "Eventos", new { id = 1 })" class="btn btn-outline-success">Ver detalles</a>
-                        <a href="@Url.Action("Contacto", "Eventos", new { id = 1 })" class="btn btn-success">Contactar</a>
-
+                        <a href="@Url.Action("Detalle", "Eventos", new { id = 1 })"
+                           class="btn btn-outline-success w-50">Detalles</a>
+                        <a href="@Url.Action("Contacto", "Eventos", new { id = 1 })"
+                           class="btn btn-success w-50">Contactar</a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- EVENTO 2 -->
+        <!-- EVENTO -->
         <div class="col">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body d-flex flex-column">
-                    <h4 class="fw-bold text-success">Feria Gastronómica</h4>
-                    <p class="fs-6">
+            <div class="evento-card h-100">
+                <div class="evento-body d-flex flex-column">
+                    <span class="evento-tag">Gastronomía</span>
+                    <h4 class="fw-bold mt-2">Feria Gastronómica</h4>
+                    <p>
                         Feria con emprendimientos locales y comida tradicional.
                     </p>
-                    <ul class="list-unstyled fs-6">
+                    <ul class="list-unstyled small text-muted">
                         <li>📍 Plaza Municipal</li>
                         <li>📅 22 de septiembre, 2025</li>
                     </ul>
                     <div class="mt-auto d-flex gap-2">
-                        <a href="@Url.Action("Detalle", "Eventos", new { id = 2 })" class="btn btn-outline-success">Ver detalles</a>
-                        <a href="@Url.Action("Contacto", "Eventos", new { id = 2 })" class="btn btn-success">Contactar</a>
-
+                        <a href="@Url.Action("Detalle", "Eventos", new { id = 2 })"
+                           class="btn btn-outline-success w-50">Detalles</a>
+                        <a href="@Url.Action("Contacto", "Eventos", new { id = 2 })"
+                           class="btn btn-success w-50">Contactar</a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- EVENTO 3 -->
+        <!-- EVENTO -->
         <div class="col">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body d-flex flex-column">
-                    <h4 class="fw-bold text-success">Caminata Ecológica Guiada</h4>
-                    <p class="fs-6">
+            <div class="evento-card h-100">
+                <div class="evento-body d-flex flex-column">
+                    <span class="evento-tag">Naturaleza</span>
+                    <h4 class="fw-bold mt-2">Caminata Ecológica Guiada</h4>
+                    <p>
                         Recorrido guiado por senderos naturales del cantón.
                     </p>
-                    <ul class="list-unstyled fs-6">
+                    <ul class="list-unstyled small text-muted">
                         <li>📍 Reserva Natural</li>
                         <li>📅 10 de octubre, 2025</li>
                     </ul>
                     <div class="mt-auto d-flex gap-2">
-                        <a href="@Url.Action("Detalle", "Eventos", new { id = 3 })" class="btn btn-outline-success">Ver detalles</a>
-                        <a href="@Url.Action("Contacto", "Eventos", new { id = 3 })" class="btn btn-success">Contactar</a>
-
+                        <a href="@Url.Action("Detalle", "Eventos", new { id = 3 })"
+                           class="btn btn-outline-success w-50">Detalles</a>
+                        <a href="@Url.Action("Contacto", "Eventos", new { id = 3 })"
+                           class="btn btn-success w-50">Contactar</a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- EVENTO 4 -->
+        <!-- EVENTO -->
         <div class="col">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body d-flex flex-column">
-                    <h4 class="fw-bold text-success">Concierto al Aire Libre</h4>
-                    <p class="fs-6">
+            <div class="evento-card h-100">
+                <div class="evento-body d-flex flex-column">
+                    <span class="evento-tag">Música</span>
+                    <h4 class="fw-bold mt-2">Concierto al Aire Libre</h4>
+                    <p>
                         Presentación de artistas locales en un espacio abierto.
                     </p>
-                    <ul class="list-unstyled fs-6">
+                    <ul class="list-unstyled small text-muted">
                         <li>📍 Anfiteatro Municipal</li>
                         <li>📅 5 de noviembre, 2025</li>
                     </ul>
                     <div class="mt-auto d-flex gap-2">
-                        <a href="@Url.Action("Detalle", "Eventos", new { id = 4 })" class="btn btn-outline-success">Ver detalles</a>
-                        <a href="@Url.Action("Contacto", "Eventos", new { id = 4 })" class="btn btn-success">Contactar</a>
-
+                        <a href="@Url.Action("Detalle", "Eventos", new { id = 4 })"
+                           class="btn btn-outline-success w-50">Detalles</a>
+                        <a href="@Url.Action("Contacto", "Eventos", new { id = 4 })"
+                           class="btn btn-success w-50">Contactar</a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- EVENTO 5 -->
+        <!-- EVENTO -->
         <div class="col">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body d-flex flex-column">
-                    <h4 class="fw-bold text-success">Festival Navideño Municipal</h4>
-                    <p class="fs-6">
+            <div class="evento-card h-100">
+                <div class="evento-body d-flex flex-column">
+                    <span class="evento-tag">Familiar</span>
+                    <h4 class="fw-bold mt-2">Festival Navideño Municipal</h4>
+                    <p>
                         Celebración con luces, música y actividades familiares.
                     </p>
-                    <ul class="list-unstyled fs-6">
+                    <ul class="list-unstyled small text-muted">
                         <li>📍 Avenida Principal</li>
                         <li>📅 20 de diciembre, 2025</li>
                     </ul>
                     <div class="mt-auto d-flex gap-2">
-                        <a href="@Url.Action("Detalle", "Eventos", new { id = 5 })" class="btn btn-outline-success">Ver detalles</a>
-                        <a href="@Url.Action("Contacto", "Eventos", new { id = 5 })" class="btn btn-success">Contactar</a>
-
+                        <a href="@Url.Action("Detalle", "Eventos", new { id = 5 })"
+                           class="btn btn-outline-success w-50">Detalles</a>
+                        <a href="@Url.Action("Contacto", "Eventos", new { id = 5 })"
+                           class="btn btn-success w-50">Contactar</a>
                     </div>
                 </div>
             </div>
@@ -119,3 +135,42 @@
 
     </div>
 </div>
+
+<!-- ESTILOS -->
+<style>
+    .eventos-hero {
+        min-height: 60vh;
+        margin-top: -80px; 
+        padding-top: 80px; /* compensa el navbar */
+        background: linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.55)), url('/Content/im/img2.jpg') center/cover no-repeat;
+    }
+
+
+    .evento-card {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,.08);
+        transition: all .35s ease;
+        overflow: hidden;
+    }
+
+        .evento-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 18px 40px rgba(0,0,0,.15);
+        }
+
+    .evento-body {
+        padding: 1.6rem;
+    }
+
+    .evento-tag {
+        display: inline-block;
+        background: rgba(25,135,84,.1);
+        color: #198754;
+        font-size: .75rem;
+        padding: .25rem .6rem;
+        border-radius: 50px;
+        font-weight: 600;
+        width: fit-content;
+    }
+</style>
