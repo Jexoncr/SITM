@@ -1,520 +1,978 @@
 ﻿@{
     ViewBag.Title = "Inicio";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // ===== Datos (listos para ViewModel, pero con fallback mock) =====
+    var userName = (string)(ViewBag.UserName ?? (User?.Identity?.IsAuthenticated == true ? User.Identity.Name : null) ?? "Usuario");
+
+    // KPIs
+    var kpiReservasActivas = (int?)(ViewBag.KpiReservasActivas) ?? 2;
+    var kpiResenas = (int?)(ViewBag.KpiResenas) ?? 5;
+    var kpiEventosProximos = (int?)(ViewBag.KpiEventosProximos) ?? 3;
+
+    // Listas mock (si no vienen del controller)
+    var proximosEventos = ViewBag.ProximosEventos as IEnumerable<dynamic> ?? new[]
+    {
+        new { Titulo = "Feria Ecoturística", Fecha = "15 de agosto", Lugar = "Parque Central", Estado = "Programado", Img="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80", Id = 1 },
+        new { Titulo = "Festival Cultural", Fecha = "22 de septiembre", Lugar = "Anfiteatro Municipal", Estado = "Programado", Img="https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=900&q=80", Id = 2 },
+        new { Titulo = "Ruta Guiada – Sendero Local", Fecha = "05 de octubre", Lugar = "Punto de Encuentro", Estado = "Cupo limitado", Img="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=900&q=80", Id = 3 }
+    };
+
+    var reservasRecientes = ViewBag.ReservasRecientes as IEnumerable<dynamic> ?? new[]
+    {
+        new { Titulo = "Reserva – Tour Catarata", Fecha = "28 feb 2026", Estado = "Confirmada", Plan = "Regular", Id = 11 },
+        new { Titulo = "Reserva – Visita Guiada", Fecha = "03 mar 2026", Estado = "Pendiente", Plan = "Municipal", Id = 12 },
+        new { Titulo = "Reserva – Arenal (Tarde)", Fecha = "10 mar 2026", Estado = "Confirmada", Plan = "Regular", Id = 13 }
+    };
+
+    var resenasRecientes = ViewBag.ResenasRecientes as IEnumerable<dynamic> ?? new[]
+    {
+        new { Comercio = "Café Central", Fecha = "20 feb 2026", Comentario = "Atención cordial y ambiente tranquilo.", Calificacion = 5, Id = 21 },
+        new { Comercio = "Tours La Fortuna", Fecha = "18 feb 2026", Comentario = "Buena organización y puntualidad.", Calificacion = 4, Id = 22 },
+        new { Comercio = "Artesanías Municipales", Fecha = "10 feb 2026", Comentario = "Variedad de productos y buen precio.", Calificacion = 5, Id = 23 }
+    };
+
+    // Carrusel (lugares / comercios destacados)
+    var lugaresDestacados = ViewBag.LugaresDestacados as IEnumerable<dynamic> ?? new[]
+    {
+        new { Titulo="Volcán Arenal", Sub="San Carlos", Rating="⭐ 5.0 · 162 comentarios", Img="https://images.unsplash.com/photo-1707074111761-3f1db359269e?auto=format&fit=crop&w=1200&q=80" },
+        new { Titulo="Ecotermales Fortuna", Sub="San Carlos", Rating="⭐ 4.2 · 79 comentarios", Img="https://images.unsplash.com/photo-1628212094509-50706e8ffd4e?auto=format&fit=crop&w=1200&q=80" },
+        new { Titulo="Mirador El Silencio", Sub="San Carlos", Rating="⭐ 5.0 · 30 comentarios", Img="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1200&q=80" },
+        new { Titulo="Reserva Biológica", Sub="San Carlos", Rating="⭐ 4.2 · 56 comentarios", Img="https://misanimales.com/wp-content/uploads/2020/11/rana-ojos-rojos-arbol-768x554.jpg" }
+    };
 }
+
 <script>
     document.body.classList.add("home-index");
 </script>
 
 <style>
-    body.home-index #mainContent {
-        padding-top: 0 !important;
-    }
-</style>
-<style>
-    /* ===============================
-    SOLO INDEX – BASE
-    =============================== */
+     /* ===============================
+        INDEX – FUSIÓN (Komoot + Institucional)
+        =============================== */
 
-    html, body {
-        height: 100%;
-    }
+     .home-index {
+         --sitm-green: #0f3d2e;
+         --sitm-green-2: #145544;
+         --sitm-ink: #0f172a;
+         --sitm-muted: #334155;
+         --sitm-border: rgba(15, 23, 42, .10);
+         --sitm-soft: rgba(15, 61, 46, .08);
+         --sitm-shadow: 0 12px 30px rgba(2, 6, 23, .14);
+     }
 
-    body {
-        margin: 0;
-        overflow-x: hidden;
-    }
+     /* Accesibilidad: base legible */
+     html, body {
+         height: 100%;
+     }
 
-        /* El main NO empuja el hero */
-        body.home-index main {
-            padding-top: 0 !important;
-            margin: 0 !important;
-        }
+     body {
+         margin: 0;
+         overflow-x: hidden;
+     }
 
-        /* ===============================
-    NAVBAR (VISIBLE SIEMPRE)
-    =============================== */
+         body.home-index #mainContent {
+             padding-top: 0 !important;
+         }
 
-        body.home-index .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 9999;
-            background: transparent !important;
-            box-shadow: none !important;
-            transition: background .4s ease, box-shadow .4s ease;
-        }
+         body.home-index main {
+             padding-top: 0 !important;
+             margin: 0 !important;
+         }
 
-            body.home-index .navbar .nav-link,
-            body.home-index .navbar .navbar-brand {
-                color: #fff !important;
-            }
+         /* Navbar: transparente sobre hero + verde al hacer scroll */
+         body.home-index .navbar {
+             position: fixed;
+             top: 0;
+             left: 0;
+             width: 100%;
+             z-index: 9999;
+             background: transparent !important;
+             box-shadow: none !important;
+             transition: background .35s ease, box-shadow .35s ease, backdrop-filter .35s ease;
+         }
 
-            /* Navbar al hacer scroll → VERDE */
-            body.home-index .navbar.scrolled {
-                background: rgba(27, 122, 92, 0.95) !important; /* verde bonito */
-                backdrop-filter: blur(8px);
-                box-shadow: 0 6px 20px rgba(0,0,0,.15);
-            }
+             body.home-index .navbar .nav-link,
+             body.home-index .navbar .navbar-brand {
+                 color: #fff !important;
+             }
 
-                /* Texto en blanco sobre verde */
-                body.home-index .navbar.scrolled .nav-link,
-                body.home-index .navbar.scrolled .navbar-brand {
-                    color: #fff !important;
-                }
+             body.home-index .navbar.scrolled {
+                 background: rgba(15, 61, 46, .92) !important;
+                 backdrop-filter: blur(10px);
+                 box-shadow: 0 10px 24px rgba(0,0,0,.20) !important;
+             }
 
+                 body.home-index .navbar.scrolled .nav-link,
+                 body.home-index .navbar.scrolled .navbar-brand {
+                     color: #fff !important;
+                 }
 
-    /* ===============================
-    HERO FULL SCREEN
-    =============================== */
+     /* ===============================
+        HERO FULL SCREEN (con imagen, pero institucional)
+        =============================== */
+     .hero-komoot {
+         height: 100vh;
+         min-height: 100vh;
+         width: 100%;
+         background-image: url("/Content/im/img3.png");
+         background-size: cover;
+         background-position: center;
+         position: relative;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         color: #fff;
+     }
 
-    .hero-komoot {
-        height: 100vh;
-        min-height: 100vh;
-        width: 100%;
-        background-image: url("https://images.unsplash.com/photo-1552727131-5fc6af16796d?q=80&w=1049&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
-        background-size: cover;
-        background-position: center;
-        position: relative;
-        display: flex;
+         /* Overlay más “gobierno”: verde + sombra */
+         .hero-komoot::before {
+             content: "";
+             position: absolute;
+             inset: 0;
+             background: linear-gradient(135deg, rgba(15,61,46,.78), rgba(0,0,0,.55)), radial-gradient(900px 350px at 70% 10%, rgba(255,255,255,.12), transparent 60%);
+             z-index: 1;
+         }
+
+     .hero-content {
+         position: relative;
+         z-index: 2;
+         text-align: center;
+         max-width: 980px;
+         padding: 0 1rem;
+     }
+
+    .hero-badge {
+        display: inline-flex;
         align-items: center;
-        justify-content: center;
-        color: white;
-    }
-
-        /* Overlay (DETRÁS del navbar) */
-        .hero-komoot::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,.45);
-            z-index: 1;
-        }
-
-    /* Contenido encima del overlay */
-    .hero-content {
-        position: relative;
-        z-index: 2;
-        text-align: center;
-        max-width: 900px;
-        padding: 0 1rem;
-    }
-
-        .hero-content h1 {
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin-bottom: 1.8rem;
-        }
-
-    /* ===============================
-    BUSCADOR
-    =============================== */
-
-    .search-box {
-        display: flex;
-        background: #fff;
+        gap: .45rem;
+        padding: .7rem 1.1rem;
         border-radius: 999px;
-        overflow: hidden;
-        width: 680px;
-        max-width: 90%;
-        margin: 0 auto;
-        box-shadow: 0 12px 30px rgba(0,0,0,.25);
-    }
-
-        .search-box input {
-            flex: 1;
-            padding: 1.1rem 1.6rem;
-            border: none;
-            outline: none;
-            font-size: 1.05rem;
-        }
-
-        .search-box button {
-            background: #5cb85c;
-            border: none;
-            padding: 0 2.2rem;
-            color: white;
-            font-size: 1.05rem;
-            cursor: pointer;
-        }
-
-    /* Frase debajo */
-    .hero-subtitle {
-        margin-top: 1.4rem;
-        font-size: .95rem;
-        color: rgba(255,255,255,.85);
-        letter-spacing: .5px;
-    }
-
-    /* ===============================
-    RESPONSIVE
-    =============================== */
-
-    @@media (max-width:768px) {
-        .hero-content h1 {
-            font-size: 2.4rem;
-        }
-
-        .search-box {
-            width: 100%;
-        }
-    }
-</style>
-
-<style>
-    .routes-section {
-        background: #f7f6f2;
-        padding: 4rem 3rem;
-        color: #111;
-    }
-
-    /* ===============================
-    HEADER
-    =============================== */
-
-    .routes-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-    }
-
-        .routes-header h2 {
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin: 0;
-        }
-
-            .routes-header h2 span {
-                color: #ff7a00;
-            }
-
-    /* ===============================
-    SCROLL HORIZONTAL (CLAVE)
-    =============================== */
-
-    .routes-container {
-        display: flex;
-        gap: 1.5rem;
-        overflow-x: auto;
-        width: 100vw;
-        margin-left: calc(50% - 50vw);
-        padding: 0 3rem 1rem;
-        scroll-snap-type: x mandatory;
-        scroll-behavior: smooth;
-        scrollbar-width: none;
-    }
-
-
-        .routes-container::-webkit-scrollbar {
-            display: none; /* Chrome */
-        }
-
-    /* ===============================
-    CARDS
-    =============================== */
-
-    .route-card {
-        min-width: 260px;
-        height: 360px;
-        border-radius: 22px;
-        overflow: hidden;
-        position: relative;
-        background: #000;
-        flex-shrink: 0;
-        box-shadow: 0 8px 20px rgba(0,0,0,.15);
-        /* SNAP */
-        scroll-snap-align: start;
-    }
-
-        /* Imagen */
-        .route-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform .4s ease;
-        }
-
-        /* Zoom MUY sutil */
-        .route-card:hover img {
-            transform: scale(1.03);
-        }
-
-    /* ===============================
-    OVERLAY
-    =============================== */
-
-    .route-info {
-        position: absolute;
-        bottom: 0;
-        width: 100%;
-        padding: 1rem 1.1rem;
-        color: #fff;
-        background: linear-gradient( to top, rgba(0,0,0,.85), rgba(0,0,0,0) );
-    }
-
-        .route-info h3 {
-            font-size: 1.05rem;
-            font-weight: 700;
-            margin: 0;
-        }
-
-        .route-info p {
-            font-size: .85rem;
-            opacity: .85;
-            margin: 0;
-        }
-
-    .rating {
-        font-size: .8rem;
-        margin-top: .3rem;
-    }
-
-    /* ===============================
-    FLECHAS
-    =============================== */
-
-    .routes-arrows {
-        display: flex;
-        gap: .6rem;
-    }
-
-    .arrow-btn {
-        width: 42px;
-        height: 42px;
-        border-radius: 50%;
-        border: none;
-        background: #fff;
-        color: #111;
-        font-size: 1.1rem;
-        cursor: pointer;
-        box-shadow: 0 6px 16px rgba(0,0,0,.15);
-        transition: transform .2s ease, box-shadow .2s ease;
-    }
-
-        .arrow-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 22px rgba(0,0,0,.2);
-        }
-
-    /* ===============================
-    RESPONSIVE
-    =============================== */
-
-    @@media (max-width:768px) {
-        .routes-section {
-            padding: 3rem 1.2rem;
-        }
-
-        .route-card {
-            height: 300px;
-            min-width: 240px;
-        }
-
-        .routes-arrows {
-            display: none;
-        }
-    }
-</style>
-
-
-
-
-<style>
-    .events-section {
-        background: #ffffff;
-        padding: 3.5rem 3rem 4rem;
-        color: #111;
-    }
-
-    .events-title {
-        font-size: 2rem;
+        border: 1px solid rgba(255,255,255,.22);
+        background: rgba(255,255,255,.10);
         font-weight: 800;
-        margin: 0 0 1.4rem 0;
-        color: #1b7a5c;
+        font-size: 1.15rem;
+        margin-bottom: 1rem;
     }
 
-    /* Grid */
-    .events-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(260px, 1fr));
-        gap: 1.2rem;
+     .hero-content h1 {
+         font-size: 3rem;
+         font-weight: 900;
+         margin-bottom: 1rem;
+         letter-spacing: .2px;
+         line-height: 1.12;
+     }
+
+    .hero-lead {
+        font-size: 1.35rem;
+        line-height: 1.6;
+        max-width: 65ch;
+        margin: 0 auto 1.4rem;
     }
 
-    /* Card */
-    .event-card {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-        padding: 1rem;
-        border-radius: 16px;
-        background: #f4f8f5;
-        border: 1px solid rgba(0,0,0,0.06);
-        transition: transform .25s ease, box-shadow .25s ease;
+     /* Buscador original, pero accesible y alineado institucional */
+     .search-box {
+         display: flex;
+         background: #fff;
+         border-radius: 999px;
+         overflow: hidden;
+         width: 720px;
+         max-width: 92%;
+         margin: 0 auto;
+         box-shadow: 0 14px 34px rgba(0,0,0,.30);
+         border: 1px solid rgba(255,255,255,.22);
+     }
+
+         .search-box input {
+             flex: 1;
+             padding: 1.1rem 1.35rem;
+             border: none;
+             outline: none;
+             font-size: 1.05rem;
+             color: #0f172a;
+         }
+
+         .search-box button {
+             background: var(--sitm-green-2);
+             border: none;
+             padding: 0 1.6rem;
+             color: #fff;
+             font-size: 1.05rem;
+             cursor: pointer;
+             font-weight: 800;
+         }
+
+    .search-help {
+        margin-top: .9rem;
+        font-size: 1.15rem;
+        color: rgba(255,255,255,.88);
+        letter-spacing: .2px;
     }
 
-        .event-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 22px rgba(0,0,0,0.10);
-        }
+     .btn-hero-ghost {
+         background: rgba(255,255,255,.12);
+         border: 1px solid rgba(255,255,255,.22);
+         color: #fff;
+     }
 
-    /* Imagen */
-    .event-img {
-        width: 110px;
-        height: 80px;
-        object-fit: cover;
-        border-radius: 12px;
-        flex-shrink: 0;
-    }
+         .btn-hero-ghost:hover {
+             background: rgba(255,255,255,.18);
+             border-color: rgba(255,255,255,.30);
+             color: #fff;
+         }
 
-    /* Texto */
-    .event-content h4 {
-        margin: 0;
-        font-weight: 800;
-    }
+     /* ===============================
+        Secciones “institucionales” debajo del hero
+        =============================== */
+     .sitm-wrap {
+         background: #fff;
+     }
 
-    .event-content p {
-        margin: .15rem 0 0;
-        opacity: .8;
-    }
+     .sitm-container {
+         max-width: 1320px;
+         margin: 0 auto;
+         padding: 3.5rem 1rem 2.5rem;
+     }
 
-    /* Responsive (Razor-safe) */
-    @@media (max-width: 992px) {
-        .events-section {
-            padding: 3rem 1.2rem;
-        }
+     .sitm-section-title {
+         font-size: 2rem;
+         font-weight: 900;
+         margin: 0 0 1rem 0;
+         color: var(--sitm-green);
+         letter-spacing: .2px;
+     }
 
-        .events-grid {
-            grid-template-columns: 1fr;
-        }
-    }
+     .sitm-section-sub {
+         color: var(--sitm-muted);
+         font-size: 1rem;
+         margin: 0 0 1.6rem 0;
+         max-width: 85ch;
+     }
+
+     .sitm-kpi {
+         border: 1px solid var(--sitm-border);
+         border-radius: 16px;
+         background: #fff;
+         padding: 1rem 1.1rem;
+         display: flex;
+         gap: .9rem;
+         align-items: center;
+         transition: transform .18s ease, box-shadow .18s ease;
+         box-shadow: 0 8px 22px rgba(2, 6, 23, .06);
+     }
+
+         .sitm-kpi:hover {
+             transform: translateY(-2px);
+             box-shadow: 0 12px 26px rgba(2, 6, 23, .10);
+         }
+
+         .sitm-kpi .kpi-ico {
+             width: 44px;
+             height: 44px;
+             border-radius: 14px;
+             display: grid;
+             place-items: center;
+             background: var(--sitm-soft);
+             color: var(--sitm-green);
+             font-size: 1.25rem;
+             flex: 0 0 auto;
+         }
+
+         .sitm-kpi .kpi-label {
+             color: var(--sitm-muted);
+             margin: 0;
+             font-weight: 700;
+         }
+
+         .sitm-kpi .kpi-value {
+             font-size: 1.55rem;
+             font-weight: 900;
+             margin: 0;
+             color: var(--sitm-ink);
+             line-height: 1.1;
+         }
+
+     .sitm-card {
+         border: 1px solid var(--sitm-border);
+         border-radius: 16px;
+         background: #fff;
+         box-shadow: 0 8px 22px rgba(2, 6, 23, .06);
+         overflow: hidden;
+         height: 100%;
+     }
+
+         .sitm-card .card-header {
+             background: #fff;
+             border-bottom: 1px solid var(--sitm-border);
+             padding: 1rem 1.1rem;
+             display: flex;
+             justify-content: space-between;
+             align-items: center;
+             gap: 1rem;
+         }
+
+             .sitm-card .card-header .hdr {
+                 display: flex;
+                 align-items: center;
+                 gap: .55rem;
+                 font-weight: 900;
+                 font-size: 1.05rem;
+                 color: var(--sitm-ink);
+             }
+
+         .sitm-card .card-body {
+             padding: 1.1rem;
+         }
+
+     .sitm-badge {
+         min-width: 120px;
+         text-align: center;
+         display: inline-flex;
+         justify-content: center;
+         align-items: center;
+         height: 38px;
+         border-radius: 999px;
+         padding: 0 .75rem;
+         font-weight: 800;
+         border: 1px solid var(--sitm-border);
+         background: #f8fafc;
+         color: var(--sitm-ink);
+         font-size: .95rem;
+     }
+
+         .sitm-badge.ok {
+             background: rgba(16, 185, 129, .10);
+             border-color: rgba(16, 185, 129, .25);
+             color: #065f46;
+         }
+
+         .sitm-badge.warn {
+             background: rgba(245, 158, 11, .12);
+             border-color: rgba(245, 158, 11, .28);
+             color: #7c2d12;
+         }
+
+     .sitm-list-item {
+         display: flex;
+         justify-content: space-between;
+         gap: 1rem;
+         padding: .9rem 0;
+         border-bottom: 1px dashed rgba(15, 23, 42, .16);
+     }
+
+         .sitm-list-item:last-child {
+             border-bottom: 0;
+             padding-bottom: 0;
+         }
+
+     .sitm-title {
+         font-size: 1.05rem;
+         font-weight: 900;
+         margin: 0;
+         color: var(--sitm-ink);
+     }
+
+     .sitm-sub {
+         margin: .2rem 0 0 0;
+         color: var(--sitm-muted);
+         font-size: 1rem;
+     }
+
+     .sitm-note {
+         border: 1px solid rgba(15, 61, 46, .22);
+         background: rgba(15, 61, 46, .06);
+         border-radius: 16px;
+         padding: 1rem 1.1rem;
+         display: flex;
+         gap: .85rem;
+         align-items: flex-start;
+         box-shadow: 0 8px 22px rgba(2, 6, 23, .05);
+     }
+
+         .sitm-note i {
+             font-size: 1.25rem;
+             color: var(--sitm-green);
+             margin-top: .1rem;
+         }
+
+         .sitm-note strong {
+             display: block;
+             font-size: 1.05rem;
+             color: var(--sitm-ink);
+             margin-bottom: .15rem;
+         }
+
+         .sitm-note p {
+             margin: 0;
+             color: var(--sitm-muted);
+         }
+
+     /* ===============================
+    CARRUSEL PROFESIONAL (uniforme)
+    =============================== */
+     .routes-pro {
+         background: #f7f6f2;
+         padding: 3.25rem 0;
+     }
+
+     .routes-pro-inner {
+         max-width: 1320px;
+         margin: 0 auto;
+         padding: 0 1rem;
+     }
+
+     .routes-pro-header {
+         display: flex;
+         justify-content: space-between;
+         align-items: flex-end;
+         gap: 1rem;
+         margin-bottom: 1.25rem;
+     }
+
+     .routes-pro-title {
+         font-size: 2.05rem;
+         font-weight: 900;
+         margin: 0;
+         color: var(--sitm-ink);
+         letter-spacing: .2px;
+     }
+
+         .routes-pro-title span {
+             color: var(--sitm-green);
+         }
+
+     .routes-pro-sub {
+         margin: .35rem 0 0 0;
+         color: var(--sitm-muted);
+         font-size: 1rem;
+         max-width: 80ch;
+     }
+
+     /* Viewport centrado: evita cortes */
+     .routes-pro-viewport {
+         position: relative;
+         border-radius: 18px;
+         padding: 0 3.25rem; /* espacio fijo para flechas */
+     }
+
+     /* Track real (scroll) */
+     .routes-pro-track {
+         display: flex;
+         gap: 1.25rem;
+         overflow-x: auto;
+         padding: .25rem 0 1rem;
+         scroll-snap-type: x mandatory;
+         scroll-behavior: smooth;
+         scrollbar-width: none;
+         border-radius: 18px;
+     }
+
+         .routes-pro-track::-webkit-scrollbar {
+             display: none;
+         }
+
+     /* Card más “institucional”, compacta */
+     .routes-pro-card {
+         scroll-snap-align: start;
+         flex: 0 0 auto;
+         width: 260px;
+         border-radius: 18px;
+         background: #fff;
+         border: 1px solid rgba(15,23,42,.10);
+         box-shadow: 0 10px 22px rgba(2, 6, 23, .10);
+         overflow: hidden;
+         transition: transform .18s ease, box-shadow .18s ease;
+     }
+
+         .routes-pro-card:hover {
+             transform: translateY(-2px);
+             box-shadow: 0 14px 28px rgba(2, 6, 23, .14);
+         }
+
+     .routes-pro-img {
+         position: relative;
+         height: 170px;
+         background: #0b1220;
+     }
+
+         .routes-pro-img img {
+             width: 100%;
+             height: 100%;
+             object-fit: cover;
+             filter: saturate(.95) contrast(1.02);
+             transform: scale(1.01);
+         }
+
+     .routes-pro-gradient {
+         position: absolute;
+         inset: 0;
+         background: linear-gradient(to top, rgba(15,61,46,.35), rgba(0,0,0,0) 60%);
+         pointer-events: none;
+     }
+
+     .routes-pro-info {
+         padding: .95rem 1rem 1rem;
+     }
+
+     .routes-pro-chip {
+         display: inline-flex;
+         align-items: center;
+         gap: .35rem;
+         padding: .4rem .65rem;
+         border-radius: 999px;
+         font-weight: 800;
+         font-size: .98rem;
+         background: rgba(15,61,46,.07);
+         border: 1px solid rgba(15,61,46,.18);
+         color: var(--sitm-green);
+     }
+
+     .routes-pro-h3 {
+         margin: .65rem 0 .25rem;
+         font-size: 1.08rem;
+         font-weight: 900;
+         color: var(--sitm-ink);
+     }
+
+     .routes-pro-rating {
+         margin: 0;
+         color: var(--sitm-muted);
+         font-size: 1rem;
+     }
+
+     .routes-pro-link {
+         display: inline-flex;
+         align-items: center;
+         gap: .25rem;
+         margin-top: .65rem;
+         font-weight: 900;
+         color: var(--sitm-green);
+         text-decoration: none;
+         font-size: 1rem;
+     }
+
+         .routes-pro-link:hover {
+             text-decoration: underline;
+         }
+
+     /* Flechas del carrusel: SIEMPRE visibles, bien posicionadas y con ícono real */
+     .routes-pro-viewport {
+         position: relative;
+     }
+
+     /* Botón */
+     .routes-pro-arrow {
+         position: absolute;
+         top: 50%;
+         transform: translateY(-50%);
+         width: 46px;
+         height: 46px;
+         border-radius: 14px; /* mejor que círculo perfecto */
+         border: 1px solid rgba(15,23,42,.14);
+         background: rgba(255,255,255,.96);
+         box-shadow: 0 12px 24px rgba(0,0,0,.18);
+         display: grid;
+         place-items: center;
+         cursor: pointer;
+         z-index: 50; /* por encima de todo */
+         padding: 0;
+     }
+
+         .routes-pro-arrow.left {
+             left: 10px;
+         }
+
+         .routes-pro-arrow.right {
+             right: 10px;
+         }
+
+         .routes-pro-arrow:hover {
+             box-shadow: 0 16px 30px rgba(0,0,0,.22);
+             transform: translateY(-50%) scale(1.04);
+         }
+
+     /* Ícono SVG */
+     .routes-pro-arrow-ico {
+         width: 22px;
+         height: 22px;
+         stroke: #0f3d2e; /* verde institucional */
+         stroke-width: 2.6;
+         fill: none;
+         stroke-linecap: round;
+         stroke-linejoin: round;
+     }
+
+     /* Disabled */
+     .routes-pro-arrow[disabled] {
+         opacity: .35;
+         cursor: not-allowed;
+     }
+
+     .routes-pro-arrow.left {
+         left: -18px; /* la empuja hacia afuera */
+     }
+
+     .routes-pro-arrow.right {
+         right: -18px; /* igual del lado derecho */
+     }
+
+     /* Responsive */
+     @@media (max-width: 992px) {
+         .routes-pro-viewport {
+             padding: 0 2.75rem;
+         }
+
+         .routes-pro-card {
+             width: 240px;
+         }
+     }
+
+     @@media (max-width: 576px) {
+         .routes-pro-viewport {
+             padding: 0 2.25rem;
+         }
+
+         .routes-pro-card {
+             width: 220px;
+         }
+
+         .routes-pro-title {
+             font-size: 1.8rem;
+         }
+     }
 </style>
 
-
-
-
-<section class="hero-komoot">
+<!-- ===============================
+     HERO (se conserva con imágenes, pero ahora orienta + CTA + saludo)
+     =============================== -->
+<section class="hero-komoot" aria-label="Encabezado de inicio">
     <div class="hero-content">
-        <h1>Explorá más<br />allá de San Carlos</h1>
-
-        <div class="search-box">
-            <input type="text" placeholder="Buscar lugares, eventos..." />
-            <button>Buscar →</button>
+        <div class="hero-badge">
+            <i class="bi bi-building"></i> Portal Ciudadano – SITM
         </div>
-        <p class="hero-subtitle">
-            Descubre  eventos y experiencias únicas en San Carlos
+
+        <h1>Bienvenido, @userName</h1>
+
+        <p class="hero-lead">
+            Explorá comercios turísticos, consultá eventos, gestioná tus reservas y compartí reseñas
+            para fortalecer la información turística del cantón.
         </p>
 
+        <form class="search-box" id="heroSearchForm" role="search" aria-label="Búsqueda rápida">
+            <input id="heroSearchInput" type="text" placeholder="Buscar comercios o eventos por nombre..." aria-label="Buscar comercios o eventos por nombre" />
+            <button type="submit"><i class="bi bi-search me-1"></i> Buscar</button>
+        </form>
+
+        <div class="search-help">
+            Tip: esta búsqueda te lleva a <strong>Comercios</strong>. Para ver agenda completa, usá <strong>Eventos</strong>.
+        </div>
+
     </div>
 </section>
 
-<section class="routes-section">
-    <div class="routes-header">
-        <h2><span>Lo Mejor de </span>San Carlos</h2>
-
-        <div class="routes-arrows">
-            <button class="arrow-btn" type="button" onclick="scrollRoutes(-1)">←</button>
-            <button class="arrow-btn" type="button" onclick="scrollRoutes(1)">→</button>
-        </div>
-    </div>
-
-    <div class="routes-container" id="routesContainer">
-        <div class="route-card">
-            <img src="https://images.unsplash.com/photo-1707074111761-3f1db359269e?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
-            <div class="route-info">
-                <h3>Volcán Arenal</h3>
-                <p>From San Carlos</p>
-                <span class="rating">⭐ 5.0 · 162 comentarios</span>
+<!-- ===============================
+     CARRUSEL PROFESIONAL – DESTACADOS
+     =============================== -->
+<section class="routes-pro" aria-label="Destacados del cantón">
+    <div class="routes-pro-inner">
+        <div class="routes-pro-header">
+            <div>
+                <h2 class="routes-pro-title"><span>Lo Mejor de</span> San Carlos</h2>
+                <p class="routes-pro-sub">
+                    Sitios y experiencias relevantes para la comunidad y visitantes. Información municipal.
+                </p>
             </div>
-        </div>
 
-        <div class="route-card">
-            <img src="https://images.unsplash.com/photo-1628212094509-50706e8ffd4e?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
-            <div class="route-info">
-                <h3>Ecotermales Fortuna</h3>
-                <p>San Carlos</p>
-                <span class="rating">⭐ 4.2 · 79 comentarios</span>
-            </div>
+            <a class="btn btn-outline-success d-none d-md-inline-flex"
+               style="border-radius:12px; font-weight:800;"
+               href="@Url.Action("Index","Comercios")">
+                <i class="bi bi-compass me-1"></i> Explorar comercios
+            </a>
         </div>
 
-        <div class="route-card">
-            <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e">
-            <div class="route-info">
-                <h3>Mirador el Silencio</h3>
-                <p>San Carlos</p>
-                <span class="rating">⭐ 5.0 · 30 comentarios</span>
+        <div class="routes-pro-viewport">
+            <!-- Flecha izquierda -->
+            <button class="routes-pro-arrow left" type="button" aria-label="Anterior" id="routesPrev">
+                <svg class="routes-pro-arrow-ico" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M15 18l-6-6 6-6" />
+                </svg>
+            </button>
+
+            <!-- Track -->
+            <div class="routes-pro-track" id="routesTrack" tabindex="0" aria-label="Carrusel de destacados">
+                @foreach (var l in lugaresDestacados)
+                {
+                    <article class="routes-pro-card">
+                        <div class="routes-pro-img">
+                            <img src="@l.Img" alt="@l.Titulo" loading="lazy" />
+                            <div class="routes-pro-gradient"></div>
+                        </div>
+
+                        <div class="routes-pro-info">
+                            <div class="routes-pro-chip">
+                                <i class="bi bi-geo-alt me-1"></i> @l.Sub
+                            </div>
+
+                            <h3 class="routes-pro-h3">@l.Titulo</h3>
+                            <p class="routes-pro-rating">@l.Rating</p>
+
+                            <a class="routes-pro-link"
+                               href="@Url.Action("Index","Comercios", new { q = l.Titulo })"
+                               aria-label="Ver información relacionada con @l.Titulo">
+                                Ver información <i class="bi bi-arrow-right-short"></i>
+                            </a>
+                        </div>
+                    </article>
+                }
             </div>
-        </div>
 
-        <div class="route-card">
-            <img src="https://misanimales.com/wp-content/uploads/2020/11/rana-ojos-rojos-arbol-768x554.jpg">
-            <div class="route-info">
-                <h3>Reserva Biológica Ecocentro Danaus</h3>
-                <p>San Carlos</p>
-                <span class="rating">⭐ 4.2 · 56 comentarios</span>
-            </div>
-        </div>
-    </div>
-</section>
-
-
-<section class="events-section">
-    <h2 class="events-title">Próximos Eventos</h2>
-
-    <div class="events-grid">
-        <div class="event-card">
-            <img class="event-img"
-                 src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"
-                 alt="Feria Ecoturística">
-
-            <div class="event-content">
-                <h4> Feria Ecoturística</h4>
-                <p>15 de agosto – Parque Central</p>
-            </div>
-        </div>
-
-        <div class="event-card">
-            <img class="event-img"
-                 src="https://images.unsplash.com/photo-1501785888041-af3ef285b470"
-                 alt="Festival Cultural">
-
-            <div class="event-content">
-                <h4> Festival Cultural</h4>
-                <p>22 de septiembre – Anfiteatro Municipal</p>
-            </div>
+            <!-- Flecha derecha -->
+            <button class="routes-pro-arrow right" type="button" aria-label="Siguiente" id="routesNext">
+                <svg class="routes-pro-arrow-ico" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M9 6l6 6-6 6" />
+                </svg>
+            </button>
         </div>
     </div>
 </section>
+<!-- ===============================
+     HOME INSTITUCIONAL (actividad + resumen)
+     =============================== -->
+<section class="sitm-wrap" aria-label="Inicio institucional">
+    <div class="sitm-container">
 
+        <h2 class="sitm-section-title">Actividad reciente</h2>
+        <p class="sitm-section-sub">
+            Resumen de tu actividad dentro del portal municipal: reservas, reseñas y eventos próximos.
+        </p>
 
+        <!-- KPIs -->
+        <div class="row g-3 mb-4">
+            <div class="col-12 col-md-4">
+                <div class="sitm-kpi" role="group" aria-label="Reservas activas">
+                    <div class="kpi-ico"><i class="bi bi-bookmark-check"></i></div>
+                    <div class="flex-grow-1">
+                        <p class="kpi-label">Reservas activas</p>
+                        <p class="kpi-value">@kpiReservasActivas</p>
+                    </div>
+                    <a class="btn btn-sm btn-outline-success" style="border-radius:10px;"
+                       href="@Url.Action("Index","MisReservas")">Ver</a>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="sitm-kpi" role="group" aria-label="Reseñas registradas">
+                    <div class="kpi-ico"><i class="bi bi-star-half"></i></div>
+                    <div class="flex-grow-1">
+                        <p class="kpi-label">Reseñas registradas</p>
+                        <p class="kpi-value">@kpiResenas</p>
+                    </div>
+                    <a class="btn btn-sm btn-outline-success" style="border-radius:10px;"
+                       href="@Url.Action("Index","Resenas")">Ver</a>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="sitm-kpi" role="group" aria-label="Eventos próximos">
+                    <div class="kpi-ico"><i class="bi bi-calendar2-week"></i></div>
+                    <div class="flex-grow-1">
+                        <p class="kpi-label">Eventos próximos</p>
+                        <p class="kpi-value">@kpiEventosProximos</p>
+                    </div>
+                    <a class="btn btn-sm btn-outline-success" style="border-radius:10px;"
+                       href="@Url.Action("Index","Eventos")">Ver</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nota institucional -->
+        <div class="sitm-note mb-4" aria-label="Aviso institucional">
+            <i class="bi bi-info-circle"></i>
+            <div>
+                <strong>Información municipal</strong>
+                <p>
+                    Las reseñas publicadas pueden estar sujetas a moderación según políticas de convivencia y uso del portal.
+                    Si detectás contenido inapropiado, utilizá la sección de Reseñas para reportarlo.
+                </p>
+            </div>
+        </div>
+
+        <!-- Tarjetas de actividad -->
+        <div class="row g-3">
+            <!-- Próximos eventos -->
+            <div class="col-12 col-lg-4">
+                <div class="sitm-card">
+                    <div class="card-header">
+                        <div class="hdr"><i class="bi bi-calendar-event" style="color: var(--sitm-green);"></i> Tus próximos eventos</div>
+                        <a class="btn btn-sm btn-outline-secondary" style="border-radius:10px;"
+                           href="@Url.Action("Index","Eventos")">Ver todos</a>
+                    </div>
+                    <div class="card-body">
+                        @if (!proximosEventos.Any())
+                        {
+                            <p class="mb-0" style="color: var(--sitm-muted);">No hay eventos próximos registrados.</p>
+                        }
+                        else
+                        {
+                            foreach (var e in proximosEventos.Take(3))
+                            {
+                                <div class="sitm-list-item">
+                                    <div class="flex-grow-1">
+                                        <p class="sitm-title">@e.Titulo</p>
+                                        <p class="sitm-sub">
+                                            <i class="bi bi-geo-alt me-1"></i>@e.Lugar
+                                            <span class="mx-2">•</span>
+                                            <i class="bi bi-clock me-1"></i>@e.Fecha
+                                        </p>
+                                    </div>
+                                    <span class="sitm-badge @(e.Estado.ToString().Contains("Cupo") ? "warn" : "ok")">@e.Estado</span>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reservas recientes -->
+            <div class="col-12 col-lg-4">
+                <div class="sitm-card">
+                    <div class="card-header">
+                        <div class="hdr"><i class="bi bi-ticket-perforated" style="color: var(--sitm-green);"></i> Tus reservas recientes</div>
+                        <a class="btn btn-sm btn-outline-secondary" style="border-radius:10px;"
+                           href="@Url.Action("Index","MisReservas")">Ver todas</a>
+                    </div>
+                    <div class="card-body">
+                        @if (!reservasRecientes.Any())
+                        {
+                            <p class="mb-0" style="color: var(--sitm-muted);">Aún no tenés reservas registradas.</p>
+                        }
+                        else
+                        {
+                            foreach (var r in reservasRecientes.Take(3))
+                            {
+                                var estado = (r.Estado ?? "").ToString();
+                                var badgeClass = estado.Contains("Confirm") ? "ok" : (estado.Contains("Pend") ? "warn" : "");
+
+                                <div class="sitm-list-item">
+                                    <div class="flex-grow-1">
+                                        <p class="sitm-title">@r.Titulo</p>
+                                        <p class="sitm-sub">
+                                            <i class="bi bi-calendar3 me-1"></i>@r.Fecha
+                                            <span class="mx-2">•</span>
+                                            <i class="bi bi-layers me-1"></i>@r.Plan
+                                        </p>
+                                    </div>
+                                    <span class="sitm-badge @badgeClass">@r.Estado</span>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reseñas recientes -->
+            <div class="col-12 col-lg-4">
+                <div class="sitm-card">
+                    <div class="card-header">
+                        <div class="hdr"><i class="bi bi-chat-square-text" style="color: var(--sitm-green);"></i> Tus reseñas recientes</div>
+                        <a class="btn btn-sm btn-outline-secondary" style="border-radius:10px;"
+                           href="@Url.Action("Index","Resenas")">Ver todas</a>
+                    </div>
+                    <div class="card-body">
+                        @if (!resenasRecientes.Any())
+                        {
+                            <p class="mb-0" style="color: var(--sitm-muted);">Aún no has publicado reseñas.</p>
+                        }
+                        else
+                        {
+                            foreach (var rr in resenasRecientes.Take(3))
+                            {
+                                int stars = 0;
+                                int.TryParse((rr.Calificacion ?? 0).ToString(), out stars);
+                                if (stars < 0) { stars = 0; }
+                                if (stars > 5) { stars = 5; }
+
+                                <div class="sitm-list-item">
+                                    <div class="flex-grow-1">
+                                        <p class="sitm-title">@rr.Comercio</p>
+                                        <p class="sitm-sub"><i class="bi bi-calendar3 me-1"></i>@rr.Fecha</p>
+                                        <p class="mb-0 mt-2" style="color: var(--sitm-muted); font-size: 1rem;">
+                                            “@rr.Comentario”
+                                        </p>
+                                    </div>
+                                    
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
 
 <script>
-    document.body.classList.add("home-index");
+    // Navbar cambia a verde al hacer scroll
+    (function () {
+        const navbar = document.querySelector("body.home-index .navbar");
+        const hero = document.querySelector(".hero-komoot");
+        if (!navbar) return;
 
-    const navbar = document.querySelector(".navbar");
-
-    window.addEventListener("scroll", () => {
-        if (window.scrollY > 420) {
-            navbar.classList.add("scrolled");
-        } else {
-            navbar.classList.remove("scrolled");
+        function getThreshold() {
+            if (hero) return Math.max(120, Math.floor(hero.offsetHeight * 0.6));
+            return 420;
         }
-    });
-</script>
-<script>
-    function scrollRoutes(direction) {
-        const container = document.getElementById("routesContainer");
-        const card = container.querySelector(".route-card");
-        if (!card) return;
 
-        const gap = 24; // 1.5rem
-        const scrollAmount = card.offsetWidth + gap;
+        function updateNavbar() {
+            const threshold = getThreshold();
+            navbar.classList.toggle("scrolled", window.scrollY > threshold);
+        }
 
-        container.scrollBy({
-            left: direction * scrollAmount,
-            behavior: "smooth"
+        window.addEventListener("scroll", updateNavbar, { passive: true });
+        window.addEventListener("load", updateNavbar);
+        document.addEventListener("DOMContentLoaded", updateNavbar);
+    })();
+
+    // Hero Search -> dirige a Comercios con query
+    (function () {
+        const form = document.getElementById("heroSearchForm");
+        const input = document.getElementById("heroSearchInput");
+        if (!form || !input) return;
+
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const q = (input.value || "").trim();
+            const baseUrl = "@Url.Action("Index","Comercios")";
+            const url = q ? (baseUrl + "?q=" + encodeURIComponent(q)) : baseUrl;
+            window.location.href = url;
         });
-    }
+    })();
+
+    // Flechas carrusel
+    (function () {
+        const track = document.getElementById("routesTrack");
+        const prev = document.getElementById("routesPrev");
+        const next = document.getElementById("routesNext");
+        if (!track || !prev || !next) return;
+
+        function updateArrows() {
+            prev.disabled = track.scrollLeft <= 0;
+            next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 5;
+        }
+
+        function getScrollAmount() {
+            const card = track.querySelector(".routes-pro-card");
+            const gap = 20;
+            return card ? (card.offsetWidth + gap) : 300;
+        }
+
+        prev.addEventListener("click", () => track.scrollBy({ left: -getScrollAmount(), behavior: "smooth" }));
+        next.addEventListener("click", () => track.scrollBy({ left: getScrollAmount(), behavior: "smooth" }));
+
+        track.addEventListener("scroll", updateArrows, { passive: true });
+        window.addEventListener("load", updateArrows);
+        window.addEventListener("resize", updateArrows);
+        updateArrows();
+    })();
 </script>
