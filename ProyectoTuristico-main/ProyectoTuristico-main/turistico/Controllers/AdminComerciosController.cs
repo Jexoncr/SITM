@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using turistico.Models;
+using System.Globalization;
 
 namespace turistico.Controllers
 {
@@ -11,6 +12,87 @@ namespace turistico.Controllers
     public class AdminComerciosController : Controller
     {
         private readonly ApplicationDbContext db = new ApplicationDbContext();
+
+        // ============================
+        // ✅ FIX: Latitud/Longitud con coma o punto
+        // ============================
+        private decimal? ParseDecimalFlexible(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw))
+                return null;
+
+            raw = raw.Trim();
+
+            decimal value;
+            var styles = NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowThousands;
+
+            // 1) Cultura actual (por si tu app ya está en es-CR)
+            if (decimal.TryParse(raw, styles, CultureInfo.CurrentCulture, out value))
+                return value;
+
+            // 2) es-CR explícito
+            if (decimal.TryParse(raw, styles, new CultureInfo("es-CR"), out value))
+                return value;
+
+            // 3) Invariante (punto decimal)
+            if (decimal.TryParse(raw, styles, CultureInfo.InvariantCulture, out value))
+                return value;
+
+            // 4) Heurística: si viene "1.234,56" => quitar miles y poner punto decimal
+            if (raw.Contains(".") && raw.Contains(","))
+            {
+                var normalized = raw.Replace(".", "").Replace(",", ".");
+                if (decimal.TryParse(normalized, styles, CultureInfo.InvariantCulture, out value))
+                    return value;
+            }
+
+            // 5) Si viene solo con coma "10,469956" => cambiar coma por punto
+            if (raw.Contains(",") && !raw.Contains("."))
+            {
+                var normalized = raw.Replace(",", ".");
+                if (decimal.TryParse(normalized, styles, CultureInfo.InvariantCulture, out value))
+                    return value;
+            }
+
+            return null;
+        }
+
+        private void NormalizarLatLng(ComercioAdminVM vm)
+        {
+            // Ojo: estos nombres deben coincidir con los "name" de tus inputs (normalmente Latitud/Longitud)
+            var latRaw = (Request["Latitud"] ?? "").Trim();
+            var lngRaw = (Request["Longitud"] ?? "").Trim();
+
+            // Si el binder falló, ModelState queda con error y aunque asignés vm.Latitud luego, sigue inválido.
+            // Por eso removemos esos 2 campos y los validamos nosotros.
+            ModelState.Remove("Latitud");
+            ModelState.Remove("Longitud");
+
+            if (!string.IsNullOrWhiteSpace(latRaw))
+            {
+                var parsedLat = ParseDecimalFlexible(latRaw);
+                if (parsedLat.HasValue)
+                    vm.Latitud = parsedLat.Value;
+                else
+                    ModelState.AddModelError("Latitud", "Latitud inválida. Ejemplo válido: 10.469956 (o 10,469956).");
+            }
+
+            if (!string.IsNullOrWhiteSpace(lngRaw))
+            {
+                var parsedLng = ParseDecimalFlexible(lngRaw);
+                if (parsedLng.HasValue)
+                    vm.Longitud = parsedLng.Value;
+                else
+                    ModelState.AddModelError("Longitud", "Longitud inválida. Ejemplo válido: -84.469296 (o -84,469296).");
+            }
+
+            // Mensaje general (para que NO quede el cuadro rojo vacío)
+            if (ModelState.ContainsKey("Latitud") && ModelState["Latitud"].Errors.Any()
+                || ModelState.ContainsKey("Longitud") && ModelState["Longitud"].Errors.Any())
+            {
+                ModelState.AddModelError("", "Revisá Latitud y Longitud (pueden ir con coma o con punto).");
+            }
+        }
 
         // LISTA
         public async Task<ActionResult> Index()
@@ -40,6 +122,9 @@ namespace turistico.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(ComercioAdminVM vm)
         {
+            // ✅ FIX: normalizar antes del IsValid
+            NormalizarLatLng(vm);
+
             if (!ModelState.IsValid)
             {
                 ViewBag.Categorias = new SelectList(
@@ -91,6 +176,7 @@ namespace turistico.Controllers
 
                 await db.SaveChangesAsync();
             }
+
             // 4) Imagen (opcional)
             if (vm.Imagen != null && vm.Imagen.ContentLength > 0)
             {
@@ -129,9 +215,6 @@ namespace turistico.Controllers
                 var physicalPath = System.IO.Path.Combine(folder, fileName);
                 vm.Imagen.SaveAs(physicalPath);
 
-                // ✅ AJUSTA ESTOS 2 NOMBRES a tu proyecto:
-                // - DbSet: db.ImagenesLugar
-                // - Clase: ImagenLugar
                 db.ImagenesLugar.Add(new ImagenLugar
                 {
                     LugarId = lugar.Id,
@@ -140,6 +223,7 @@ namespace turistico.Controllers
 
                 await db.SaveChangesAsync();
             }
+
             return RedirectToAction("Index");
         }
 
@@ -180,7 +264,6 @@ namespace turistico.Controllers
         // EDIT (GET)
         public async Task<ActionResult> Edit(int id)
         {
-
             var comercio = await db.Comercios
                 .Include(c => c.Lugar)
                 .Include(c => c.ComercioRegulado)
@@ -235,6 +318,9 @@ namespace turistico.Controllers
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (comercio == null) return HttpNotFound();
+
+            // ✅ FIX: normalizar antes del IsValid
+            NormalizarLatLng(vm);
 
             if (!ModelState.IsValid)
             {
@@ -341,7 +427,6 @@ namespace turistico.Controllers
         }
 
         // DELETE (POST)
-        // DELETE (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(int id)
@@ -387,7 +472,7 @@ namespace turistico.Controllers
         public string Descripcion { get; set; }
 
         public int CategoriaId { get; set; }
-        public System.Web.HttpPostedFileBase Imagen { get; set; } 
+        public System.Web.HttpPostedFileBase Imagen { get; set; }
         public string Direccion { get; set; }
         public string Telefono { get; set; }
         public string Horario { get; set; }
@@ -401,6 +486,7 @@ namespace turistico.Controllers
         public string NumeroPatente { get; set; }
         public System.DateTime? FechaVencimiento { get; set; }
     }
+
     public class CreateUsuarioVM
     {
         public string Email { get; set; }
@@ -416,12 +502,3 @@ namespace turistico.Controllers
         public List<RoleCheckVM> Roles { get; set; } = new List<RoleCheckVM>();
     }
 }
-
-
-
-
-
-
-
-
-

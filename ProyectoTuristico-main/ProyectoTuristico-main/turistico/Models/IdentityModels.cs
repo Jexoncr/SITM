@@ -82,6 +82,13 @@ namespace turistico.Models
             modelBuilder.Entity<ProductoServicio>().ToTable("ProductosServicio");
 
             modelBuilder.Entity<AccionAuditoria>().ToTable("AccionesAuditoria");
+            modelBuilder.Entity<Lugar>()
+    .Property(x => x.Latitud)
+    .HasPrecision(9, 6);
+
+            modelBuilder.Entity<Lugar>()
+                .Property(x => x.Longitud)
+                .HasPrecision(9, 6);
         }
     }
 }
