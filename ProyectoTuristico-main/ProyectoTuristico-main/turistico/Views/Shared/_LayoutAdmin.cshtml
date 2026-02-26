@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8" />
@@ -20,15 +20,15 @@
         .sidebar {
             width: 260px;
             min-height: 100vh;
-            background: #0f3d2e; /* verde oscuro elegante */
+            background: #0f3d2e;
             color: #fff;
             box-shadow: 6px 0 20px rgba(0,0,0,.12);
         }
 
-            .sidebar h5 {
-                font-weight: 700;
-                letter-spacing: .5px;
-            }
+        .sidebar h5 {
+            font-weight: 700;
+            letter-spacing: .5px;
+        }
 
         .nav-admin a {
             position: relative;
@@ -42,37 +42,32 @@
             transition: all .25s ease;
         }
 
-            .nav-admin a:hover {
-                background: rgba(255,255,255,.08);
-                color: #fff;
-            }
-
-            /* INDICADOR ACTIVO (barra lateral) */
-            .nav-admin a.active {
-                color: #fff;
-                background: rgba(255,255,255,.12);
-            }
-
-                .nav-admin a.active::before {
-                    content: "";
-                    position: absolute;
-                    left: 0;
-                    top: 10%;
-                    height: 80%;
-                    width: 4px;
-                    background: #38d39f;
-                    border-radius: 4px;
-                }
-
-        /* LOGOUT */
-        .logout {
-            color: rgba(255,255,255,.6);
+        .nav-admin a:hover {
+            background: rgba(255,255,255,.08);
+            color: #fff;
         }
 
-            .logout:hover {
-                background: rgba(220,53,69,.15);
-                color: #fff;
-            }
+        .nav-admin a.active {
+            color: #fff;
+            background: rgba(255,255,255,.12);
+        }
+
+        .nav-admin a.active::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 10%;
+            height: 80%;
+            width: 4px;
+            background: #38d39f;
+            border-radius: 4px;
+        }
+
+        /* LOGOUT */
+        .logout-btn {
+            width: 100%;
+            border-radius: 10px;
+        }
 
         /* ================= HEADER ================= */
         .header-admin {
@@ -88,20 +83,23 @@
         }
 
         @@keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 
 <body>
+    @{
+        var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+        var action = ViewContext.RouteData.Values["action"]?.ToString();
+
+        // helper para marcar activo por controller/action
+        Func<string, string, string> isActive = (ctrl, act) =>
+            (string.Equals(controller, ctrl, StringComparison.OrdinalIgnoreCase) &&
+             string.Equals(action, act, StringComparison.OrdinalIgnoreCase))
+            ? "active" : "";
+    }
 
     <div class="d-flex">
 
@@ -111,35 +109,48 @@
                 <i class="bi bi-buildings me-2"></i> Administración
             </h5>
 
-            @{
-                var controller = ViewContext.RouteData.Values["controller"]?.ToString();
-                var action = ViewContext.RouteData.Values["action"]?.ToString();
-            }
-
             <nav class="nav-admin d-flex flex-column gap-2">
 
-                <a href="/Admin/Dashboard" class="@(action=="Dashboard" ? "active" : "")">
+                <a href="@Url.Action("Dashboard","Admin")" class="@isActive("Admin","Dashboard")">
                     <i class="bi bi-speedometer2"></i> Dashboard
                 </a>
 
-                <a href="/Admin/Comercios" class="@(action=="Comercios" ? "active" : "")">
+                <!-- Módulos (según tu proyecto actual, estos existen por lo que pegaste) -->
+                <a href="@Url.Action("Index","AdminComercios")" class="@isActive("AdminComercios","Index")">
                     <i class="bi bi-shop"></i> Comercios
                 </a>
 
-                <a href="/Admin/Eventos" class="@(action=="Eventos" ? "active" : "")">
+                <a href="@Url.Action("Index","AdminEventos")" class="@isActive("AdminEventos","Index")">
                     <i class="bi bi-calendar-event"></i> Eventos
                 </a>
 
-                <a href="/Admin/Resenas" class="@(action=="Resenas" ? "active" : "")">
+                <a href="@Url.Action("Index","AdminResenas")" class="@isActive("AdminResenas","Index")">
                     <i class="bi bi-star-fill"></i> Reseñas
+                </a>
+
+                <a href="@Url.Action("Index","AdminUsuarios")" class="@isActive("AdminUsuarios","Index")">
+                    <i class="bi bi-people"></i> Usuarios
+                </a>
+
+                <a href="@Url.Action("Index","AdminRoles")" class="@isActive("AdminRoles","Index")">
+                    <i class="bi bi-shield-lock"></i> Roles
                 </a>
 
                 <hr class="border-light opacity-25 my-3">
 
-                <a href="/Home/Login" class="logout">
-                    <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+                <!-- Sitio público -->
+                <a href="@Url.Action("Index","Home")">
+                    <i class="bi bi-globe"></i> Ver sitio web
                 </a>
 
+                <!-- LOGOUT REAL (POST) -->
+                @using (Html.BeginForm("Logout", "Account", FormMethod.Post, new { @class = "mt-2" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-outline-light btn-sm logout-btn">
+                        <i class="bi bi-box-arrow-right me-1"></i> Cerrar sesión
+                    </button>
+                }
             </nav>
         </aside>
 
@@ -165,6 +176,5 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @RenderSection("Scripts", required: false)
-
 </body>
 </html>

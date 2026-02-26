@@ -1,42 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
+using turistico.Models;
 
 namespace turistico.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
+        private readonly ApplicationDbContext db = new ApplicationDbContext();
+
         public ActionResult Dashboard()
         {
-            return View();
-        }
+            var vm = new AdminDashboardVM
+            {
+                ComerciosRegistrados = db.Comercios.Count(),
+                ComerciosPendientes = db.Comercios.Count(c => c.Lugar.Estado == "Pendiente"),
+                ComerciosAprobados = db.Comercios.Count(c => c.Lugar.Estado == "Aprobado"),
+                ComerciosRechazados = db.Comercios.Count(c => c.Lugar.Estado == "Rechazado"),
+                UsuariosRegistrados = db.Users.Count()
+            };
 
-        public ActionResult Comercios()
-        {
-            return View();
-        }
-
-        public ActionResult Eventos()
-        {
-            return View();
-        }
-
-        public ActionResult Resenas()
-        {
-            return View();
-        }
-
-        public ActionResult Reservas()
-        {
-            return View();
-        }
-
-        public ActionResult Usuarios()
-        {
-            return View();
+            return View(vm);
         }
     }
-
 }

@@ -1,4 +1,6 @@
-﻿@{
+@model IEnumerable<turistico.Models.Comercio>
+
+@{
     ViewBag.Title = "Gestión de Comercios";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
@@ -14,7 +16,7 @@
         </p>
     </div>
 
-    <a href="#" class="btn btn-success rounded-pill px-4">
+    <a href="@Url.Action("Create", "AdminComercios")" class="btn btn-success rounded-pill px-4">
         <i class="bi bi-plus-lg me-2"></i> Nuevo comercio
     </a>
 </div>
@@ -35,7 +37,7 @@
                         <i class="bi bi-search"></i>
                     </span>
                     <input id="searchInput" type="text" class="form-control"
-                           placeholder="Nombre, propietario, ubicación..." />
+                           placeholder="Nombre, descripción, categoría, dirección..." />
                 </div>
             </div>
 
@@ -48,9 +50,8 @@
                 </select>
             </div>
 
-            <!-- ESTADO (a la derecha de Tipo, sin pegarse al borde) -->
+            <!-- ESTADO -->
             <div class="col-12 col-lg-5">
-
                 <label class="form-label fw-semibold mb-2">
                     Filtrar por estado
                 </label>
@@ -86,8 +87,11 @@
                     <button id="clearFiltersBtn" class="btn btn-sm btn-outline-secondary rounded-pill">
                         <i class="bi bi-x-circle me-1"></i> Limpiar filtros
                     </button>
-                </div>
 
+                    <span class="text-muted ms-auto">
+                        Total (modelo): <strong>@(Model?.Count() ?? 0)</strong>
+                    </span>
+                </div>
             </div>
 
         </div>
@@ -96,7 +100,7 @@
 </div>
 
 <!-- ===================== -->
-<!-- LISTADO -->
+<!-- LISTADO (REAL, CON MODEL) -->
 <!-- ===================== -->
 <div class="card shadow-sm border-0">
     <div class="card-body p-0">
@@ -107,140 +111,124 @@
                     <tr>
                         <th>Comercio</th>
                         <th>Tipo</th>
-                        <th>Propietario</th>
                         <th>Ubicación</th>
                         <th>Estado</th>
+                        <th>Regulado</th>
                         <th class="text-end">Acciones</th>
                     </tr>
                 </thead>
 
                 <tbody id="comercioTbody">
+                    @if (Model == null || !Model.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                No hay comercios para mostrar.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model)
+                        {
+                            var estado = item.Lugar != null ? item.Lugar.Estado : "Pendiente";
+                            var esRegulado = item.ComercioRegulado != null;
 
-                    <!-- Mock: Pendiente -->
-                    <tr data-status="Pendiente" data-type="Restaurante">
-                        <td class="fw-semibold">Restaurante Sabores Típicos</td>
-                        <td>Restaurante</td>
-                        <td>María González</td>
-                        <td>Barrio Central</td>
-                        <td><span class="badge badge-pending">Pendiente</span></td>
-                        <td class="text-end">
-                            <button class="btn btn-sm btn-light action-btn"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#modalDetalle">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                            <button class="btn btn-sm btn-success action-btn">
-                                <i class="bi bi-check-lg"></i>
-                            </button>
-                            <button class="btn btn-sm btn-danger action-btn">
-                                <i class="bi bi-x-lg"></i>
-                            </button>
-                        </td>
-                    </tr>
+                            // Tipo/Categoría para filtro (si no hay, "General")
+                            var tipo = item.Lugar?.Categoria?.Nombre ?? "General";
+                            var direccion = item.Lugar?.Direccion ?? "—";
 
-                    <!-- Mock: Aprobado -->
-                    <tr data-status="Aprobado" data-type="Hospedaje">
-                        <td class="fw-semibold">Hotel Mirador Verde</td>
-                        <td>Hospedaje</td>
-                        <td>Carlos Rodríguez</td>
-                        <td>Zona Turística</td>
-                        <td><span class="badge badge-approved">Aprobado</span></td>
-                        <td class="text-end">
-                            <button class="btn btn-sm btn-light action-btn"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#modalDetalle">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-secondary action-btn" title="Desactivar">
-                                <i class="bi bi-slash-circle"></i>
-                            </button>
-                        </td>
-                    </tr>
+                            <tr data-status="@estado" data-type="@tipo">
+                                <td class="fw-semibold">
+                                    @item.Nombre
+                                    @if (!string.IsNullOrWhiteSpace(item.Descripcion))
+                                    {
+                                        <div class="text-muted small">@item.Descripcion</div>
+                                    }
+                                </td>
 
-                    <!-- Mock: Rechazado -->
-                    <tr data-status="Rechazado" data-type="Cafetería">
-                        <td class="fw-semibold">Café Montaña Verde</td>
-                        <td>Cafetería</td>
-                        <td>Sofía Ramírez</td>
-                        <td>Centro del cantón</td>
-                        <td><span class="badge badge-rejected">Rechazado</span></td>
-                        <td class="text-end">
-                            <button class="btn btn-sm btn-light action-btn"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#modalDetalle">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                        </td>
-                    </tr>
+                                <td>@tipo</td>
+                                <td>@direccion</td>
 
+                                <td>
+                                    @if (estado == "Aprobado")
+                                    {
+                                        <span class="badge badge-approved">Aprobado</span>
+                                    }
+                                    else if (estado == "Rechazado")
+                                    {
+                                        <span class="badge badge-rejected">Rechazado</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-pending">Pendiente</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (esRegulado)
+                                    {
+                                        <span class="badge bg-secondary">Sí</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-dark">No</span>
+                                    }
+                                </td>
+
+                                <td class="text-end">
+                                    <div class="d-inline-flex gap-2 flex-wrap justify-content-end">
+
+                                        <!-- Editar (DEF) -->
+                                        <a class="btn btn-sm btn-light action-btn"
+                                           title="Editar"
+                                           href="@Url.Action("Edit", "AdminComercios", new { id = item.Id })">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+
+                                        <!-- Aprobar (DEF) -->
+                                        @using (Html.BeginForm("Aprobar", "AdminComercios", new { id = item.Id }, FormMethod.Post, new { style = "display:inline" }))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-success action-btn" title="Aprobar">
+                                                <i class="bi bi-check-lg"></i>
+                                            </button>
+                                        }
+
+                                        <!-- Rechazar (DEF) -->
+                                        @using (Html.BeginForm("Rechazar", "AdminComercios", new { id = item.Id }, FormMethod.Post, new { style = "display:inline" }))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-danger action-btn" title="Rechazar">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                        }
+
+                                        <!-- Eliminar (DEF) -->
+                                        @using (Html.BeginForm("Delete", "AdminComercios", new { id = item.Id }, FormMethod.Post,
+                                            new { style = "display:inline", onsubmit = "return confirm('¿Eliminar este comercio?');" }))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary action-btn" title="Eliminar">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
                 </tbody>
             </table>
         </div>
 
-        <!-- Empty state -->
+        <!-- Empty state (cuando filtros dejan 0) -->
         <div id="emptyState" class="p-5 text-center d-none">
             <div class="empty-illustration mx-auto mb-3">
                 <i class="bi bi-shop"></i>
             </div>
             <h5 class="fw-semibold mb-1">Sin resultados</h5>
             <p class="text-muted mb-0">Probá ajustando los filtros o cambiando la búsqueda.</p>
-        </div>
-    </div>
-</div>
-
-<!-- ===================== -->
-<!-- MODAL DETALLE (Mock) -->
-<!-- ===================== -->
-<div class="modal fade" id="modalDetalle" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title">Detalle del Comercio</h5>
-                <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-
-            <div class="modal-body">
-                <div class="row g-3">
-
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">Nombre</label>
-                        <input class="form-control" disabled value="Restaurante Sabores Típicos" />
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">Tipo</label>
-                        <input class="form-control" disabled value="Restaurante" />
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">Propietario</label>
-                        <input class="form-control" disabled value="María González" />
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">Ubicación</label>
-                        <input class="form-control" disabled value="Barrio Central" />
-                    </div>
-
-                    <div class="col-12">
-                        <label class="form-label fw-semibold">Descripción</label>
-                        <textarea class="form-control" rows="3" disabled>Restaurante especializado en comida típica costarricense.</textarea>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-success">
-                    <i class="bi bi-check-lg me-1"></i> Aprobar
-                </button>
-                <button class="btn btn-danger">
-                    <i class="bi bi-x-lg me-1"></i> Rechazar
-                </button>
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-            </div>
-
         </div>
     </div>
 </div>
@@ -260,9 +248,9 @@
         transition: background .25s ease, transform .2s ease;
     }
 
-        .comercio-table tbody tr:hover {
-            background: #f3faf7;
-        }
+    .comercio-table tbody tr:hover {
+        background: #f3faf7;
+    }
 
     .action-btn {
         border-radius: 50%;
@@ -328,89 +316,90 @@
 <!-- JS: FILTROS + BUSCADOR + TIPO -->
 <!-- ===================== -->
 <script>
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    const rows = Array.from(document.querySelectorAll('#comercioTbody tr'));
-    const searchInput = document.getElementById('searchInput');
-    const typeSelect = document.getElementById('typeSelect');
-    const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+    document.addEventListener("DOMContentLoaded", function () {
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const tbody = document.getElementById('comercioTbody');
+        const rows = Array.from(document.querySelectorAll('#comercioTbody tr')).filter(r => r.querySelector('td')); // evita el row "no hay comercios"
+        const searchInput = document.getElementById('searchInput');
+        const typeSelect = document.getElementById('typeSelect');
+        const clearFiltersBtn = document.getElementById('clearFiltersBtn');
 
-    const countVisible = document.getElementById('countVisible');
-    const countTotal = document.getElementById('countTotal');
-    const emptyState = document.getElementById('emptyState');
+        const countVisible = document.getElementById('countVisible');
+        const countTotal = document.getElementById('countTotal');
+        const emptyState = document.getElementById('emptyState');
 
-    let currentStatus = 'all';
+        let currentStatus = 'all';
 
-    // Fill dropdown types from existing rows (mock-friendly)
-    function populateTypes() {
-        const types = new Set(rows.map(r => (r.dataset.type || '').trim()).filter(Boolean));
-        [...types].sort().forEach(t => {
-            const opt = document.createElement('option');
-            opt.value = t;
-            opt.textContent = t;
-            typeSelect.appendChild(opt);
+        function populateTypes() {
+            if (!typeSelect) return;
+            const types = new Set(rows.map(r => (r.dataset.type || '').trim()).filter(Boolean));
+            [...types].sort().forEach(t => {
+                const opt = document.createElement('option');
+                opt.value = t;
+                opt.textContent = t;
+                typeSelect.appendChild(opt);
+            });
+        }
+
+        function normalize(text) {
+            return (text || '')
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '');
+        }
+
+        function applyFilters() {
+            const query = normalize(searchInput ? searchInput.value.trim() : '');
+            const selectedType = typeSelect ? typeSelect.value : 'all';
+
+            let visibleCount = 0;
+
+            rows.forEach(row => {
+                const statusOk = (currentStatus === 'all' || row.dataset.status === currentStatus);
+                const typeOk = (selectedType === 'all' || row.dataset.type === selectedType);
+
+                const rowText = normalize(row.innerText);
+                const searchOk = (!query || rowText.includes(query));
+
+                const show = statusOk && typeOk && searchOk;
+
+                row.style.display = show ? '' : 'none';
+                if (show) visibleCount++;
+            });
+
+            if (countTotal) countTotal.textContent = rows.length.toString();
+            if (countVisible) countVisible.textContent = visibleCount.toString();
+
+            if (emptyState) emptyState.classList.toggle('d-none', visibleCount !== 0);
+        }
+
+        // Status buttons
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                currentStatus = btn.dataset.status || 'all';
+                applyFilters();
+            });
         });
-    }
 
-    function normalize(text) {
-        return (text || '')
-            .toLowerCase()
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '');
-    }
+        if (searchInput) searchInput.addEventListener('input', applyFilters);
+        if (typeSelect) typeSelect.addEventListener('change', applyFilters);
 
-    function applyFilters() {
-        const query = normalize(searchInput.value.trim());
-        const selectedType = typeSelect.value;
+        if (clearFiltersBtn) {
+            clearFiltersBtn.addEventListener('click', () => {
+                currentStatus = 'all';
+                filterButtons.forEach(b => b.classList.remove('active'));
+                document.querySelector('.filter-btn[data-status="all"]')?.classList.add('active');
 
-        let visibleCount = 0;
+                if (searchInput) searchInput.value = '';
+                if (typeSelect) typeSelect.value = 'all';
+                applyFilters();
+            });
+        }
 
-        rows.forEach(row => {
-            const statusOk = (currentStatus === 'all' || row.dataset.status === currentStatus);
-            const typeOk = (selectedType === 'all' || row.dataset.type === selectedType);
-
-            const rowText = normalize(row.innerText);
-            const searchOk = (!query || rowText.includes(query));
-
-            const show = statusOk && typeOk && searchOk;
-
-            row.style.display = show ? '' : 'none';
-            if (show) visibleCount++;
-        });
-
-        // Counts + empty state
-        countTotal.textContent = rows.length.toString();
-        countVisible.textContent = visibleCount.toString();
-
-        emptyState.classList.toggle('d-none', visibleCount !== 0);
-    }
-
-    // Status buttons
-    filterButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            filterButtons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            currentStatus = btn.dataset.status || 'all';
-            applyFilters();
-        });
-    });
-
-    // Search + type
-    searchInput.addEventListener('input', applyFilters);
-    typeSelect.addEventListener('change', applyFilters);
-
-    // Clear
-    clearFiltersBtn.addEventListener('click', () => {
-        currentStatus = 'all';
-        filterButtons.forEach(b => b.classList.remove('active'));
-        document.querySelector('.filter-btn[data-status="all"]')?.classList.add('active');
-
-        searchInput.value = '';
-        typeSelect.value = 'all';
+        populateTypes();
         applyFilters();
     });
-
-    // Init
-    populateTypes();
-    applyFilters();
 </script>

@@ -663,10 +663,19 @@
             <button type="submit"><i class="bi bi-search me-1"></i> Buscar</button>
         </form>
 
-        <div class="search-help">
+               <div class="search-help">
             Tip: esta búsqueda te lleva a <strong>Comercios</strong>. Para ver agenda completa, usá <strong>Eventos</strong>.
         </div>
 
+        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+        {
+            <div style="margin-top:25px;">
+                <a href="@Url.Action("Dashboard","Admin")"
+                   class="btn btn-success btn-lg shadow">
+                    Ir al Panel Administrativo
+                </a>
+            </div>
+        }
     </div>
 </section>
 

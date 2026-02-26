@@ -1,10 +1,10 @@
-﻿@{
+@model turistico.Models.AdminDashboardVM
+@{
     ViewBag.Title = "Dashboard Administrativo";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
 <style>
-    /* ===== Dashboard styles (solo para esta vista) ===== */
     .dash-title {
         display: flex;
         align-items: center;
@@ -26,20 +26,19 @@
         overflow: hidden;
         transition: transform .25s ease, box-shadow .25s ease;
         background: #fff;
-        position: relative;
     }
 
-        .kpi-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 14px 35px rgba(0,0,0,.10);
-        }
+    .kpi-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 14px 35px rgba(0,0,0,.10);
+    }
 
     .kpi-top {
         display: flex;
         align-items: start;
         justify-content: space-between;
         gap: 1rem;
-        margin-bottom: .75rem;
+        margin-bottom: .5rem;
     }
 
     .kpi-icon {
@@ -54,49 +53,8 @@
         flex: 0 0 auto;
     }
 
-    .kpi-label {
-        color: #6c757d;
-        font-size: .92rem;
-        margin-bottom: .25rem;
-    }
-
-    .kpi-value {
-        font-weight: 800;
-        font-size: 1.7rem;
-        margin: 0;
-        line-height: 1.1;
-        color: #0f3d2e;
-    }
-
-    .kpi-meta {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: .75rem;
-        margin-top: .25rem;
-        color: #6c757d;
-        font-size: .9rem;
-    }
-
-    .kpi-chip {
-        border-radius: 999px;
-        padding: .25rem .6rem;
-        font-weight: 600;
-        font-size: .8rem;
-        background: rgba(13,110,253,.10);
-        color: #0d6efd;
-        white-space: nowrap;
-    }
-
-        .kpi-chip.ok {
-            background: rgba(25,135,84,.12);
-            color: #198754;
-        }
-
-        .kpi-chip.warn {
-            background: rgba(255,193,7,.18);
-            color: #946200;
-        }
+    .kpi-label { color: #6c757d; font-size: .92rem; margin-bottom: .25rem; }
+    .kpi-value { font-weight: 800; font-size: 1.7rem; margin: 0; line-height: 1.1; color: #0f3d2e; }
 
     .panel-card {
         border: 0;
@@ -122,9 +80,7 @@
         font-size: 1.05rem;
     }
 
-    .panel-body {
-        padding: 18px;
-    }
+    .panel-body { padding: 18px; }
 
     .quick-actions .btn {
         border-radius: 12px;
@@ -132,23 +88,7 @@
         font-weight: 700;
     }
 
-    .soft {
-        background: rgba(56, 211, 159, 0.10);
-        border: 1px solid rgba(56, 211, 159, 0.20);
-        color: #0f3d2e;
-    }
-
-    .table thead th {
-        font-size: .85rem;
-        color: #6c757d;
-        font-weight: 700;
-        border-bottom: 1px solid rgba(0,0,0,.06) !important;
-    }
-
-    .table tbody td {
-        border-top: 1px solid rgba(0,0,0,.04) !important;
-        vertical-align: middle;
-    }
+    .mini-note { color: #6c757d; font-size: .9rem; }
 
     .status-pill {
         padding: .3rem .6rem;
@@ -161,36 +101,12 @@
         white-space: nowrap;
     }
 
-        .status-pill.aprobado {
-            background: rgba(25,135,84,.12);
-            color: #198754;
-        }
-
-        .status-pill.pendiente {
-            background: rgba(255,193,7,.18);
-            color: #946200;
-        }
-
-        .status-pill.rechazado {
-            background: rgba(220,53,69,.12);
-            color: #dc3545;
-        }
-
-    .mini-note {
-        color: #6c757d;
-        font-size: .9rem;
-    }
-
-    /* mini sparkline canvas */
-    .spark {
-        height: 40px !important;
-    }
+    .status-pill.aprobado { background: rgba(25,135,84,.12); color: #198754; }
+    .status-pill.pendiente { background: rgba(255,193,7,.18); color: #946200; }
+    .status-pill.rechazado { background: rgba(220,53,69,.12); color: #dc3545; }
 
     @@media (max-width: 991px) {
-        .dash-title {
-            flex-direction: column;
-            align-items: flex-start;
-        }
+        .dash-title { flex-direction: column; align-items: flex-start; }
     }
 </style>
 
@@ -212,26 +128,19 @@
     </div>
 </div>
 
-<!-- KPI CARDS -->
+<!-- KPI CARDS (REALES DEL MODEL - como DEF) -->
 <div class="row g-4 mb-4">
-
     <div class="col-12 col-md-6 col-xl-3">
         <div class="card kpi-card">
             <div class="card-body p-4">
                 <div class="kpi-top">
                     <div>
                         <div class="kpi-label">Comercios registrados</div>
-                        <p class="kpi-value" id="kpiComercios">24</p>
+                        <p class="kpi-value">@Model.ComerciosRegistrados</p>
                     </div>
                     <div class="kpi-icon"><i class="bi bi-shop"></i></div>
                 </div>
-
-                <div class="kpi-meta">
-                    <span class="mini-note">+2 esta semana</span>
-                    <span class="kpi-chip ok"><i class="bi bi-arrow-up"></i> 8%</span>
-                </div>
-
-                <canvas id="sparkComercios" class="spark mt-3"></canvas>
+                <div class="mini-note">Total en el sistema</div>
             </div>
         </div>
     </div>
@@ -242,19 +151,13 @@
                 <div class="kpi-top">
                     <div>
                         <div class="kpi-label">Comercios pendientes</div>
-                        <p class="kpi-value text-warning mb-0" id="kpiPendientes">6</p>
+                        <p class="kpi-value text-warning mb-0">@Model.ComerciosPendientes</p>
                     </div>
                     <div class="kpi-icon" style="background: rgba(255,193,7,.18); color:#946200;">
                         <i class="bi bi-hourglass-split"></i>
                     </div>
                 </div>
-
-                <div class="kpi-meta">
-                    <span class="mini-note">Requieren revisión</span>
-                    <span class="kpi-chip warn"><i class="bi bi-exclamation-triangle"></i> Prioridad</span>
-                </div>
-
-                <canvas id="sparkPendientes" class="spark mt-3"></canvas>
+                <div class="mini-note">Requieren revisión</div>
             </div>
         </div>
     </div>
@@ -264,20 +167,14 @@
             <div class="card-body p-4">
                 <div class="kpi-top">
                     <div>
-                        <div class="kpi-label">Eventos activos</div>
-                        <p class="kpi-value text-primary mb-0" id="kpiEventos">12</p>
+                        <div class="kpi-label">Comercios aprobados</div>
+                        <p class="kpi-value text-success mb-0">@Model.ComerciosAprobados</p>
                     </div>
-                    <div class="kpi-icon" style="background: rgba(13,110,253,.12); color:#0d6efd;">
-                        <i class="bi bi-calendar-event"></i>
+                    <div class="kpi-icon" style="background: rgba(25,135,84,.12); color:#198754;">
+                        <i class="bi bi-check2-circle"></i>
                     </div>
                 </div>
-
-                <div class="kpi-meta">
-                    <span class="mini-note">Próx. 7 días</span>
-                    <span class="kpi-chip"><i class="bi bi-bar-chart"></i> Tendencia</span>
-                </div>
-
-                <canvas id="sparkEventos" class="spark mt-3"></canvas>
+                <div class="mini-note">En producción</div>
             </div>
         </div>
     </div>
@@ -288,51 +185,21 @@
                 <div class="kpi-top">
                     <div>
                         <div class="kpi-label">Usuarios registrados</div>
-                        <p class="kpi-value text-dark mb-0" id="kpiUsuarios">58</p>
+                        <p class="kpi-value text-dark mb-0">@Model.UsuariosRegistrados</p>
                     </div>
                     <div class="kpi-icon" style="background: rgba(33,37,41,.08); color:#212529;">
                         <i class="bi bi-people"></i>
                     </div>
                 </div>
-
-                <div class="kpi-meta">
-                    <span class="mini-note">Crecimiento mensual</span>
-                    <span class="kpi-chip ok"><i class="bi bi-graph-up"></i> +12</span>
-                </div>
-
-                <canvas id="sparkUsuarios" class="spark mt-3"></canvas>
+                <div class="mini-note">Total de usuarios</div>
             </div>
         </div>
     </div>
-
 </div>
 
 <div class="row g-4">
 
-    <!-- CHART EVENTOS POR MES -->
-    <div class="col-12 col-xl-8">
-        <div class="panel-card">
-            <div class="panel-head">
-                <h5 class="panel-title"><i class="bi bi-bar-chart-line me-2"></i>Eventos por mes</h5>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-sm soft" id="btnDemo">
-                        <i class="bi bi-magic me-1"></i> Demo data
-                    </button>
-                    <button class="btn btn-sm btn-outline-secondary" id="btnRefresh">
-                        <i class="bi bi-arrow-clockwise me-1"></i> Actualizar
-                    </button>
-                </div>
-            </div>
-            <div class="panel-body">
-                <canvas id="eventosChart" height="120"></canvas>
-                <div class="mini-note mt-2">
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- CHART ESTADO COMERCIOS -->
+    <!-- ESTADO DE COMERCIOS (SIN CHART.JS, SOLO RESUMEN REAL) -->
     <div class="col-12 col-xl-4">
         <div class="panel-card">
             <div class="panel-head">
@@ -342,11 +209,17 @@
                 </a>
             </div>
             <div class="panel-body">
-                <canvas id="comerciosChart" height="180"></canvas>
-                <div class="d-flex justify-content-between mt-3 mini-note">
+                <div class="d-flex justify-content-between mini-note mb-2">
                     <span><i class="bi bi-check-circle text-success me-1"></i> Aprobados</span>
+                    <strong>@Model.ComerciosAprobados</strong>
+                </div>
+                <div class="d-flex justify-content-between mini-note mb-2">
                     <span><i class="bi bi-hourglass text-warning me-1"></i> Pendientes</span>
+                    <strong>@Model.ComerciosPendientes</strong>
+                </div>
+                <div class="d-flex justify-content-between mini-note">
                     <span><i class="bi bi-x-circle text-danger me-1"></i> Rechazados</span>
+                    <strong>@Model.ComerciosRechazados</strong>
                 </div>
             </div>
         </div>
@@ -374,18 +247,18 @@
                 <hr class="my-3">
 
                 <div class="mini-note">
-                    Tip:
+                    Tip: revisa primero los comercios <strong>pendientes</strong> para mantener el sistema al día.
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ACTIVIDAD RECIENTE -->
+    <!-- ACTIVIDAD RECIENTE (DEMO VISUAL, NO ROMPE NADA) -->
     <div class="col-12 col-xl-8">
         <div class="panel-card">
             <div class="panel-head">
                 <h5 class="panel-title"><i class="bi bi-clock-history me-2"></i>Actividad reciente</h5>
-                <span class="mini-note">Últimos movimientos del sistema (demo)</span>
+                <span class="mini-note">Demo</span>
             </div>
             <div class="panel-body">
                 <div class="table-responsive">
@@ -398,247 +271,33 @@
                                 <th>Estado</th>
                             </tr>
                         </thead>
-                        <tbody id="tablaActividad">
+                        <tbody>
                             <tr>
                                 <td>Hoy</td>
                                 <td><i class="bi bi-shop me-1"></i> Comercio</td>
-                                <td>“Café Bosque Verde” enviado a revisión</td>
+                                <td>Nuevo comercio enviado a revisión</td>
                                 <td><span class="status-pill pendiente"><i class="bi bi-hourglass"></i> Pendiente</span></td>
                             </tr>
                             <tr>
                                 <td>Ayer</td>
                                 <td><i class="bi bi-calendar-event me-1"></i> Evento</td>
-                                <td>“Feria Artesanal” publicado</td>
+                                <td>Evento publicado</td>
                                 <td><span class="status-pill aprobado"><i class="bi bi-check2-circle"></i> Activo</span></td>
                             </tr>
                             <tr>
                                 <td>Hace 2 días</td>
                                 <td><i class="bi bi-star me-1"></i> Reseña</td>
-                                <td>Reseña reportada para moderación</td>
+                                <td>Reseña reportada</td>
                                 <td><span class="status-pill rechazado"><i class="bi bi-flag"></i> Revisar</span></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="mini-note mt-3">
-                    Esto lo podemos alimentar desde BD luego (últimos 10 registros de auditoría).
+                    Luego lo conectamos a auditoría si existe tabla/log.
                 </div>
             </div>
         </div>
     </div>
 
 </div>
-
-@section Scripts {
-    <script>
-        // ==========================
-        // Helpers (Chart.js)
-        // ==========================
-        const gridColor = "rgba(0,0,0,.06)";
-        const tickColor = "rgba(0,0,0,.55)";
-
-        function makeSparkline(canvasId, data, color = "#0f3d2e") {
-            const el = document.getElementById(canvasId);
-            if (!el) return null;
-
-            return new Chart(el, {
-                type: "line",
-                data: {
-                    labels: data.map((_, i) => i + 1),
-                    datasets: [{
-                        data,
-                        borderColor: color,
-                        tension: 0.35,
-                        borderWidth: 2,
-                        pointRadius: 0,
-                        fill: true,
-                        backgroundColor: "rgba(56, 211, 159, 0.12)"
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false }, tooltip: { enabled: false } },
-                    scales: {
-                        x: { display: false },
-                        y: { display: false }
-                    }
-                }
-            });
-        }
-
-        let eventosChart = null;
-        let comerciosChart = null;
-
-        function buildEventosChart(labels, values) {
-            const canvas = document.getElementById("eventosChart");
-            if (!canvas) return;
-
-            if (eventosChart) eventosChart.destroy();
-
-            eventosChart = new Chart(canvas, {
-                type: "bar",
-                data: {
-                    labels,
-                    datasets: [{
-                        label: "Eventos",
-                        data: values,
-                        backgroundColor: "rgba(56, 211, 159, 0.55)",
-                        borderColor: "rgba(15, 61, 46, 0.9)",
-                        borderWidth: 1,
-                        borderRadius: 10
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: { label: (ctx) => ` ${ctx.parsed.y} eventos` }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: { display: false },
-                            ticks: { color: tickColor }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: gridColor },
-                            ticks: { color: tickColor }
-                        }
-                    }
-                }
-            });
-        }
-
-        function buildComerciosChart(data) {
-            const canvas = document.getElementById("comerciosChart");
-            if (!canvas) return;
-
-            if (comerciosChart) comerciosChart.destroy();
-
-            comerciosChart = new Chart(canvas, {
-                type: "doughnut",
-                data: {
-                    labels: ["Aprobados", "Pendientes", "Rechazados"],
-                    datasets: [{
-                        data,
-                        backgroundColor: ["rgba(25,135,84,.75)", "rgba(255,193,7,.80)", "rgba(220,53,69,.75)"],
-                        borderWidth: 0,
-                        hoverOffset: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { position: "bottom", labels: { color: tickColor } }
-                    },
-                    cutout: "68%"
-                }
-            });
-        }
-
-        // ==========================
-        // "API" (modo demo) + plantilla para API real
-        // ==========================
-        async function getDashboardData() {
-            // . MODO DEMO (sin backend)
-            // Si querés hacerlo real, creamos un endpoint tipo: /api/admin/stats y aquí hacemos fetch().
-            return {
-                kpis: {
-                    comercios: 24,
-                    pendientes: 6,
-                    eventos: 12,
-                    usuarios: 58
-                },
-                eventosPorMes: {
-                    labels: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago"],
-                    values: [2, 4, 3, 5, 1, 6, 4, 7]
-                },
-                estadoComercios: [18, 6, 3],
-                actividad: [
-                    { fecha: "Hoy", tipo: "Comercio", detalle: "“Café Bosque Verde” enviado a revisión", estado: "pendiente" },
-                    { fecha: "Ayer", tipo: "Evento", detalle: "“Feria Artesanal” publicado", estado: "aprobado" },
-                    { fecha: "Hace 2 días", tipo: "Reseña", detalle: "Reseña reportada para moderación", estado: "rechazado" }
-                ]
-            };
-
-            // . PLANTILLA PARA API REAL (cuando la tengas)
-            // const resp = await fetch("/api/admin/stats");
-            // if(!resp.ok) throw new Error("No se pudo cargar stats");
-            // return await resp.json();
-        }
-
-        function renderActividad(rows) {
-            const tb = document.getElementById("tablaActividad");
-            if (!tb) return;
-
-            const iconByTipo = {
-                "Comercio": "bi-shop",
-                "Evento": "bi-calendar-event",
-                "Reseña": "bi-star"
-            };
-
-            const labelByEstado = {
-                "aprobado": { cls: "aprobado", txt: "Activo", ic: "bi-check2-circle" },
-                "pendiente": { cls: "pendiente", txt: "Pendiente", ic: "bi-hourglass" },
-                "rechazado": { cls: "rechazado", txt: "Revisar", ic: "bi-flag" }
-            };
-
-            tb.innerHTML = rows.map(r => {
-                const ic = iconByTipo[r.tipo] || "bi-info-circle";
-                const st = labelByEstado[r.estado] || labelByEstado["pendiente"];
-                return `
-                            <tr>
-                                <td>${r.fecha}</td>
-                                <td><i class="bi ${ic} me-1"></i> ${r.tipo}</td>
-                                <td>${r.detalle}</td>
-                                <td><span class="status-pill ${st.cls}"><i class="bi ${st.ic}"></i> ${st.txt}</span></td>
-                            </tr>
-                        `;
-            }).join("");
-        }
-
-        async function loadDashboard() {
-            const data = await getDashboardData();
-
-            // KPIs
-            document.getElementById("kpiComercios").textContent = data.kpis.comercios;
-            document.getElementById("kpiPendientes").textContent = data.kpis.pendientes;
-            document.getElementById("kpiEventos").textContent = data.kpis.eventos;
-            document.getElementById("kpiUsuarios").textContent = data.kpis.usuarios;
-
-            // Charts
-            buildEventosChart(data.eventosPorMes.labels, data.eventosPorMes.values);
-            buildComerciosChart(data.estadoComercios);
-
-            // Activity
-            renderActividad(data.actividad);
-
-            // Sparklines (mini charts)
-            makeSparkline("sparkComercios", [10, 12, 11, 14, 13, 16, 18, 19]);
-            makeSparkline("sparkPendientes", [4, 6, 5, 7, 6, 6, 5, 6], "#946200");
-            makeSparkline("sparkEventos", [1, 2, 3, 3, 4, 6, 5, 7], "#0d6efd");
-            makeSparkline("sparkUsuarios", [35, 38, 40, 44, 46, 50, 54, 58], "#212529");
-        }
-
-        document.addEventListener("DOMContentLoaded", () => {
-            loadDashboard().catch(console.error);
-
-            // Botones (demo)
-            const btnRefresh = document.getElementById("btnRefresh");
-            if (btnRefresh) {
-                btnRefresh.addEventListener("click", () => loadDashboard().catch(console.error));
-            }
-
-            const btnDemo = document.getElementById("btnDemo");
-            if (btnDemo) {
-                btnDemo.addEventListener("click", () => {
-                    buildEventosChart(["Sep", "Oct", "Nov", "Dic"], [5, 3, 8, 6]);
-                    buildComerciosChart([22, 4, 1]);
-                });
-            }
-        });
-    </script>
-}
