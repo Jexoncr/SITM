@@ -215,6 +215,27 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\img\AmorArenal.jpeg" />
+    <Content Include="Content\img\ArenalLodge.jpeg" />
+    <Content Include="Content\img\ArenalParaiso.jpeg" />
+    <Content Include="Content\img\BonitaSteakhouse.jpeg" />
+    <Content Include="Content\img\EcotermalesFortuna.jpeg" />
+    <Content Include="Content\img\HotelLindaVista.jpeg" />
+    <Content Include="Content\img\Italianisimo.jpeg" />
+    <Content Include="Content\img\Kenko.jpeg" />
+    <Content Include="Content\img\KioroSpa.jpeg" />
+    <Content Include="Content\img\LosLagos.jpeg" />
+    <Content Include="Content\img\magicalmountain.jpeg" />
+    <Content Include="Content\img\MontanaFuego.jpeg" />
+    <Content Include="Content\img\NayaraGardens.jpeg" />
+    <Content Include="Content\img\NayaraSprings.jpeg" />
+    <Content Include="Content\img\PraderaArenal.jpeg" />
+    <Content Include="Content\img\royaleCorin.jpeg" />
+    <Content Include="Content\img\SilencioDelCampo.jpeg" />
+    <Content Include="Content\img\Tabacon.jpeg" />
+    <Content Include="Content\img\TermalesArenal.jpeg" />
+    <Content Include="Content\img\Travesia.jpeg" />
+    <Content Include="Content\img\VolcanoLoadge.jpeg" />
     <Content Include="Content\img\comercios\763eb9ab.jpg" />
     <Content Include="Content\img\comercios\caption.jpg" />
     <Content Include="Content\img\comercios\caption1.jpg" />
@@ -289,7 +310,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Modelos\" />
+    <Folder Include="Content\NewFolder1\" />
     <Folder Include="Views\ReservacionViewModel\" />
   </ItemGroup>
   <ItemGroup>
