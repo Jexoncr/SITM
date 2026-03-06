@@ -277,7 +277,6 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Home\home.cshtml" />
     <Content Include="Views\Home\Eventos.cshtml" />
     <Content Include="Views\Home\Comercios.cshtml" />
     <Content Include="Views\Home\Resenas.cshtml" />

@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using turistico.Models;
 using System.Data.Entity;
 using System.Linq;
+using Microsoft.AspNet.Identity;
 
 
 namespace turistico.Controllers
@@ -13,7 +14,18 @@ namespace turistico.Controllers
     public class HomeController : Controller
     {
         // Páginas públicas
-        public ActionResult Index() => View();
+        public async Task<ActionResult> Index()
+        {
+            var userManager = HttpContext.GetOwinContext()
+                .GetUserManager<UserManager<ApplicationUser>>();
+
+            var userId = User.Identity.GetUserId();
+            var user = await userManager.FindByIdAsync(userId);
+
+            ViewBag.UserName = user.Nombre;
+
+            return View();
+        }
 
         public ActionResult About()
         {
