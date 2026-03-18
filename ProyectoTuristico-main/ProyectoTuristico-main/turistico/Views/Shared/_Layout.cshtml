@@ -458,22 +458,26 @@
 
                 <!-- Footer bottom -->
                 <div class="footer-bottom">
-                    <div class="row align-items-center g-3">
+                    <div class="row align-items-center">
 
+                        <!-- IZQUIERDA -->
                         <div class="col-12 col-md-7">
-                            <div class="d-flex flex-column flex-md-row gap-2 gap-md-3 align-items-md-center">
+                            <div class="d-flex flex-column flex-md-row gap-2 align-items-md-center">
                                 <span>© @DateTime.Now.Year Municipalidad — SITM</span>
+
                                 <span class="d-none d-md-inline text-white-50">•</span>
+
                                 <div class="legal-links d-flex flex-wrap gap-3">
-                                    <a href="@Url.Action("Privacidad","Home")">Política de privacidad</a>
-                                    <a href="@Url.Action("Terminos","Home")">Términos de uso</a>
-                                    <a href="@Url.Action("Legal","Home")">Aviso legal</a>
+                                    <a href="#">Política de privacidad</a>
+                                    <a href="#">Términos de uso</a>
+                                    <a href="#">Aviso legal</a>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col-12 col-md-5">
-                            <div class="social">
+                        <!-- DERECHA (REDES BIEN ALINEADAS) -->
+                        <div class="col-12 col-md-5 text-md-end mt-3 mt-md-0">
+                            <div class="social d-inline-flex">
                                 <a href="#" aria-label="Sitio institucional"><i class="bi bi-globe2"></i></a>
                                 <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
                                 <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
