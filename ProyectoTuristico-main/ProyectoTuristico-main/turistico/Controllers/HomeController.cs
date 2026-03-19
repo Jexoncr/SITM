@@ -1,20 +1,22 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using turistico.Models;
-using System.Data.Entity;
-using System.Linq;
-using System.Collections.Generic;
-
 
 namespace turistico.Controllers
 {
     public class HomeController : Controller
     {
-        // Páginas públicas
-        public ActionResult Index() => View();
+       
+        public ActionResult Index()
+        {
+            return View();
+        }
 
         public ActionResult About()
         {
@@ -28,7 +30,11 @@ namespace turistico.Controllers
             return View();
         }
 
-        public ActionResult Eventos() => View();
+        public ActionResult Eventos()
+        {
+            return RedirectToAction("Index", "Eventos");
+        }
+
         public async Task<ActionResult> Comercios()
         {
             using (var db = new ApplicationDbContext())
@@ -37,14 +43,13 @@ namespace turistico.Controllers
                     .Include(c => c.Lugar)
                     .Include(c => c.Lugar.Categoria)
                     .Include(c => c.Lugar.ImagenesLugar)
-                    .Where(c => c.Lugar.Estado == "Aprobado")
                     .OrderBy(c => c.Nombre)
                     .Select(c => new ComercioDTO
                     {
                         Id = c.Id,
                         Nombre = c.Nombre,
                         Descripcion = c.Descripcion,
-                        LinkWhatsApp = c.LinkWhatsApp,  // ← ESTA ES LA LÍNEA QUE FALTABA
+                        LinkWhatsApp = c.LinkWhatsApp,
                         Categoria = c.Lugar.Categoria.Nombre,
                         Direccion = c.Lugar.Direccion,
                         Ubicacion = c.Lugar.Direccion,
@@ -56,21 +61,24 @@ namespace turistico.Controllers
                             .FirstOrDefault()
                     })
                     .ToListAsync();
+
                 return View(model);
             }
         }
-        public ActionResult Resenas() => View();
+
+        public ActionResult Resenas()
+        {
+            return RedirectToAction("Index", "Resenas");
+        }
 
         public async Task<ActionResult> Mapa()
         {
             using (var db = new ApplicationDbContext())
             {
-                // 1) ids de Lugares que son Comercios (para habilitar "Ver detalle")
                 var comercioLugarIds = await db.Comercios
                     .Select(c => c.LugarId)
                     .ToListAsync();
 
-                // 2) Lugares aprobados/activos para el mapa
                 var lugaresEnt = await db.Lugares
                     .Include(l => l.Categoria)
                     .Include(l => l.ImagenesLugar)
@@ -91,14 +99,10 @@ namespace turistico.Controllers
                     EsComercio = comercioLugarIds.Contains(l.Id)
                 }).ToList();
 
-                // 3) Categorías desde BD (para generar filtros dinámicos)
                 var categorias = await db.Categorias
                     .OrderBy(c => c.Nombre)
                     .Select(c => c.Nombre)
                     .ToListAsync();
-
-                // Si querés que SOLO salgan las categorías que tienen lugares:
-                // categorias = lugares.Select(x => x.Categoria).Distinct().OrderBy(x => x).ToList();
 
                 var model = new MapaTuristicoVM
                 {
@@ -110,15 +114,14 @@ namespace turistico.Controllers
             }
         }
 
-        public ActionResult Recuperar() => View();
+        public ActionResult Recuperar()
+        {
+            return View();
+        }
 
-        
-       
-       
-
-       
-
-        // LOGIN (GET)
+        // =========================
+        // Login / Register / Logout
+        // =========================
         [AllowAnonymous]
         [HttpGet]
         public ActionResult Login(string returnUrl)
@@ -126,7 +129,6 @@ namespace turistico.Controllers
             return RedirectToAction("Login", "Account", new { returnUrl });
         }
 
-        // LOGIN (POST) 
         [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -135,7 +137,6 @@ namespace turistico.Controllers
             return RedirectToAction("Login", "Account", new { returnUrl });
         }
 
-        // REGISTER (GET) 
         [AllowAnonymous]
         [HttpGet]
         public ActionResult Register()
@@ -143,7 +144,6 @@ namespace turistico.Controllers
             return RedirectToAction("Register", "Account");
         }
 
-        // REGISTER (POST) -> redirige a Account/Register
         [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -152,7 +152,6 @@ namespace turistico.Controllers
             return RedirectToAction("Register", "Account");
         }
 
-        // LOGOUT (POST) -> redirige a Account/Logout
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -161,10 +160,9 @@ namespace turistico.Controllers
             return RedirectToAction("Logout", "Account");
         }
 
-        
-        //Páginas privadas
-        
-
+        // =========================
+        // Páginas privadas
+        // =========================
         [Authorize]
         [HttpGet]
         public async Task<ActionResult> Perfil()
@@ -189,7 +187,6 @@ namespace turistico.Controllers
             var userId = User.Identity.GetUserId();
             var user = await userManager.FindByIdAsync(userId);
 
-            // Actualizar campos permitidos
             user.Nombre = model.Nombre;
             user.Apellido = model.Apellido;
             user.Canton = model.Canton;
@@ -210,8 +207,12 @@ namespace turistico.Controllers
         }
 
         [Authorize]
-        public ActionResult MisReservas() => View();
+        public ActionResult MisReservas()
+        {
+            return RedirectToAction("Index", "Reservas");
+        }
     }
+
     public class MapaVM
     {
         public List<Categoria> Categorias { get; set; }
@@ -220,12 +221,12 @@ namespace turistico.Controllers
 
     public class MapaItemVM
     {
-        public string Tipo { get; set; }      // "Comercio" o "Lugar"
-        public int Id { get; set; }           // Id del comercio (si aplica) o del lugar
-        public int LugarId { get; set; }      // Lugar.Id
+        public string Tipo { get; set; }
+        public int Id { get; set; }
+        public int LugarId { get; set; }
         public string Nombre { get; set; }
         public string Descripcion { get; set; }
-        public string Categoria { get; set; } // Nombre de la categoría
+        public string Categoria { get; set; }
         public double? Latitud { get; set; }
         public double? Longitud { get; set; }
     }

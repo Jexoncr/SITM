@@ -6,17 +6,45 @@
 }
 
 <div class="container mt-4">
-    <h2 class="fw-bold text-success mb-5">Comercios y Servicios Registrados</h2>
+    <h2 class="fw-bold text-success mb-3">Comercios y Servicios Registrados</h2>
+    <p class="text-muted mb-5 fs-5">
+        Listado de comercios locales registrados y regulados por la municipalidad.
+    </p>
 
     @if (Model != null && Model.Any())
     {
         <div class="row g-4 row-cols-1 row-cols-md-2 row-cols-lg-3">
             @foreach (var comercio in Model)
             {
+                var imagen = comercio.ImagenUrl;
+
+                if (string.IsNullOrWhiteSpace(imagen))
+                {
+                    imagen = Url.Content("~/Content/img/default.jpg");
+                }
+                else if (
+                    imagen.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+                    imagen.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+                )
+                {
+                    // ya es URL absoluta, se deja igual
+                }
+                else if (imagen.StartsWith("~/"))
+                {
+                    imagen = Url.Content(imagen);
+                }
+                else if (imagen.StartsWith("/"))
+                {
+                    imagen = Url.Content("~" + imagen);
+                }
+                else
+                {
+                    imagen = Url.Content("~/" + imagen.TrimStart('/'));
+                }
+
                 <div class="col">
-                    <div class="card h-100 shadow-sm border-0">
-                        @* Se usa Url.Content para que ASP.NET resuelva la ruta correctamente *@
-                        <img src="@Url.Content("~" + comercio.ImagenUrl)"
+                    <div class="card h-100 shadow-sm border-0 rounded-4">
+                        <img src="@imagen"
                              class="card-img-top"
                              style="height:200px; object-fit:cover;"
                              alt="@comercio.Nombre"
@@ -24,30 +52,54 @@
 
                         <div class="card-body d-flex flex-column">
                             <h4 class="fw-bold text-success">@comercio.Nombre</h4>
-                            <p class="text-muted small">@comercio.Descripcion</p>
+
+                            <p class="text-muted small mb-2">
+                                @(string.IsNullOrWhiteSpace(comercio.Descripcion)
+                                    ? "Comercio local registrado en el sistema."
+                                    : comercio.Descripcion)
+                            </p>
+
+                            <p class="text-success small fw-semibold mb-3">
+                                Aprobado por la municipalidad.
+                            </p>
 
                             <ul class="list-unstyled mt-auto mb-4 small">
-                                <li><strong>Categoría:</strong> @comercio.Categoria</li>
-                             
-                                        <p>&copy; Arobado por la municipalidad</p>
-                                <li>📍 @comercio.Ubicacion</li>
+                                <li><strong>Categoría:</strong> @(string.IsNullOrWhiteSpace(comercio.Categoria) ? "General" : comercio.Categoria)</li>
+                                <li>📍 @(string.IsNullOrWhiteSpace(comercio.Ubicacion) ? "Ubicación no disponible" : comercio.Ubicacion)</li>
 
-                                @if (!string.IsNullOrEmpty(comercio.Telefono))
+                                @if (!string.IsNullOrWhiteSpace(comercio.Telefono))
                                 {
                                     <li>📞 @comercio.Telefono</li>
+                                }
+
+                                @if (!string.IsNullOrWhiteSpace(comercio.Horario))
+                                {
+                                    <li>🕐 @comercio.Horario</li>
                                 }
                             </ul>
 
                             <div class="d-flex gap-2">
                                 <a href="@Url.Action("Perfil", "Comercios", new { id = comercio.Id })"
-                                   class="btn btn-outline-success btn-sm w-100">Ver perfil</a>
+                                   class="btn btn-outline-success btn-sm w-100 rounded-pill">
+                                    Ver perfil
+                                </a>
+
                                 <a href="@Url.Action("Contacto", "Comercios", new { id = comercio.Id })"
-                                   class="btn btn-success btn-sm w-100">Contactar</a>
+                                   class="btn btn-success btn-sm w-100 rounded-pill">
+                                    Contactar
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
             }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info" role="alert">
+            <h4 class="alert-heading">No hay comercios disponibles</h4>
+            <p class="mb-0">Actualmente no hay comercios registrados en el sistema.</p>
         </div>
     }
 </div>
