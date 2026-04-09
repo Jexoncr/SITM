@@ -1,0 +1,201 @@
+﻿@model turistico.Models.AdminDashboardVM
+
+@{
+    Layout = null;
+    var m = Model ?? new turistico.Models.AdminDashboardVM();
+    var fechaGeneracion = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Dashboard SITM</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #1f2937;
+            margin: 32px;
+            background: #fff;
+        }
+
+        .print-header {
+            margin-bottom: 24px;
+            border-bottom: 2px solid #145544;
+            padding-bottom: 12px;
+        }
+
+        .print-title {
+            margin: 0 0 6px 0;
+            font-size: 28px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .print-sub {
+            margin: 0;
+            color: #475569;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .meta {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .summary-box {
+            border: 1px solid #dbe4ea;
+            border-radius: 12px;
+            padding: 14px 16px;
+            background: #f8fbfa;
+        }
+
+        .summary-label {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            margin-bottom: 4px;
+        }
+
+        .summary-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+        }
+
+        th, td {
+            border: 1px solid #dbe4ea;
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background: #f1f5f9;
+            color: #0f172a;
+            font-weight: 800;
+        }
+
+        .print-actions {
+            margin-top: 18px;
+        }
+
+        .btn-print {
+            padding: 10px 16px;
+            border: 0;
+            border-radius: 999px;
+            background: #145544;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        @@media print {
+            .print-actions {
+                display: none;
+            }
+
+            body {
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="print-header">
+        <h1 class="print-title">Dashboard institucional SITM</h1>
+        <p class="print-sub">
+            Resumen ejecutivo de indicadores administrativos del sistema turístico municipal.
+        </p>
+        <div class="meta">Generado: @fechaGeneracion</div>
+    </div>
+
+    <div class="summary-grid">
+        <div class="summary-box">
+            <div class="summary-label">Comercios registrados</div>
+            <div class="summary-value">@m.ComerciosRegistrados</div>
+        </div>
+
+        <div class="summary-box">
+            <div class="summary-label">Usuarios registrados</div>
+            <div class="summary-value">@m.UsuariosRegistrados</div>
+        </div>
+
+        <div class="summary-box">
+            <div class="summary-label">Eventos activos</div>
+            <div class="summary-value">@m.EventosActivos</div>
+        </div>
+
+        <div class="summary-box">
+            <div class="summary-label">Reservas registradas</div>
+            <div class="summary-value">@m.ReservasRegistradas</div>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Indicador</th>
+                <th>Valor</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Comercios registrados</td>
+                <td>@m.ComerciosRegistrados</td>
+            </tr>
+            <tr>
+                <td>Comercios pendientes</td>
+                <td>@m.ComerciosPendientes</td>
+            </tr>
+            <tr>
+                <td>Comercios aprobados</td>
+                <td>@m.ComerciosAprobados</td>
+            </tr>
+            <tr>
+                <td>Comercios rechazados</td>
+                <td>@m.ComerciosRechazados</td>
+            </tr>
+            <tr>
+                <td>Usuarios registrados</td>
+                <td>@m.UsuariosRegistrados</td>
+            </tr>
+            <tr>
+                <td>Eventos activos</td>
+                <td>@m.EventosActivos</td>
+            </tr>
+            <tr>
+                <td>Reseñas pendientes</td>
+                <td>@m.ResenasPendientes</td>
+            </tr>
+            <tr>
+                <td>Reservas registradas</td>
+                <td>@m.ReservasRegistradas</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="print-actions">
+        <button class="btn-print" onclick="window.print();">
+            Imprimir / Guardar como PDF
+        </button>
+    </div>
+</body>
+</html>

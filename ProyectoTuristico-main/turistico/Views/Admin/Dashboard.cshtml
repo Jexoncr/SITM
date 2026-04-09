@@ -1,0 +1,1069 @@
+﻿@{
+    Response.ContentEncoding = System.Text.Encoding.UTF8;
+    Response.Charset = "utf-8";
+}
+@model turistico.Models.AdminDashboardVM
+@using System.Web.Helpers
+
+@{
+    ViewBag.Title = "Dashboard Administrativo";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+
+    var m = Model ?? new turistico.Models.AdminDashboardVM();
+
+    var totalComerciosEstado = m.ComerciosAprobados + m.ComerciosPendientes + m.ComerciosRechazados;
+
+    decimal pctAprobados = totalComerciosEstado > 0 ? (decimal)m.ComerciosAprobados * 100m / totalComerciosEstado : 0m;
+    decimal pctPendientes = totalComerciosEstado > 0 ? (decimal)m.ComerciosPendientes * 100m / totalComerciosEstado : 0m;
+    decimal pctRechazados = totalComerciosEstado > 0 ? (decimal)m.ComerciosRechazados * 100m / totalComerciosEstado : 0m;
+
+    var resumenLabels = new[] { "Comercios", "Eventos", "Usuarios", "Reseñas pendientes", "Reservas" };
+    var resumenValores = new[] { m.ComerciosRegistrados, m.EventosActivos, m.UsuariosRegistrados, m.ResenasPendientes, m.ReservasRegistradas };
+
+    var estadosLabels = new[] { "Aprobados", "Pendientes", "Rechazados" };
+    var estadosValores = new[] { m.ComerciosAprobados, m.ComerciosPendientes, m.ComerciosRechazados };
+
+    var radarLabels = new[] { "Comercios", "Eventos", "Usuarios", "Moderación", "Reservas" };
+    var radarValores = new[] { m.ComerciosRegistrados, m.EventosActivos, m.UsuariosRegistrados, m.ResenasPendientes, m.ReservasRegistradas };
+
+    var lineaLabels = new[] { "Registrados", "Aprobados", "Pendientes", "Rechazados" };
+    var lineaValores = new[] { m.ComerciosRegistrados, m.ComerciosAprobados, m.ComerciosPendientes, m.ComerciosRechazados };
+}
+
+<style>
+    .dash-shell {
+        display: grid;
+        gap: 1.25rem;
+    }
+
+    .dash-hero {
+        position: relative;
+        border-radius: 32px;
+        padding: 2.2rem;
+        overflow: hidden;
+        background: radial-gradient(circle at 20% 20%, rgba(52,211,153,.25), transparent 25%), radial-gradient(circle at 80% 0%, rgba(16,185,129,.18), transparent 30%), linear-gradient(135deg, #061b14 0%, #0b2f23 40%, #145544 100%);
+        box-shadow: 0 30px 80px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.05);
+        border: 1px solid rgba(255,255,255,.08);
+        color: #fff;
+    }
+
+        .dash-hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, rgba(255,255,255,.02), transparent 35%, rgba(255,255,255,.04) 60%, transparent 80%);
+            pointer-events: none;
+        }
+
+        .dash-hero h1 {
+            margin: 0;
+            font-size: clamp(2.2rem, 4vw, 4rem);
+            line-height: .98;
+            font-weight: 900;
+            letter-spacing: -.05em;
+            max-width: 840px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .dash-hero p {
+            margin: 1rem 0 0;
+            max-width: 980px;
+            color: rgba(255,255,255,.92);
+            font-size: 1.08rem;
+            line-height: 1.85;
+            position: relative;
+            z-index: 1;
+        }
+
+    .dash-tabs-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .85rem;
+        margin-top: 1.55rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .dash-tab-btn {
+        border: none;
+        background: rgba(255,255,255,.08);
+        backdrop-filter: blur(8px);
+        color: #fff;
+        border-radius: 999px;
+        padding: .82rem 1.2rem;
+        font-weight: 800;
+        letter-spacing: .01em;
+        display: inline-flex;
+        align-items: center;
+        gap: .58rem;
+        cursor: pointer;
+        transition: all .22s ease;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+    }
+
+        .dash-tab-btn:hover {
+            background: rgba(255,255,255,.16);
+            transform: translateY(-1px);
+        }
+
+        .dash-tab-btn.active {
+            background: #ffffff;
+            color: #0f172a;
+            box-shadow: 0 12px 30px rgba(0,0,0,.16);
+        }
+
+    .dash-panel {
+        display: none;
+    }
+
+        .dash-panel.active {
+            display: block;
+            animation: fadeUp .25s ease;
+        }
+
+    @@keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .dash-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1rem;
+    }
+
+    .dash-card,
+    .panel-card,
+    .chart-card {
+        position: relative;
+        border-radius: 24px;
+        background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,250,252,.92));
+        border: 1px solid rgba(15,23,42,.06);
+        box-shadow: 0 10px 30px rgba(0,0,0,.06), 0 2px 6px rgba(0,0,0,.04);
+        overflow: hidden;
+        transition: all .25s ease;
+    }
+
+        .dash-card:hover,
+        .panel-card:hover,
+        .chart-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 24px 54px rgba(15,23,42,.10);
+        }
+
+    .kpi-card {
+        position: relative;
+        padding: 1.45rem;
+        height: 100%;
+    }
+
+        .kpi-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 3px;
+            border-radius: 999px;
+            background: linear-gradient(180deg, #10b981, #34d399);
+        }
+
+    .kpi-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .kpi-label {
+        color: #64748b;
+        font-size: .92rem;
+        font-weight: 800;
+        margin-bottom: .3rem;
+    }
+
+    .kpi-value {
+        margin: 0;
+        font-size: 2.35rem;
+        font-weight: 900;
+        letter-spacing: -.05em;
+        line-height: 1;
+        color: #020617;
+    }
+
+    .kpi-note {
+        color: #64748b;
+        font-size: .95rem;
+        line-height: 1.72;
+    }
+
+    .kpi-icon {
+        width: 58px;
+        height: 58px;
+        border-radius: 19px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.26rem;
+        flex: 0 0 auto;
+        background: rgba(15,61,46,.06);
+        color: #145544;
+        border: 1px solid rgba(15,61,46,.10);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.45);
+    }
+
+    .icon-green {
+        background: rgba(25,135,84,.12);
+        color: #198754;
+    }
+
+    .icon-yellow {
+        background: rgba(255,193,7,.18);
+        color: #946200;
+    }
+
+    .icon-red {
+        background: rgba(220,53,69,.12);
+        color: #dc3545;
+    }
+
+    .icon-blue {
+        background: rgba(59,130,246,.12);
+        color: #1d4ed8;
+    }
+
+    .icon-dark {
+        background: rgba(15,23,42,.08);
+        color: #0f172a;
+    }
+
+    .panel-head {
+        padding: 1.15rem 1.3rem;
+        border-bottom: 1px solid rgba(15,23,42,.06);
+        background: linear-gradient(180deg, rgba(248,250,252,.92), rgba(255,255,255,1));
+    }
+
+    .panel-title {
+        margin: 0;
+        color: #0f172a;
+        font-size: 1.04rem;
+        font-weight: 900;
+        letter-spacing: -.01em;
+    }
+
+    .panel-sub {
+        color: #64748b;
+        font-size: .9rem;
+        margin-top: .22rem;
+        line-height: 1.65;
+    }
+
+    .panel-body {
+        padding: 1.3rem;
+    }
+
+    .chart-body {
+        padding: 1.3rem;
+        min-height: 360px;
+    }
+
+    .chart-wrap {
+        position: relative;
+        height: 310px;
+    }
+
+    .metric-row {
+        margin-bottom: 1.1rem;
+    }
+
+        .metric-row:last-child {
+            margin-bottom: 0;
+        }
+
+    .metric-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: .48rem;
+        font-size: .94rem;
+        color: #334155;
+        font-weight: 800;
+    }
+
+    .metric-track {
+        width: 100%;
+        height: 13px;
+        background: #eef2f7;
+        border-radius: 999px;
+        overflow: hidden;
+        box-shadow: inset 0 1px 2px rgba(15,23,42,.04);
+    }
+
+    .metric-fill {
+        height: 100%;
+        border-radius: 999px;
+    }
+
+    .fill-green {
+        background: linear-gradient(90deg, #198754, #38d39f);
+    }
+
+    .fill-yellow {
+        background: linear-gradient(90deg, #f0ad00, #ffd24d);
+    }
+
+    .fill-red {
+        background: linear-gradient(90deg, #dc3545, #ff7b8a);
+    }
+
+    .quick-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: .9rem;
+    }
+
+    .quick-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 1rem 1rem;
+        border-radius: 18px;
+        border: 1px solid rgba(15,23,42,.06);
+        background: linear-gradient(180deg, #ffffff 0%, #fbfcfd 100%);
+        text-decoration: none;
+        color: #0f172a;
+        transition: all .18s ease;
+        font-weight: 800;
+        box-shadow: 0 10px 24px rgba(15,23,42,.04);
+    }
+
+        .quick-link:hover {
+            transform: translateY(-2px);
+            background: rgba(15,61,46,.03);
+            color: #0f3d2e;
+            border-color: rgba(15,61,46,.12);
+        }
+
+        .quick-link small {
+            display: block;
+            color: #64748b;
+            font-weight: 600;
+            margin-top: .16rem;
+        }
+
+    .quick-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 16px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.12rem;
+        background: rgba(15,61,46,.08);
+        color: #145544;
+        border: 1px solid rgba(15,61,46,.10);
+        flex: 0 0 auto;
+    }
+
+    .table-shell {
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: 22px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.7);
+    }
+
+        .table-shell table {
+            margin-bottom: 0;
+        }
+
+        .table-shell thead th {
+            background: #f8faf9;
+            color: #475569;
+            font-size: .82rem;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+            font-weight: 900;
+            border-bottom: 1px solid rgba(15,23,42,.06);
+        }
+
+        .table-shell tbody tr:hover {
+            background: rgba(15,61,46,.018);
+        }
+
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+        padding: .42rem .74rem;
+        border-radius: 999px;
+        font-size: .79rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .status-ok {
+        background: rgba(25,135,84,.12);
+        color: #198754;
+    }
+
+    .status-warn {
+        background: rgba(255,193,7,.18);
+        color: #946200;
+    }
+
+    .status-sec {
+        background: rgba(100,116,139,.12);
+        color: #475569;
+    }
+
+    .export-box {
+        border: 1px dashed rgba(15,61,46,.16);
+        border-radius: 22px;
+        background: linear-gradient(180deg, rgba(15,61,46,.03), rgba(15,61,46,.015));
+        padding: 1.15rem;
+    }
+
+    .export-title {
+        font-weight: 900;
+        color: #0f172a;
+        margin-bottom: .2rem;
+        letter-spacing: -.01em;
+    }
+
+    .export-sub {
+        color: #64748b;
+        font-size: .92rem;
+        margin-bottom: .95rem;
+        line-height: 1.7;
+    }
+
+    .btn-dash {
+        border-radius: 999px;
+        font-weight: 800;
+    }
+
+    @@media (max-width: 1199.98px) {
+        .dash-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @@media (max-width: 767.98px) {
+        .dash-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .dash-hero {
+            padding: 1.4rem;
+            border-radius: 24px;
+        }
+
+        .chart-wrap {
+            height: 240px;
+        }
+    }
+</style>
+
+<div class="dash-shell">
+    <div class="dash-hero">
+        <h1>Panel de administración</h1>
+        <p>
+            Gestión administrativa del sistema turístico municipal con indicadores reales de comercios, eventos, usuarios, reseñas y reservas.
+        </p>
+
+        <div class="dash-tabs-wrap">
+            <button type="button" class="dash-tab-btn active" data-panel="panel-kpis">
+                <i class="bi bi-grid"></i> Indicadores
+            </button>
+            <button type="button" class="dash-tab-btn" data-panel="panel-graficos">
+                <i class="bi bi-bar-chart"></i> Gráficos
+            </button>
+            <button type="button" class="dash-tab-btn" data-panel="panel-acciones">
+                <i class="bi bi-lightning-charge"></i> Acciones
+            </button>
+            <button type="button" class="dash-tab-btn" data-panel="panel-resumen">
+                <i class="bi bi-table"></i> Resumen
+            </button>
+        </div>
+    </div>
+
+    <div id="panel-kpis" class="dash-panel active">
+        <div class="dash-grid">
+            <div class="dash-card">
+                <div class="kpi-card">
+                    <div class="kpi-top">
+                        <div>
+                            <div class="kpi-label">Comercios registrados</div>
+                            <p class="kpi-value">@Model.ComerciosRegistrados</p>
+                        </div>
+                        <div class="kpi-icon"><i class="bi bi-shop"></i></div>
+                    </div>
+                    <div class="kpi-note">Total actual de comercios creados dentro del sistema.</div>
+                </div>
+            </div>
+
+            <div class="dash-card">
+                <div class="kpi-card">
+                    <div class="kpi-top">
+                        <div>
+                            <div class="kpi-label">Pendientes de revisión</div>
+                            <p class="kpi-value text-warning">@Model.ComerciosPendientes</p>
+                        </div>
+                        <div class="kpi-icon icon-yellow"><i class="bi bi-hourglass-split"></i></div>
+                    </div>
+                    <div class="kpi-note">Comercios que aún requieren validación administrativa.</div>
+                </div>
+            </div>
+
+            <div class="dash-card">
+                <div class="kpi-card">
+                    <div class="kpi-top">
+                        <div>
+                            <div class="kpi-label">Eventos activos</div>
+                            <p class="kpi-value text-success">@Model.EventosActivos</p>
+                        </div>
+                        <div class="kpi-icon icon-green"><i class="bi bi-calendar2-check"></i></div>
+                    </div>
+                    <div class="kpi-note">Eventos vigentes o próximos disponibles para los usuarios.</div>
+                </div>
+            </div>
+
+            <div class="dash-card">
+                <div class="kpi-card">
+                    <div class="kpi-top">
+                        <div>
+                            <div class="kpi-label">Usuarios registrados</div>
+                            <p class="kpi-value">@Model.UsuariosRegistrados</p>
+                        </div>
+                        <div class="kpi-icon icon-dark"><i class="bi bi-people"></i></div>
+                    </div>
+                    <div class="kpi-note">Base total de usuarios almacenados en la plataforma.</div>
+                </div>
+            </div>
+
+            <div class="dash-card">
+                <div class="kpi-card">
+                    <div class="kpi-top">
+                        <div>
+                            <div class="kpi-label">Reseñas pendientes</div>
+                            <p class="kpi-value text-warning">@Model.ResenasPendientes</p>
+                        </div>
+                        <div class="kpi-icon icon-yellow"><i class="bi bi-star-half"></i></div>
+                    </div>
+                    <div class="kpi-note">Moderación pendiente antes de publicarse al público.</div>
+                </div>
+            </div>
+
+            <div class="dash-card">
+                <div class="kpi-card">
+                    <div class="kpi-top">
+                        <div>
+                            <div class="kpi-label">Reservas registradas</div>
+                            <p class="kpi-value text-primary">@Model.ReservasRegistradas</p>
+                        </div>
+                        <div class="kpi-icon icon-blue"><i class="bi bi-bookmark-check"></i></div>
+                    </div>
+                    <div class="kpi-note">Histórico acumulado de reservas generadas por usuarios.</div>
+                </div>
+            </div>
+
+            <div class="dash-card">
+                <div class="kpi-card">
+                    <div class="kpi-top">
+                        <div>
+                            <div class="kpi-label">Comercios aprobados</div>
+                            <p class="kpi-value text-success">@Model.ComerciosAprobados</p>
+                        </div>
+                        <div class="kpi-icon icon-green"><i class="bi bi-check2-circle"></i></div>
+                    </div>
+                    <div class="kpi-note">Ya visibles para los visitantes dentro del sitio público.</div>
+                </div>
+            </div>
+
+            <div class="dash-card">
+                <div class="kpi-card">
+                    <div class="kpi-top">
+                        <div>
+                            <div class="kpi-label">Comercios rechazados</div>
+                            <p class="kpi-value text-danger">@Model.ComerciosRechazados</p>
+                        </div>
+                        <div class="kpi-icon icon-red"><i class="bi bi-x-circle"></i></div>
+                    </div>
+                    <div class="kpi-note">No aprobados por inconsistencias o revisión administrativa.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="panel-graficos" class="dash-panel">
+        <div class="row g-4">
+            <div class="col-12 col-xl-6">
+                <div class="chart-card">
+                    <div class="panel-head">
+                        <h3 class="panel-title"><i class="bi bi-pie-chart me-2"></i>Estado de comercios</h3>
+                        <div class="panel-sub">Distribución por aprobados, pendientes y rechazados.</div>
+                    </div>
+                    <div class="chart-body">
+                        <div class="chart-wrap">
+                            <canvas id="chartEstadosComercio"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-6">
+                <div class="chart-card">
+                    <div class="panel-head">
+                        <h3 class="panel-title"><i class="bi bi-bar-chart me-2"></i>Resumen general</h3>
+                        <div class="panel-sub">Comparación entre los principales indicadores del sistema.</div>
+                    </div>
+                    <div class="chart-body">
+                        <div class="chart-wrap">
+                            <canvas id="chartResumenGeneral"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-6">
+                <div class="chart-card">
+                    <div class="panel-head">
+                        <h3 class="panel-title"><i class="bi bi-bullseye me-2"></i>Radar operativo</h3>
+                        <div class="panel-sub">Vista rápida del comportamiento del sistema por área.</div>
+                    </div>
+                    <div class="chart-body">
+                        <div class="chart-wrap">
+                            <canvas id="chartRadar"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-6">
+                <div class="chart-card">
+                    <div class="panel-head">
+                        <h3 class="panel-title"><i class="bi bi-graph-up-arrow me-2"></i>Tendencia de comercios</h3>
+                        <div class="panel-sub">Comparación entre registrados, aprobados, pendientes y rechazados.</div>
+                    </div>
+                    <div class="chart-body">
+                        <div class="chart-wrap">
+                            <canvas id="chartLineaComercios"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="panel-acciones" class="dash-panel">
+        <div class="row g-4">
+            <div class="col-12 col-xl-4">
+                <div class="panel-card">
+                    <div class="panel-head">
+                        <h3 class="panel-title"><i class="bi bi-clipboard-data me-2"></i>Progreso por estado</h3>
+                        <div class="panel-sub">Barras de avance del estado comercial.</div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="metric-row">
+                            <div class="metric-head">
+                                <span>Aprobados</span>
+                                <span>@Model.ComerciosAprobados</span>
+                            </div>
+                            <div class="metric-track">
+                                <div class="metric-fill fill-green" style="width:@pctAprobados.ToString(System.Globalization.CultureInfo.InvariantCulture)%"></div>
+                            </div>
+                        </div>
+
+                        <div class="metric-row">
+                            <div class="metric-head">
+                                <span>Pendientes</span>
+                                <span>@Model.ComerciosPendientes</span>
+                            </div>
+                            <div class="metric-track">
+                                <div class="metric-fill fill-yellow" style="width:@pctPendientes.ToString(System.Globalization.CultureInfo.InvariantCulture)%"></div>
+                            </div>
+                        </div>
+
+                        <div class="metric-row">
+                            <div class="metric-head">
+                                <span>Rechazados</span>
+                                <span>@Model.ComerciosRechazados</span>
+                            </div>
+                            <div class="metric-track">
+                                <div class="metric-fill fill-red" style="width:@pctRechazados.ToString(System.Globalization.CultureInfo.InvariantCulture)%"></div>
+                            </div>
+                        </div>
+
+                        <hr />
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted fw-semibold">Total</span>
+                            <span class="fw-bold text-dark">@totalComerciosEstado</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-4">
+                <div class="panel-card">
+                    <div class="panel-head">
+                        <h3 class="panel-title"><i class="bi bi-lightning-charge me-2"></i>Acciones rápidas</h3>
+                        <div class="panel-sub">Acceso directo a los módulos administrativos.</div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="quick-grid">
+                            <a class="quick-link" href="@Url.Action("Index","AdminComercios")">
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="quick-icon"><i class="bi bi-shop-window"></i></span>
+                                    <div>
+                                        Aprobar comercios
+                                        <small>Revisa pendientes y estados</small>
+                                    </div>
+                                </div>
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+
+                            <a class="quick-link" href="@Url.Action("Index","AdminEventos")">
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="quick-icon"><i class="bi bi-calendar-week"></i></span>
+                                    <div>
+                                        Administrar eventos
+                                        <small>Cupos, límites y fechas</small>
+                                    </div>
+                                </div>
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+
+                            <a class="quick-link" href="@Url.Action("Index","AdminResenas")">
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="quick-icon"><i class="bi bi-chat-square-quote"></i></span>
+                                    <div>
+                                        Moderar reseñas
+                                        <small>Publicar, ocultar o rechazar</small>
+                                    </div>
+                                </div>
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+
+                            <a class="quick-link" href="@Url.Action("Index","AdminUsuarios")">
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="quick-icon"><i class="bi bi-person-gear"></i></span>
+                                    <div>
+                                        Administrar usuarios
+                                        <small>Roles, estados y accesos</small>
+                                    </div>
+                                </div>
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-4">
+                <div class="panel-card">
+                    <div class="panel-head">
+                        <h3 class="panel-title"><i class="bi bi-download me-2"></i>Exportación</h3>
+                        <div class="panel-sub">Prepara salidas administrativas del dashboard.</div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="export-box">
+                            <div class="export-title">Exportar resumen</div>
+                            <div class="export-sub">
+                                Deja listos tus reportes para revisión o respaldo administrativo.
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <a href="@Url.Action("ExportarDashboardCsv", "Admin")" class="btn btn-outline-success btn-dash">
+                                    <i class="bi bi-filetype-csv me-1"></i> Exportar CSV
+                                </a>
+
+                                <a href="@Url.Action("ExportarDashboardExcel", "Admin")" class="btn btn-outline-primary btn-dash">
+                                    <i class="bi bi-file-earmark-excel me-1"></i> Exportar Excel
+                                </a>
+
+                                <a href="@Url.Action("ExportarDashboardPdf", "Admin")" class="btn btn-outline-danger btn-dash">
+                                    <i class="bi bi-file-earmark-pdf me-1"></i> Exportar PDF
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="panel-resumen" class="dash-panel">
+        <div class="panel-card">
+            <div class="panel-head">
+                <h3 class="panel-title"><i class="bi bi-diagram-3 me-2"></i>Resumen operativo</h3>
+                <div class="panel-sub">Esquema ejecutivo de los principales indicadores del sistema.</div>
+            </div>
+
+            <div class="panel-body">
+                <div class="table-shell">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Área</th>
+                                <th>Indicador</th>
+                                <th>Valor</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Comercios</td>
+                                <td>Registrados</td>
+                                <td class="fw-bold">@Model.ComerciosRegistrados</td>
+                                <td>
+                                    <span class="status-pill status-sec">
+                                        <i class="bi bi-building"></i> General
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Comercios</td>
+                                <td>Pendientes por revisar</td>
+                                <td class="fw-bold">@Model.ComerciosPendientes</td>
+                                <td>
+                                    <span class="status-pill @(Model.ComerciosPendientes > 0 ? "status-warn" : "status-ok")">
+                                        <i class="bi @(Model.ComerciosPendientes > 0 ? "bi-hourglass-split" : "bi-check-circle")"></i>
+                                        @(Model.ComerciosPendientes > 0 ? "Atención" : "Controlado")
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Eventos</td>
+                                <td>Activos</td>
+                                <td class="fw-bold">@Model.EventosActivos</td>
+                                <td>
+                                    <span class="status-pill status-ok">
+                                        <i class="bi bi-calendar-check"></i> Operativo
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Usuarios</td>
+                                <td>Registrados</td>
+                                <td class="fw-bold">@Model.UsuariosRegistrados</td>
+                                <td>
+                                    <span class="status-pill status-sec">
+                                        <i class="bi bi-people"></i> Base activa
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Reseñas</td>
+                                <td>Pendientes de moderación</td>
+                                <td class="fw-bold">@Model.ResenasPendientes</td>
+                                <td>
+                                    <span class="status-pill @(Model.ResenasPendientes > 0 ? "status-warn" : "status-ok")">
+                                        <i class="bi @(Model.ResenasPendientes > 0 ? "bi-star-half" : "bi-check-circle")"></i>
+                                        @(Model.ResenasPendientes > 0 ? "Pendiente" : "Al día")
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Reservas</td>
+                                <td>Registradas</td>
+                                <td class="fw-bold">@Model.ReservasRegistradas</td>
+                                <td>
+                                    <span class="status-pill status-ok">
+                                        <i class="bi bi-bookmark-check"></i> Seguimiento
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const tabButtons = document.querySelectorAll(".dash-tab-btn");
+            const panels = document.querySelectorAll(".dash-panel");
+            let chartsInitialized = false;
+
+            function activarPanel(panelId) {
+                tabButtons.forEach(btn => {
+                    btn.classList.toggle("active", btn.getAttribute("data-panel") === panelId);
+                });
+
+                panels.forEach(panel => {
+                    panel.classList.toggle("active", panel.id === panelId);
+                });
+
+                if (panelId === "panel-graficos" && !chartsInitialized) {
+                    inicializarGraficos();
+                    chartsInitialized = true;
+                }
+            }
+
+            tabButtons.forEach(btn => {
+                btn.addEventListener("click", function () {
+                    activarPanel(this.getAttribute("data-panel"));
+                });
+            });
+
+            function inicializarGraficos() {
+                if (typeof Chart === "undefined") return;
+
+                const resumenLabels = @Html.Raw(Json.Encode(resumenLabels));
+                const resumenValores = @Html.Raw(Json.Encode(resumenValores));
+
+                const estadosLabels = @Html.Raw(Json.Encode(estadosLabels));
+                const estadosValores = @Html.Raw(Json.Encode(estadosValores));
+
+                const radarLabels = @Html.Raw(Json.Encode(radarLabels));
+                const radarValores = @Html.Raw(Json.Encode(radarValores));
+
+                const lineaLabels = @Html.Raw(Json.Encode(lineaLabels));
+                const lineaValores = @Html.Raw(Json.Encode(lineaValores));
+
+                Chart.defaults.color = '#334155';
+                Chart.defaults.font.family = 'Inter, Segoe UI, Arial, sans-serif';
+
+                const doughnutCtx = document.getElementById('chartEstadosComercio');
+                if (doughnutCtx) {
+                    new Chart(doughnutCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: estadosLabels,
+                            datasets: [{
+                                data: estadosValores,
+                                backgroundColor: ['#198754', '#f0ad00', '#dc3545'],
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            cutout: '62%',
+                            plugins: {
+                                legend: { position: 'bottom' }
+                            }
+                        }
+                    });
+                }
+
+                const barCtx = document.getElementById('chartResumenGeneral');
+                if (barCtx) {
+                    new Chart(barCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: resumenLabels,
+                            datasets: [{
+                                label: 'Cantidad',
+                                data: resumenValores,
+                                backgroundColor: ['#145544', '#198754', '#1d4ed8', '#f0ad00', '#7c3aed'],
+                                borderRadius: 12
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: { precision: 0 }
+                                }
+                            },
+                            plugins: {
+                                legend: { display: false }
+                            }
+                        }
+                    });
+                }
+
+                const radarCtx = document.getElementById('chartRadar');
+                if (radarCtx) {
+                    new Chart(radarCtx, {
+                        type: 'radar',
+                        data: {
+                            labels: radarLabels,
+                            datasets: [{
+                                label: 'Indicadores',
+                                data: radarValores,
+                                fill: true,
+                                backgroundColor: 'rgba(20,85,68,0.18)',
+                                borderColor: '#145544',
+                                pointBackgroundColor: '#145544',
+                                pointBorderColor: '#145544',
+                                pointRadius: 4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                r: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        precision: 0,
+                                        backdropColor: 'transparent'
+                                    },
+                                    grid: {
+                                        color: 'rgba(148,163,184,.25)'
+                                    },
+                                    angleLines: {
+                                        color: 'rgba(148,163,184,.25)'
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: { display: false }
+                            }
+                        }
+                    });
+                }
+
+                const lineCtx = document.getElementById('chartLineaComercios');
+                if (lineCtx) {
+                    new Chart(lineCtx, {
+                        type: 'line',
+                        data: {
+                            labels: lineaLabels,
+                            datasets: [{
+                                label: 'Comercios',
+                                data: lineaValores,
+                                borderColor: '#145544',
+                                backgroundColor: 'rgba(20,85,68,.15)',
+                                fill: true,
+                                tension: 0.35,
+                                pointRadius: 4,
+                                pointBackgroundColor: '#145544'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: { precision: 0 }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+}
