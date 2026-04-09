@@ -1,0 +1,1037 @@
+﻿@model turistico.Models.HomeIndexVM
+
+@{
+    ViewBag.Title = "Inicio";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    document.body.classList.add("home-index");
+</script>
+
+<style>
+    .home-index {
+        --sitm-green: #0f3d2e;
+        --sitm-green-2: #145544;
+        --sitm-ink: #0f172a;
+        --sitm-muted: #475569;
+        --sitm-border: rgba(15, 23, 42, .10);
+        --sitm-soft: rgba(15, 61, 46, .08);
+        --sitm-glass: rgba(255,255,255,.12);
+        --sitm-glass-border: rgba(255,255,255,.24);
+    }
+
+    body.home-index .sitm-main {
+        padding-top: 0 !important;
+    }
+
+        body.home-index .sitm-main > .container-fluid {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            max-width: none !important;
+        }
+
+    body.home-index .sitm-navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background: transparent !important;
+        box-shadow: none !important;
+        border-bottom: 0;
+        transition: background .35s ease, box-shadow .35s ease, backdrop-filter .35s ease;
+    }
+
+        body.home-index .sitm-navbar.scrolled {
+            background: linear-gradient(135deg, rgba(15,61,46,.94), rgba(27,107,85,.92)) !important;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 10px 28px rgba(15, 23, 42, .18) !important;
+        }
+
+    .hero-komoot {
+        width: 100%;
+        min-height: 100vh;
+        background: url('/Content/im/img3.png') center center / cover no-repeat;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        margin: 0;
+    }
+
+        .hero-komoot::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(rgba(15,61,46,0.55), rgba(0,0,0,0.45));
+            z-index: 1;
+        }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        max-width: 920px;
+        padding: 120px 1rem 60px;
+        margin: 0 auto;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        padding: .72rem 1.1rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,.22);
+        background: rgba(255,255,255,.10);
+        font-weight: 800;
+        font-size: .96rem;
+        margin-bottom: 1rem;
+        backdrop-filter: blur(8px);
+    }
+
+    .hero-content h1 {
+        font-size: 3.2rem;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        line-height: 1.08;
+        margin-bottom: 1rem;
+    }
+
+    .hero-lead {
+        font-size: 1.18rem;
+        line-height: 1.9;
+        max-width: 64ch;
+        margin: 0 auto 1.4rem;
+        color: rgba(255,255,255,.94);
+    }
+
+    .search-box {
+        display: flex;
+        align-items: center;
+        background: #ffffff;
+        border-radius: 999px;
+        overflow: hidden;
+        width: 700px;
+        max-width: 95%;
+        margin: 1.5rem auto;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+        border: 1px solid rgba(255,255,255,.20);
+    }
+
+        .search-box input {
+            flex: 1;
+            padding: 1.2rem 1.4rem;
+            border: none;
+            outline: none;
+            font-size: 1.05rem;
+            color: #0f172a;
+            min-width: 0;
+        }
+
+        .search-box button {
+            background: #145544;
+            color: white;
+            border: none;
+            padding: 0 1.8rem;
+            font-weight: 800;
+            transition: .2s;
+            height: 100%;
+            min-height: 62px;
+        }
+
+            .search-box button:hover {
+                background: #0f3d2e;
+            }
+
+    .search-help {
+        margin-top: .9rem;
+        font-size: 1rem;
+        color: rgba(255,255,255,.90);
+        letter-spacing: .15px;
+    }
+
+    .hero-cta-row {
+        margin-top: 1.2rem;
+        display: flex;
+        justify-content: center;
+        gap: .75rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-hero-ghost {
+        background: rgba(255,255,255,0.12);
+        border: 1px solid rgba(255,255,255,0.25);
+        border-radius: 999px;
+        padding: 0.8rem 1.3rem;
+        font-weight: 800;
+        color: #fff;
+        backdrop-filter: blur(6px);
+        transition: .2s;
+    }
+
+        .btn-hero-ghost:hover {
+            background: rgba(255,255,255,0.2);
+            color: #fff;
+            border-color: rgba(255,255,255,0.32);
+        }
+
+    .hero-role-actions {
+        margin-top: 1.5rem;
+        display: flex;
+        justify-content: center;
+        gap: .9rem;
+        flex-wrap: wrap;
+    }
+
+    .hero-role-btn {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: .7rem;
+        padding: 1rem 1.35rem;
+        min-width: 240px;
+        border-radius: 20px;
+        font-weight: 900;
+        font-size: 1rem;
+        color: #fff;
+        text-decoration: none;
+        border: 1px solid var(--sitm-glass-border);
+        background: linear-gradient(135deg, rgba(255,255,255,.16), rgba(255,255,255,.09));
+        backdrop-filter: blur(12px);
+        box-shadow: 0 18px 38px rgba(0,0,0,.18);
+        transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+        overflow: hidden;
+    }
+
+        .hero-role-btn::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(255,255,255,.10), transparent 45%);
+            pointer-events: none;
+        }
+
+        .hero-role-btn:hover {
+            transform: translateY(-2px);
+            color: #fff;
+            box-shadow: 0 22px 42px rgba(0,0,0,.22);
+            background: linear-gradient(135deg, rgba(255,255,255,.22), rgba(255,255,255,.12));
+        }
+
+        .hero-role-btn .role-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,.18);
+            border: 1px solid rgba(255,255,255,.16);
+            font-size: 1.2rem;
+            flex: 0 0 auto;
+        }
+
+        .hero-role-btn .role-copy {
+            text-align: left;
+            line-height: 1.25;
+        }
+
+            .hero-role-btn .role-copy strong {
+                display: block;
+                font-size: 1rem;
+                font-weight: 900;
+                margin-bottom: .12rem;
+            }
+
+            .hero-role-btn .role-copy span {
+                display: block;
+                font-size: .82rem;
+                color: rgba(255,255,255,.88);
+                font-weight: 700;
+            }
+
+        .hero-role-btn.admin-btn {
+            border-color: rgba(255,255,255,.26);
+            background: linear-gradient(135deg, rgba(16,185,129,.22), rgba(255,255,255,.10));
+        }
+
+        .hero-role-btn.comercio-btn {
+            border-color: rgba(255,255,255,.26);
+            background: linear-gradient(135deg, rgba(59,130,246,.22), rgba(255,255,255,.10));
+        }
+
+    .sitm-wrap {
+        background: #fff;
+    }
+
+    .sitm-container {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 3.3rem 1rem 2.5rem;
+    }
+
+    .sitm-section-title {
+        font-size: 2rem;
+        font-weight: 900;
+        margin: 0 0 1rem 0;
+        color: var(--sitm-green);
+        letter-spacing: .2px;
+    }
+
+    .sitm-section-sub {
+        color: var(--sitm-muted);
+        font-size: 1rem;
+        margin: 0 0 1.6rem 0;
+        max-width: 85ch;
+        line-height: 1.8;
+    }
+
+    .sitm-kpi {
+        border: 1px solid var(--sitm-border);
+        border-radius: 18px;
+        background: #fff;
+        padding: 1rem 1.1rem;
+        display: flex;
+        gap: .9rem;
+        align-items: center;
+        transition: transform .18s ease, box-shadow .18s ease;
+        box-shadow: 0 8px 22px rgba(2, 6, 23, .06);
+    }
+
+        .sitm-kpi:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 26px rgba(2, 6, 23, .10);
+        }
+
+        .sitm-kpi .kpi-ico {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            background: var(--sitm-soft);
+            color: var(--sitm-green);
+            font-size: 1.2rem;
+            flex: 0 0 auto;
+        }
+
+        .sitm-kpi .kpi-label {
+            color: var(--sitm-muted);
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .sitm-kpi .kpi-value {
+            font-size: 1.55rem;
+            font-weight: 900;
+            margin: 0;
+            color: var(--sitm-ink);
+            line-height: 1.1;
+        }
+
+    .sitm-card {
+        border: 1px solid var(--sitm-border);
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 8px 22px rgba(2, 6, 23, .06);
+        overflow: hidden;
+        height: 100%;
+    }
+
+        .sitm-card .card-header {
+            background: #fff;
+            border-bottom: 1px solid var(--sitm-border);
+            padding: 1rem 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+            .sitm-card .card-header .hdr {
+                display: flex;
+                align-items: center;
+                gap: .55rem;
+                font-weight: 900;
+                font-size: 1.02rem;
+                color: var(--sitm-ink);
+            }
+
+        .sitm-card .card-body {
+            padding: 1.1rem;
+        }
+
+    .sitm-badge {
+        min-width: 120px;
+        text-align: center;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        height: 38px;
+        border-radius: 999px;
+        padding: 0 .75rem;
+        font-weight: 800;
+        border: 1px solid var(--sitm-border);
+        background: #f8fafc;
+        color: var(--sitm-ink);
+        font-size: .95rem;
+        flex: 0 0 auto;
+    }
+
+        .sitm-badge.ok {
+            background: rgba(16, 185, 129, .10);
+            border-color: rgba(16, 185, 129, .25);
+            color: #065f46;
+        }
+
+        .sitm-badge.warn {
+            background: rgba(245, 158, 11, .12);
+            border-color: rgba(245, 158, 11, .28);
+            color: #7c2d12;
+        }
+
+    .sitm-list-item {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: .9rem 0;
+        border-bottom: 1px dashed rgba(15, 23, 42, .16);
+    }
+
+        .sitm-list-item:last-child {
+            border-bottom: 0;
+            padding-bottom: 0;
+        }
+
+    .sitm-title {
+        font-size: 1.05rem;
+        font-weight: 900;
+        margin: 0;
+        color: var(--sitm-ink);
+    }
+
+    .sitm-sub {
+        margin: .2rem 0 0 0;
+        color: var(--sitm-muted);
+        font-size: 1rem;
+        line-height: 1.7;
+    }
+
+    .sitm-note {
+        border: 1px solid rgba(15, 61, 46, .22);
+        background: rgba(15, 61, 46, .06);
+        border-radius: 16px;
+        padding: 1rem 1.1rem;
+        display: flex;
+        gap: .85rem;
+        align-items: flex-start;
+        box-shadow: 0 8px 22px rgba(2, 6, 23, .05);
+    }
+
+        .sitm-note i {
+            font-size: 1.25rem;
+            color: var(--sitm-green);
+            margin-top: .1rem;
+        }
+
+        .sitm-note strong {
+            display: block;
+            font-size: 1.05rem;
+            color: var(--sitm-ink);
+            margin-bottom: .15rem;
+        }
+
+        .sitm-note p {
+            margin: 0;
+            color: var(--sitm-muted);
+            line-height: 1.8;
+        }
+
+    .routes-pro {
+        background: #f7f6f2;
+        padding: 3.2rem 0;
+    }
+
+    .routes-pro-inner {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+
+    .routes-pro-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .routes-pro-title {
+        font-size: 2rem;
+        font-weight: 900;
+        margin: 0;
+        color: var(--sitm-ink);
+    }
+
+        .routes-pro-title span {
+            color: var(--sitm-green);
+        }
+
+    .routes-pro-sub {
+        margin: .35rem 0 0 0;
+        color: var(--sitm-muted);
+        font-size: 1rem;
+        max-width: 80ch;
+        line-height: 1.8;
+    }
+
+    .routes-pro-viewport {
+        position: relative;
+        border-radius: 18px;
+        padding: 0 3.25rem;
+    }
+
+    .routes-pro-track {
+        display: flex;
+        gap: 1.25rem;
+        overflow-x: auto;
+        padding: .25rem 0 1rem;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+        scrollbar-width: none;
+        border-radius: 18px;
+    }
+
+        .routes-pro-track::-webkit-scrollbar {
+            display: none;
+        }
+
+    .routes-pro-card {
+        scroll-snap-align: start;
+        flex: 0 0 auto;
+        width: 260px;
+        border-radius: 18px;
+        background: #fff;
+        border: 1px solid rgba(15,23,42,.10);
+        box-shadow: 0 10px 22px rgba(2, 6, 23, .10);
+        overflow: hidden;
+        transition: transform .18s ease, box-shadow .18s ease;
+    }
+
+        .routes-pro-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 28px rgba(2, 6, 23, .14);
+        }
+
+    .routes-pro-img {
+        position: relative;
+        height: 170px;
+        background: #0b1220;
+    }
+
+        .routes-pro-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .routes-pro-gradient {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(15,61,46,.35), rgba(0,0,0,0) 60%);
+    }
+
+    .routes-pro-info {
+        padding: .95rem 1rem 1rem;
+    }
+
+    .routes-pro-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+        padding: .4rem .65rem;
+        border-radius: 999px;
+        font-weight: 800;
+        font-size: .95rem;
+        background: rgba(15,61,46,.07);
+        border: 1px solid rgba(15,61,46,.18);
+        color: var(--sitm-green);
+    }
+
+    .routes-pro-h3 {
+        margin: .65rem 0 .25rem;
+        font-size: 1.08rem;
+        font-weight: 900;
+        color: var(--sitm-ink);
+    }
+
+    .routes-pro-rating {
+        margin: 0;
+        color: var(--sitm-muted);
+        font-size: 1rem;
+        line-height: 1.7;
+    }
+
+    .routes-pro-link {
+        display: inline-flex;
+        align-items: center;
+        gap: .25rem;
+        margin-top: .65rem;
+        font-weight: 900;
+        color: var(--sitm-green);
+        text-decoration: none;
+        font-size: 1rem;
+    }
+
+        .routes-pro-link:hover {
+            text-decoration: underline;
+        }
+
+    .routes-pro-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+        border: 1px solid rgba(15,23,42,.14);
+        background: rgba(255,255,255,.96);
+        box-shadow: 0 12px 24px rgba(0,0,0,.18);
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        z-index: 50;
+        padding: 0;
+    }
+
+        .routes-pro-arrow.left {
+            left: -18px;
+        }
+
+        .routes-pro-arrow.right {
+            right: -18px;
+        }
+
+    .routes-pro-arrow-ico {
+        width: 22px;
+        height: 22px;
+        stroke: #0f3d2e;
+        stroke-width: 2.6;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .routes-pro-arrow[disabled] {
+        opacity: .35;
+        cursor: not-allowed;
+    }
+
+    @@media (max-width: 992px) {
+        .routes-pro-viewport {
+            padding: 0 2.75rem;
+        }
+
+        .routes-pro-card {
+            width: 240px;
+        }
+
+        .hero-content h1 {
+            font-size: 2.5rem;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .routes-pro-viewport {
+            padding: 0 2.25rem;
+        }
+
+        .routes-pro-card {
+            width: 220px;
+        }
+
+        .routes-pro-title {
+            font-size: 1.7rem;
+        }
+
+        .hero-content h1 {
+            font-size: 2rem;
+        }
+
+        .hero-lead {
+            font-size: 1rem;
+        }
+
+        .search-box {
+            flex-direction: column;
+            border-radius: 24px;
+            overflow: hidden;
+        }
+
+            .search-box input {
+                width: 100%;
+            }
+
+            .search-box button {
+                width: 100%;
+                min-height: 56px;
+            }
+
+        .hero-role-btn {
+            width: 100%;
+            justify-content: flex-start;
+        }
+    }
+</style>
+
+<section class="hero-komoot" aria-label="Encabezado de inicio">
+    <div class="hero-content">
+        <div class="hero-badge">
+            <i class="bi bi-building"></i> Portal Ciudadano – SITM
+        </div>
+
+        <h1>Bienvenido, @Model.UserName</h1>
+
+        <p class="hero-lead">
+            Explorá comercios turísticos, consultá eventos, gestioná tus reservas y compartí reseñas para fortalecer la información turística del cantón.
+        </p>
+
+        <form class="search-box" id="heroSearchForm" role="search" aria-label="Búsqueda rápida">
+            <input id="heroSearchInput" type="text" placeholder="Buscar comercios o eventos por nombre..." aria-label="Buscar comercios o eventos por nombre" />
+            <button type="submit"><i class="bi bi-search me-1"></i> Buscar</button>
+        </form>
+
+        <div class="search-help">
+            La búsqueda rápida te lleva a <strong>Comercios</strong>. Para consultar la agenda completa, usa la sección de <strong>Eventos</strong>.
+        </div>
+
+        <div class="hero-cta-row">
+            <a href="@Url.Action("Mapa", "Home")" class="btn btn-hero-ghost">
+                <i class="bi bi-map me-1"></i> Explorar mapa
+            </a>
+            <a href="@Url.Action("Index", "Eventos")" class="btn btn-hero-ghost">
+                <i class="bi bi-calendar-event me-1"></i> Ver eventos
+            </a>
+            <a href="@Url.Action("Index", "Comercios")" class="btn btn-hero-ghost">
+                <i class="bi bi-shop me-1"></i> Comercios
+            </a>
+        </div>
+
+        @if (User.Identity.IsAuthenticated)
+        {
+            <div class="hero-role-actions">
+                @if (User.IsInRole("Admin"))
+                {
+                    <a href="@Url.Action("Dashboard","Admin")" class="hero-role-btn admin-btn">
+                        <span class="role-icon">
+                            <i class="bi bi-shield-lock"></i>
+                        </span>
+                        <span class="role-copy">
+                            <strong>Ir al dashboard admin</strong>
+                            <span>Gestiona usuarios, eventos, comercios y configuración</span>
+                        </span>
+                    </a>
+                }
+
+                @if (User.IsInRole("Comercio"))
+                {
+                    <a href="@Url.Action("Dashboard","ComercioPanel")" class="hero-role-btn comercio-btn">
+                        <span class="role-icon">
+                            <i class="bi bi-shop-window"></i>
+                        </span>
+                        <span class="role-copy">
+                            <strong>Ir al panel de comercio</strong>
+                            <span>Administra tu negocio, eventos, reservas y reseñas</span>
+                        </span>
+                    </a>
+                }
+            </div>
+        }
+    </div>
+</section>
+
+<section class="routes-pro" aria-label="Destacados del cantón">
+    <div class="routes-pro-inner">
+        <div class="routes-pro-header">
+            <div>
+                <h2 class="routes-pro-title"><span>Lo mejor de</span> San Carlos</h2>
+                <p class="routes-pro-sub">
+                    Sitios y experiencias destacadas dentro del portal municipal.
+                </p>
+            </div>
+
+            <a class="btn btn-outline-success d-none d-md-inline-flex"
+               style="border-radius:12px; font-weight:800;"
+               href="@Url.Action("Index","Comercios")">
+                <i class="bi bi-compass me-1"></i> Explorar comercios
+            </a>
+        </div>
+
+        <div class="routes-pro-viewport">
+            <button class="routes-pro-arrow left" type="button" aria-label="Anterior" id="routesPrev">
+                <svg class="routes-pro-arrow-ico" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M15 18l-6-6 6-6" />
+                </svg>
+            </button>
+
+            <div class="routes-pro-track" id="routesTrack" tabindex="0" aria-label="Carrusel de destacados">
+                @if (Model.LugaresDestacados != null && Model.LugaresDestacados.Any())
+                {
+                    foreach (var l in Model.LugaresDestacados)
+                    {
+                        <article class="routes-pro-card">
+                            <div class="routes-pro-img">
+                                <img src="@l.Img" alt="@l.Titulo" loading="lazy" />
+                                <div class="routes-pro-gradient"></div>
+                            </div>
+
+                            <div class="routes-pro-info">
+                                <div class="routes-pro-chip">
+                                    <i class="bi bi-geo-alt me-1"></i> @l.Sub
+                                </div>
+
+                                <h3 class="routes-pro-h3">@l.Titulo</h3>
+                                <p class="routes-pro-rating">@l.Rating</p>
+
+                                <a class="routes-pro-link"
+                                   href="@Url.Action("Index","Comercios", new { q = l.Titulo })">
+                                    Ver información <i class="bi bi-arrow-right-short"></i>
+                                </a>
+                            </div>
+                        </article>
+                    }
+                }
+                else
+                {
+                    <div class="w-100 p-4 bg-white rounded-4 border">
+                        <p class="mb-0 text-muted">No hay lugares destacados para mostrar en este momento.</p>
+                    </div>
+                }
+            </div>
+
+            <button class="routes-pro-arrow right" type="button" aria-label="Siguiente" id="routesNext">
+                <svg class="routes-pro-arrow-ico" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M9 6l6 6-6 6" />
+                </svg>
+            </button>
+        </div>
+    </div>
+</section>
+
+<section class="sitm-wrap" aria-label="Actividad del portal">
+    <div class="sitm-container">
+        <h2 class="sitm-section-title">Actividad reciente</h2>
+        <p class="sitm-section-sub">
+            Resumen de tu actividad dentro del portal municipal: reservas, reseñas y eventos próximos.
+        </p>
+
+        <div class="row g-3 mb-4">
+            <div class="col-12 col-md-4">
+                <div class="sitm-kpi">
+                    <div class="kpi-ico"><i class="bi bi-bookmark-check"></i></div>
+                    <div class="flex-grow-1">
+                        <p class="kpi-label">Reservas activas</p>
+                        <p class="kpi-value">@Model.KpiReservasActivas</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="sitm-kpi">
+                    <div class="kpi-ico"><i class="bi bi-star-half"></i></div>
+                    <div class="flex-grow-1">
+                        <p class="kpi-label">Reseñas registradas</p>
+                        <p class="kpi-value">@Model.KpiResenas</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="sitm-kpi">
+                    <div class="kpi-ico"><i class="bi bi-calendar2-week"></i></div>
+                    <div class="flex-grow-1">
+                        <p class="kpi-label">Eventos próximos</p>
+                        <p class="kpi-value">@Model.KpiEventosProximos</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sitm-note mb-4">
+            <i class="bi bi-info-circle"></i>
+            <div>
+                <strong>Información municipal</strong>
+                <p>
+                    Las reseñas publicadas pueden estar sujetas a moderación según políticas de convivencia y uso del portal.
+                </p>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-12 col-lg-4">
+                <div class="sitm-card">
+                    <div class="card-header">
+                        <div class="hdr"><i class="bi bi-calendar-event" style="color: var(--sitm-green);"></i> Próximos eventos</div>
+                        <a class="btn btn-sm btn-outline-secondary" style="border-radius:10px;"
+                           href="@Url.Action("Index","Eventos")">Ver todos</a>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.ProximosEventos != null && Model.ProximosEventos.Any())
+                        {
+                            foreach (var e in Model.ProximosEventos)
+                            {
+                                <div class="sitm-list-item">
+                                    <div class="flex-grow-1">
+                                        <p class="sitm-title">@e.Titulo</p>
+                                        <p class="sitm-sub">
+                                            <i class="bi bi-geo-alt me-1"></i>@e.Lugar
+                                            <span class="mx-2">•</span>
+                                            <i class="bi bi-clock me-1"></i>@e.Fecha.ToString("dd/MM/yyyy HH:mm")
+                                        </p>
+                                    </div>
+                                    <span class="sitm-badge @(e.Estado != null && e.Estado.Contains("Cupo") ? "warn" : "ok")">@e.Estado</span>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="mb-0 text-muted">No hay eventos próximos registrados.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <div class="sitm-card">
+                    <div class="card-header">
+                        <div class="hdr"><i class="bi bi-ticket-perforated" style="color: var(--sitm-green);"></i> Tus reservas recientes</div>
+                        <a class="btn btn-sm btn-outline-secondary" style="border-radius:10px;"
+                           href="@Url.Action("Index","Reservas")">Ver todas</a>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.ReservasRecientes != null && Model.ReservasRecientes.Any())
+                        {
+                            foreach (var r in Model.ReservasRecientes)
+                            {
+                                var estado = r.Estado ?? "";
+                                var badgeClass = estado.Contains("Confirm") ? "ok" : (estado.Contains("Pend") ? "warn" : "");
+
+                                <div class="sitm-list-item">
+                                    <div class="flex-grow-1">
+                                        <p class="sitm-title">@r.Titulo</p>
+                                        <p class="sitm-sub">
+                                            <i class="bi bi-calendar3 me-1"></i>@r.Fecha.ToString("dd/MM/yyyy HH:mm")
+                                            <span class="mx-2">•</span>
+                                            <i class="bi bi-layers me-1"></i>@r.Plan
+                                        </p>
+                                    </div>
+                                    <span class="sitm-badge @badgeClass">@r.Estado</span>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="mb-0 text-muted">Aún no tienes reservas registradas.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <div class="sitm-card">
+                    <div class="card-header">
+                        <div class="hdr"><i class="bi bi-chat-square-text" style="color: var(--sitm-green);"></i> Tus reseñas recientes</div>
+                        <a class="btn btn-sm btn-outline-secondary" style="border-radius:10px;"
+                           href="@Url.Action("Index","Resenas")">Ver todas</a>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.ResenasRecientes != null && Model.ResenasRecientes.Any())
+                        {
+                            foreach (var rr in Model.ResenasRecientes)
+                            {
+                                <div class="sitm-list-item">
+                                    <div class="flex-grow-1">
+                                        <p class="sitm-title">@rr.Comercio</p>
+                                        <p class="sitm-sub"><i class="bi bi-calendar3 me-1"></i>@rr.Fecha.ToString("dd/MM/yyyy HH:mm")</p>
+                                        <p class="mb-0 mt-2" style="color: var(--sitm-muted); font-size: 1rem;">
+                                            “@rr.Comentario”
+                                        </p>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="mb-0 text-muted">Aún no has publicado reseñas.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        (function () {
+            const navbar = document.querySelector(".sitm-navbar");
+            const hero = document.querySelector(".hero-komoot");
+            if (!navbar) return;
+
+            function getThreshold() {
+                if (hero) return Math.max(140, Math.floor(hero.offsetHeight * 0.55));
+                return 420;
+            }
+
+            function updateNavbar() {
+                navbar.classList.toggle("scrolled", window.scrollY > getThreshold());
+            }
+
+            window.addEventListener("scroll", updateNavbar, { passive: true });
+            window.addEventListener("load", updateNavbar);
+            updateNavbar();
+        })();
+
+        (function () {
+            const form = document.getElementById("heroSearchForm");
+            const input = document.getElementById("heroSearchInput");
+            if (!form || !input) return;
+
+            form.addEventListener("submit", function (e) {
+                e.preventDefault();
+                const q = (input.value || "").trim();
+                const baseUrl = "@Url.Action("Index","Comercios")";
+                const url = q ? (baseUrl + "?q=" + encodeURIComponent(q)) : baseUrl;
+                window.location.href = url;
+            });
+        })();
+
+        (function () {
+            const track = document.getElementById("routesTrack");
+            const prev = document.getElementById("routesPrev");
+            const next = document.getElementById("routesNext");
+            if (!track || !prev || !next) return;
+
+            function updateArrows() {
+                prev.disabled = track.scrollLeft <= 0;
+                next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 5;
+            }
+
+            function getScrollAmount() {
+                const card = track.querySelector(".routes-pro-card");
+                const gap = 20;
+                return card ? (card.offsetWidth + gap) : 300;
+            }
+
+            prev.addEventListener("click", () => track.scrollBy({ left: -getScrollAmount(), behavior: "smooth" }));
+            next.addEventListener("click", () => track.scrollBy({ left: getScrollAmount(), behavior: "smooth" }));
+
+            track.addEventListener("scroll", updateArrows, { passive: true });
+            window.addEventListener("load", updateArrows);
+            window.addEventListener("resize", updateArrows);
+            updateArrows();
+        })();
+    </script>
+}

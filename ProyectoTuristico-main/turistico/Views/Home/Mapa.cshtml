@@ -1,0 +1,1024 @@
+﻿@model turistico.Controllers.MapaTuristicoVM
+@using System.Globalization
+
+@{
+    ViewBag.Title = "Mapa Turístico";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<script>
+    document.body.classList.add("map-page-body");
+</script>
+
+<style>
+    :root {
+        --map-green-900: #0f3d2e;
+        --map-green-800: #145544;
+        --map-green-700: #1b6b55;
+        --map-green-600: #2e9e7f;
+        --map-green-soft: rgba(46,158,127,.10);
+        --map-ink: #0f172a;
+        --map-muted: #64748b;
+        --map-border: rgba(15,23,42,.08);
+        --map-card: rgba(255,255,255,.82);
+        --map-card-strong: rgba(255,255,255,.90);
+        --map-shadow: 0 18px 44px rgba(2,8,23,.12);
+        --map-shadow-soft: 0 10px 24px rgba(2,8,23,.08);
+        --map-radius-xl: 24px;
+        --map-radius-lg: 18px;
+        --map-radius-md: 14px;
+    }
+
+    body.map-page-body {
+        background: linear-gradient(rgba(9,24,19,.42), rgba(9,24,19,.30)), radial-gradient(circle at 12% 10%, rgba(46,158,127,.12), transparent 38%), radial-gradient(circle at 88% 20%, rgba(27,122,92,.10), transparent 40%), radial-gradient(circle at 50% 100%, rgba(46,158,127,.08), transparent 48%), url('/Content/im/img4.png');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+
+        body.map-page-body .sitm-main {
+            padding-top: 0 !important;
+        }
+
+            body.map-page-body .sitm-main > .container-fluid {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                max-width: none !important;
+            }
+
+        body.map-page-body .sitm-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: transparent !important;
+            box-shadow: none !important;
+            border-bottom: 0 !important;
+            transition: background .35s ease, box-shadow .35s ease, backdrop-filter .35s ease;
+        }
+
+            body.map-page-body .sitm-navbar.scrolled {
+                background: linear-gradient(135deg, rgba(15,61,46,.94), rgba(27,107,85,.92)) !important;
+                backdrop-filter: blur(12px);
+                box-shadow: 0 10px 28px rgba(15, 23, 42, .18) !important;
+            }
+
+    .map-page {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 6rem 1rem 2.2rem;
+    }
+
+    .map-hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: var(--map-radius-xl);
+        padding: 1.15rem 1.15rem;
+        margin-bottom: .9rem;
+        background: linear-gradient(135deg, rgba(15,61,46,.76), rgba(20,85,68,.52));
+        border: 1px solid rgba(255,255,255,.14);
+        box-shadow: 0 18px 40px rgba(0,0,0,.14);
+        backdrop-filter: blur(10px);
+        color: #fff;
+    }
+
+        .map-hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top right, rgba(255,255,255,.09), transparent 28%), radial-gradient(circle at bottom left, rgba(255,255,255,.04), transparent 24%);
+            pointer-events: none;
+        }
+
+    .map-hero-inner {
+        position: relative;
+        z-index: 2;
+    }
+
+    .map-hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .42rem;
+        padding: .52rem .82rem;
+        border-radius: 999px;
+        background: rgba(255,255,255,.10);
+        border: 1px solid rgba(255,255,255,.16);
+        font-weight: 800;
+        font-size: .8rem;
+        margin-bottom: .65rem;
+        backdrop-filter: blur(6px);
+    }
+
+    .map-title {
+        font-size: 1.55rem;
+        font-weight: 900;
+        letter-spacing: -.02em;
+        margin: 0 0 .3rem 0;
+    }
+
+    .map-sub {
+        margin: 0;
+        max-width: 76ch;
+        color: rgba(255,255,255,.90);
+        line-height: 1.7;
+        font-size: .9rem;
+    }
+
+    .map-search-row {
+        margin-top: .8rem;
+        display: flex;
+        gap: .65rem;
+        align-items: stretch;
+        flex-wrap: wrap;
+    }
+
+    .map-search-wrap {
+        flex: 1 1 520px;
+        display: flex;
+        align-items: center;
+        background: rgba(255,255,255,.96);
+        border-radius: 999px;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,.18);
+        box-shadow: 0 10px 20px rgba(0,0,0,.10);
+    }
+
+    .map-search-icon {
+        padding-left: .9rem;
+        color: var(--map-green-800);
+        font-size: .88rem;
+        flex: 0 0 auto;
+    }
+
+    .map-search-input {
+        border: 0 !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        min-height: 46px;
+        padding: .78rem .75rem !important;
+        font-size: .9rem;
+        color: var(--map-ink);
+    }
+
+    .map-search-actions {
+        display: flex;
+        gap: .5rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-map-glass {
+        border-radius: 999px;
+        padding: .68rem .88rem;
+        font-weight: 800;
+        border: 1px solid rgba(255,255,255,.14);
+        background: rgba(255,255,255,.10);
+        color: #fff;
+        backdrop-filter: blur(6px);
+        transition: all .2s ease;
+        font-size: .84rem;
+        line-height: 1;
+    }
+
+        .btn-map-glass:hover {
+            background: rgba(255,255,255,.16);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+    .map-top-nav {
+        position: sticky;
+        top: 76px;
+        z-index: 20;
+        margin-bottom: .95rem;
+        display: flex;
+        justify-content: center;
+    }
+
+    .map-top-nav-shell {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: .45rem;
+        padding: .45rem;
+        border-radius: 999px;
+        background: rgba(255,255,255,.76);
+        border: 1px solid rgba(255,255,255,.14);
+        box-shadow: var(--map-shadow-soft);
+        backdrop-filter: blur(12px);
+    }
+
+    .map-tab-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: .42rem;
+        padding: .62rem .88rem;
+        border-radius: 999px;
+        font-weight: 800;
+        color: var(--map-ink);
+        background: rgba(255,255,255,.88);
+        border: 1px solid rgba(15,23,42,.06);
+        transition: all .2s ease;
+        font-size: .84rem;
+        cursor: pointer;
+    }
+
+        .map-tab-btn:hover,
+        .map-tab-btn.active {
+            background: var(--map-green-800);
+            color: #fff;
+            border-color: var(--map-green-800);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 18px rgba(20,85,68,.16);
+        }
+
+    .map-layout {
+        display: grid;
+        grid-template-columns: 290px minmax(0, 1fr);
+        gap: 1rem;
+        align-items: start;
+    }
+
+    .glass-panel {
+        background: var(--map-card);
+        border: 1px solid rgba(255,255,255,.15);
+        box-shadow: var(--map-shadow);
+        backdrop-filter: blur(12px);
+        border-radius: var(--map-radius-xl);
+        overflow: hidden;
+    }
+
+    .glass-panel-head {
+        padding: .82rem .95rem;
+        border-bottom: 1px solid var(--map-border);
+        background: linear-gradient(180deg, rgba(255,255,255,.70), rgba(255,255,255,.54));
+    }
+
+    .glass-panel-title {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: .45rem;
+        font-size: .92rem;
+        font-weight: 900;
+        color: var(--map-ink);
+    }
+
+    .glass-panel-sub {
+        margin-top: .2rem;
+        color: var(--map-muted);
+        font-size: .82rem;
+        line-height: 1.5;
+    }
+
+    .glass-panel-body {
+        padding: .9rem .95rem .95rem;
+    }
+
+    .filters-sticky {
+        position: sticky;
+        top: 140px;
+    }
+
+    .filter-stack {
+        display: grid;
+        gap: .5rem;
+    }
+
+    .filter-chip {
+        border-radius: 999px;
+        border: 1px solid var(--map-border);
+        background: rgba(255,255,255,.94);
+        color: var(--map-ink);
+        font-weight: 800;
+        padding: .56rem .78rem;
+        cursor: pointer;
+        transition: all .2s ease;
+        text-align: center;
+        font-size: .82rem;
+        line-height: 1.1;
+    }
+
+        .filter-chip:hover,
+        .filter-chip.active {
+            background: var(--map-green-800);
+            color: #fff;
+            border-color: var(--map-green-800);
+            box-shadow: 0 8px 18px rgba(20,85,68,.14);
+            transform: translateY(-1px);
+        }
+
+    .filter-actions {
+        display: grid;
+        gap: .55rem;
+        margin-top: .8rem;
+    }
+
+    .filter-btn {
+        width: 100%;
+        border-radius: 999px;
+        font-weight: 800;
+        padding: .68rem .85rem;
+        font-size: .84rem;
+        line-height: 1;
+    }
+
+    .filter-btn-outline {
+        background: rgba(255,255,255,.92);
+        color: var(--map-ink);
+        border: 1px solid var(--map-border);
+    }
+
+        .filter-btn-outline:hover {
+            background: #fff;
+        }
+
+    .map-tab-panel {
+        display: none;
+    }
+
+        .map-tab-panel.active {
+            display: block;
+        }
+
+    .map-card {
+        background: var(--map-card-strong);
+        border: 1px solid rgba(255,255,255,.15);
+        border-radius: var(--map-radius-xl);
+        box-shadow: var(--map-shadow);
+        overflow: hidden;
+        backdrop-filter: blur(12px);
+    }
+
+    .map-card-head {
+        padding: .76rem .92rem;
+        border-bottom: 1px solid var(--map-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: .7rem;
+        flex-wrap: wrap;
+        background: linear-gradient(180deg, rgba(255,255,255,.76), rgba(255,255,255,.58));
+    }
+
+    .map-card-title {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: .45rem;
+        font-size: .9rem;
+        font-weight: 900;
+        color: var(--map-ink);
+    }
+
+    .map-card-sub {
+        font-size: .8rem;
+        color: var(--map-muted);
+        font-weight: 700;
+    }
+
+    #mapaTuristico {
+        width: 100%;
+        height: 560px;
+    }
+
+    .map-results-list {
+        display: grid;
+        gap: .65rem;
+    }
+
+    .place-card {
+        display: grid;
+        grid-template-columns: 72px minmax(0, 1fr);
+        gap: .72rem;
+        padding: .7rem;
+        background: rgba(255,255,255,.88);
+        border: 1px solid rgba(15,23,42,.08);
+        border-radius: var(--map-radius-lg);
+        box-shadow: var(--map-shadow-soft);
+        transition: all .22s ease;
+    }
+
+        .place-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 14px 24px rgba(2,8,23,.10);
+        }
+
+    .place-thumb {
+        width: 72px;
+        height: 72px;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #e5e7eb;
+        box-shadow: inset 0 0 0 1px rgba(15,23,42,.06);
+    }
+
+        .place-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .place-title {
+        margin: 0;
+        font-size: .9rem;
+        font-weight: 900;
+        color: var(--map-ink);
+    }
+
+    .place-meta {
+        margin: .18rem 0 0;
+        color: var(--map-muted);
+        font-size: .8rem;
+        line-height: 1.55;
+    }
+
+    .place-badges {
+        margin-top: .42rem;
+        display: flex;
+        gap: .36rem;
+        flex-wrap: wrap;
+    }
+
+    .place-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .24rem;
+        padding: .3rem .5rem;
+        border-radius: 999px;
+        font-weight: 800;
+        font-size: .72rem;
+        background: var(--map-green-soft);
+        color: var(--map-green-900);
+        border: 1px solid rgba(20,85,68,.14);
+    }
+
+    .place-actions {
+        margin-top: .5rem;
+        display: flex;
+        gap: .45rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-place {
+        border-radius: 999px;
+        font-weight: 800;
+        padding: .44rem .72rem;
+        font-size: .76rem;
+        line-height: 1;
+    }
+
+    .empty-box {
+        padding: 1rem;
+        border-radius: var(--map-radius-lg);
+        background: rgba(255,255,255,.88);
+        border: 1px dashed rgba(15,23,42,.12);
+        color: var(--map-muted);
+        text-align: center;
+        line-height: 1.65;
+        font-size: .84rem;
+    }
+
+    .leaflet-popup-content-wrapper {
+        border-radius: 14px;
+        box-shadow: 0 12px 24px rgba(2,8,23,.16);
+    }
+
+    .leaflet-popup-content {
+        margin: 10px 12px;
+        min-width: 220px;
+    }
+
+    .popup-img {
+        width: 100%;
+        height: 112px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: .6rem;
+    }
+
+    .popup-title {
+        margin: 0 0 .3rem;
+        font-size: .9rem;
+        font-weight: 900;
+        color: var(--map-ink);
+    }
+
+    .popup-meta {
+        color: var(--map-muted);
+        font-size: .8rem;
+        line-height: 1.55;
+    }
+
+    @@media (max-width: 991.98px) {
+        .map-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .filters-sticky {
+            position: static;
+        }
+
+        .map-top-nav {
+            top: 72px;
+        }
+
+        #mapaTuristico {
+            height: 460px;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .map-page {
+            padding: 5.6rem .75rem 2rem;
+        }
+
+        .map-title {
+            font-size: 1.32rem;
+        }
+
+        .map-search-wrap {
+            border-radius: 20px;
+        }
+
+        .map-search-actions {
+            width: 100%;
+        }
+
+            .map-search-actions .btn-map-glass {
+                width: 100%;
+                justify-content: center;
+            }
+
+        .map-top-nav-shell {
+            width: 100%;
+            justify-content: center;
+            border-radius: 20px;
+        }
+
+        .place-card {
+            grid-template-columns: 1fr;
+        }
+
+        .place-thumb {
+            width: 100%;
+            height: 150px;
+        }
+
+        #mapaTuristico {
+            height: 400px;
+        }
+    }
+</style>
+
+<div class="map-page">
+    <section class="map-hero">
+        <div class="map-hero-inner">
+            <div class="map-hero-badge">
+                <i class="bi bi-map"></i> Exploración turística municipal
+            </div>
+
+            <h1 class="map-title">Mapa turístico del cantón</h1>
+            <p class="map-sub">
+                Busca por nombre, filtra por categoría y navega los lugares registrados dentro del portal con una experiencia más limpia y elegante.
+            </p>
+
+            <div class="map-search-row">
+                <div class="map-search-wrap">
+                    <span class="map-search-icon">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="text"
+                           id="txtBuscarLugar"
+                           class="form-control map-search-input"
+                           placeholder="Buscar por nombre, categoría o dirección..." />
+                </div>
+
+                <div class="map-search-actions">
+                    <button type="button" id="btnBuscarLugar" class="btn btn-map-glass">
+                        <i class="bi bi-search me-1"></i> Buscar
+                    </button>
+
+                    <button type="button" id="btnLimpiarBusqueda" class="btn btn-map-glass">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Limpiar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="map-top-nav">
+        <div class="map-top-nav-shell">
+            <button type="button" class="map-tab-btn active" data-tab="tabMapa">
+                <i class="bi bi-geo-alt"></i> Mapa
+            </button>
+            <button type="button" class="map-tab-btn" data-tab="tabResultados">
+                <i class="bi bi-grid-3x3-gap"></i> Comercios
+            </button>
+        </div>
+    </div>
+
+    <div class="map-layout">
+        <aside class="filters-sticky">
+            <div class="glass-panel">
+                <div class="glass-panel-head">
+                    <h2 class="glass-panel-title">
+                        <i class="bi bi-funnel"></i>
+                        Filtros
+                    </h2>
+                    <div class="glass-panel-sub">
+                        Refina resultados por categoría y aplica la búsqueda actual.
+                    </div>
+                </div>
+
+                <div class="glass-panel-body">
+                    <div class="filter-stack" id="chipsCategorias">
+                        <button type="button" class="filter-chip active" data-cat="__all">Todas</button>
+
+                        @if (Model != null && Model.Categorias != null)
+                        {
+                            foreach (var cat in Model.Categorias)
+                            {
+                                <button type="button" class="filter-chip" data-cat="@cat">@cat</button>
+                            }
+                        }
+                    </div>
+
+                    <div class="filter-actions">
+                        <button type="button" id="btnAplicarFiltros" class="btn btn-success filter-btn">
+                            <i class="bi bi-check2-circle me-1"></i> Aplicar
+                        </button>
+
+                        <button type="button" id="btnResetFiltros" class="btn filter-btn filter-btn-outline">
+                            <i class="bi bi-arrow-counterclockwise me-1"></i> Reiniciar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <section>
+            <section id="tabMapa" class="map-tab-panel active">
+                <div class="map-card">
+                    <div class="map-card-head">
+                        <div>
+                            <h2 class="map-card-title">
+                                <i class="bi bi-geo-alt-fill"></i>
+                                Ubicaciones registradas
+                            </h2>
+                            <div class="map-card-sub">
+                                Visualiza los puntos disponibles directamente sobre el mapa.
+                            </div>
+                        </div>
+
+                        <div class="map-card-sub">
+                            Total:
+                            <strong id="lblTotalResultadosMapa">
+                                @(Model != null && Model.Lugares != null ? Model.Lugares.Count : 0)
+                            </strong>
+                        </div>
+                    </div>
+
+                    <div id="mapaTuristico"></div>
+                </div>
+            </section>
+
+            <section id="tabResultados" class="map-tab-panel">
+                <div class="glass-panel">
+                    <div class="glass-panel-head">
+                        <h2 class="glass-panel-title">
+                            <i class="bi bi-card-list"></i>
+                            Comercios y lugares
+                        </h2>
+                        <div class="glass-panel-sub">
+                            Vista rápida de resultados filtrados.
+                        </div>
+                    </div>
+
+                    <div class="glass-panel-body">
+                        <div class="map-card-sub mb-3">
+                            Total:
+                            <strong id="lblTotalResultadosLista">
+                                @(Model != null && Model.Lugares != null ? Model.Lugares.Count : 0)
+                            </strong>
+                        </div>
+
+                        <div id="listaResultados" class="map-results-list"></div>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        (function () {
+            const navbar = document.querySelector(".sitm-navbar");
+            const hero = document.querySelector(".map-hero");
+            if (!navbar) return;
+
+            function getThreshold() {
+                if (hero) return Math.max(90, Math.floor(hero.offsetHeight * 0.45));
+                return 220;
+            }
+
+            function updateNavbar() {
+                navbar.classList.toggle("scrolled", window.scrollY > getThreshold());
+            }
+
+            window.addEventListener("scroll", updateNavbar, { passive: true });
+            window.addEventListener("load", updateNavbar);
+            updateNavbar();
+        })();
+
+        (function () {
+            const tabButtons = document.querySelectorAll(".map-tab-btn");
+            const tabPanels = document.querySelectorAll(".map-tab-panel");
+
+            tabButtons.forEach(btn => {
+                btn.addEventListener("click", function () {
+                    const target = this.getAttribute("data-tab");
+
+                    tabButtons.forEach(x => x.classList.remove("active"));
+                    tabPanels.forEach(x => x.classList.remove("active"));
+
+                    this.classList.add("active");
+                    const panel = document.getElementById(target);
+                    if (panel) panel.classList.add("active");
+
+                    if (target === "tabMapa" && window.__sitmMap) {
+                        setTimeout(() => {
+                            window.__sitmMap.invalidateSize();
+                        }, 220);
+                    }
+                });
+            });
+        })();
+
+        (function () {
+            const lugares = @Html.Raw(Json.Encode(Model != null && Model.Lugares != null ? Model.Lugares : new List<turistico.Controllers.MapaLugarDTO>()));
+
+            const map = L.map('mapaTuristico', {
+                center: [9.7489, -83.7534],
+                zoom: 8
+            });
+
+            window.__sitmMap = map;
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            setTimeout(function () {
+                map.invalidateSize();
+            }, 250);
+
+            const state = {
+                categoria: '__all',
+                texto: '',
+                markers: []
+            };
+
+            const txtBuscar = document.getElementById('txtBuscarLugar');
+            const btnBuscar = document.getElementById('btnBuscarLugar');
+            const btnLimpiar = document.getElementById('btnLimpiarBusqueda');
+            const btnAplicar = document.getElementById('btnAplicarFiltros');
+            const btnReset = document.getElementById('btnResetFiltros');
+            const lblMapa = document.getElementById('lblTotalResultadosMapa');
+            const lblLista = document.getElementById('lblTotalResultadosLista');
+            const lista = document.getElementById('listaResultados');
+
+            function safeText(value) {
+                return value ? value : '';
+            }
+
+            function popupHtml(l) {
+                const img = l.ImagenUrl
+                    ? `<img src="${l.ImagenUrl}" class="popup-img" alt="${safeText(l.Nombre)}" />`
+                    : '';
+
+                const comercio = l.EsComercio
+                    ? `<div class="mt-2"><span class="place-badge"><i class="bi bi-shop"></i> Comercio</span></div>`
+                    : '';
+
+                return `
+                    <div>
+                        ${img}
+                        <div class="popup-title">${safeText(l.Nombre) || 'Lugar'}</div>
+                        <div class="popup-meta">
+                            <div><strong>Categoría:</strong> ${safeText(l.Categoria) || '-'}</div>
+                            <div><strong>Dirección:</strong> ${safeText(l.Direccion) || '-'}</div>
+                            <div class="mt-1">${safeText(l.Descripcion) || ''}</div>
+                            ${comercio}
+                        </div>
+                    </div>
+                `;
+            }
+
+            function cardHtml(l) {
+                const img = l.ImagenUrl ? l.ImagenUrl : '/Content/im/img4.png';
+
+                const comercioBadge = l.EsComercio
+                    ? `<span class="place-badge"><i class="bi bi-shop"></i> Comercio</span>`
+                    : '';
+
+                return `
+                    <article class="place-card">
+                        <div class="place-thumb">
+                            <img src="${img}" alt="${safeText(l.Nombre)}" />
+                        </div>
+
+                        <div>
+                            <h3 class="place-title">${safeText(l.Nombre) || 'Lugar'}</h3>
+                            <p class="place-meta">
+                                <strong>Categoría:</strong> ${safeText(l.Categoria) || '-'}<br />
+                                <strong>Dirección:</strong> ${safeText(l.Direccion) || '-'}
+                            </p>
+
+                            <div class="place-badges">
+                                <span class="place-badge"><i class="bi bi-geo-alt"></i> Visible en mapa</span>
+                                ${comercioBadge}
+                            </div>
+
+                            <div class="place-actions">
+                                <button type="button" class="btn btn-outline-success btn-place" data-focus="${l.Id}">
+                                    <i class="bi bi-crosshair me-1"></i> Ver en mapa
+                                </button>
+
+                                ${l.EsComercio
+                                    ? `<a href="/Comercios/Index?q=${encodeURIComponent(safeText(l.Nombre))}" class="btn btn-success btn-place">
+                                            <i class="bi bi-arrow-right-circle me-1"></i> Ir a comercios
+                                       </a>`
+                                    : `<a href="/Home/Mapa" class="btn btn-success btn-place">
+                                            <i class="bi bi-compass me-1"></i> Explorar
+                                       </a>`}
+                            </div>
+                        </div>
+                    </article>
+                `;
+            }
+
+            function limpiarMarkers() {
+                state.markers.forEach(m => map.removeLayer(m.marker));
+                state.markers = [];
+            }
+
+            function getFiltered() {
+                return lugares.filter(l => {
+                    const matchCoords = l.Latitud !== null && l.Longitud !== null;
+                    const matchCat = state.categoria === '__all' || l.Categoria === state.categoria;
+
+                    const text = (state.texto || '').toLowerCase().trim();
+                    const hayTexto = !text ||
+                        safeText(l.Nombre).toLowerCase().includes(text) ||
+                        safeText(l.Categoria).toLowerCase().includes(text) ||
+                        safeText(l.Direccion).toLowerCase().includes(text) ||
+                        safeText(l.Descripcion).toLowerCase().includes(text);
+
+                    return matchCoords && matchCat && hayTexto;
+                });
+            }
+
+            function renderLista(items) {
+                if (!lista) return;
+
+                if (!items.length) {
+                    lista.innerHTML = `
+                        <div class="empty-box">
+                            No se encontraron lugares con los filtros actuales.
+                        </div>
+                    `;
+                    return;
+                }
+
+                lista.innerHTML = items.map(cardHtml).join('');
+
+                lista.querySelectorAll('[data-focus]').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        const id = parseInt(this.getAttribute('data-focus'));
+                        const target = state.markers.find(x => x.id === id);
+                        if (!target) return;
+
+                        document.querySelectorAll(".map-tab-btn").forEach(x => x.classList.remove("active"));
+                        document.querySelectorAll(".map-tab-panel").forEach(x => x.classList.remove("active"));
+
+                        document.querySelector('.map-tab-btn[data-tab="tabMapa"]').classList.add("active");
+                        document.getElementById("tabMapa").classList.add("active");
+
+                        setTimeout(() => {
+                            map.invalidateSize();
+                            map.setView([target.lat, target.lng], 14, { animate: true });
+                            target.marker.openPopup();
+                        }, 220);
+                    });
+                });
+            }
+
+            function renderMap(items) {
+                limpiarMarkers();
+
+                if (!items.length) {
+                    if (lblMapa) lblMapa.textContent = '0';
+                    if (lblLista) lblLista.textContent = '0';
+                    return;
+                }
+
+                const bounds = [];
+
+                items.forEach(l => {
+                    const lat = Number(l.Latitud);
+                    const lng = Number(l.Longitud);
+
+                    const marker = L.marker([lat, lng]).addTo(map);
+                    marker.bindPopup(popupHtml(l));
+
+                    state.markers.push({
+                        id: l.Id,
+                        lat: lat,
+                        lng: lng,
+                        marker: marker
+                    });
+
+                    bounds.push([lat, lng]);
+                });
+
+                if (lblMapa) lblMapa.textContent = items.length.toString();
+                if (lblLista) lblLista.textContent = items.length.toString();
+
+                if (bounds.length === 1) {
+                    map.setView(bounds[0], 13);
+                } else if (bounds.length > 1) {
+                    map.fitBounds(bounds, { padding: [40, 40] });
+                }
+            }
+
+            function renderAll() {
+                const items = getFiltered();
+                renderMap(items);
+                renderLista(items);
+
+                if (lblMapa) lblMapa.textContent = items.length.toString();
+                if (lblLista) lblLista.textContent = items.length.toString();
+            }
+
+            document.querySelectorAll('.filter-chip').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    document.querySelectorAll('.filter-chip').forEach(x => x.classList.remove('active'));
+                    this.classList.add('active');
+                    state.categoria = this.getAttribute('data-cat');
+                });
+            });
+
+            if (btnBuscar) {
+                btnBuscar.addEventListener('click', function () {
+                    state.texto = txtBuscar ? txtBuscar.value : '';
+                    renderAll();
+                });
+            }
+
+            if (txtBuscar) {
+                txtBuscar.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        state.texto = txtBuscar.value;
+                        renderAll();
+                    }
+                });
+            }
+
+            if (btnAplicar) {
+                btnAplicar.addEventListener('click', function () {
+                    state.texto = txtBuscar ? txtBuscar.value : '';
+                    renderAll();
+                });
+            }
+
+            if (btnLimpiar) {
+                btnLimpiar.addEventListener('click', function () {
+                    if (txtBuscar) txtBuscar.value = '';
+                    state.texto = '';
+                    renderAll();
+                });
+            }
+
+            if (btnReset) {
+                btnReset.addEventListener('click', function () {
+                    if (txtBuscar) txtBuscar.value = '';
+                    state.texto = '';
+                    state.categoria = '__all';
+
+                    document.querySelectorAll('.filter-chip').forEach(x => x.classList.remove('active'));
+                    const all = document.querySelector('.filter-chip[data-cat="__all"]');
+                    if (all) all.classList.add('active');
+
+                    renderAll();
+                });
+            }
+
+            renderAll();
+        })();
+    </script>
+}

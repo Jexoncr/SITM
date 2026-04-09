@@ -1,0 +1,98 @@
+﻿@{
+    ViewBag.Title = "Acerca de";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .about-hero {
+        padding: 4rem 0 2rem;
+    }
+
+    .about-title {
+        font-weight: 900;
+        color: #0f172a;
+        margin-bottom: .7rem;
+    }
+
+    .about-sub {
+        color: #64748b;
+        font-size: 1.02rem;
+        line-height: 1.75;
+        max-width: 68ch;
+    }
+
+    .about-card {
+        border: 1px solid rgba(15,23,42,.08);
+        border-radius: 24px;
+        background: #fff;
+        box-shadow: 0 14px 34px rgba(15,23,42,.05);
+        padding: 1.5rem;
+        height: 100%;
+    }
+
+    .about-icon {
+        width: 58px;
+        height: 58px;
+        border-radius: 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(20,85,68,.10);
+        color: #145544;
+        font-size: 1.35rem;
+        margin-bottom: 1rem;
+    }
+
+    .about-card h5 {
+        font-weight: 900;
+        color: #0f172a;
+        margin-bottom: .6rem;
+    }
+
+    .about-card p {
+        color: #64748b;
+        line-height: 1.7;
+        margin: 0;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="about-hero">
+        <h1 class="about-title">Acerca del portal SITM</h1>
+        <p class="about-sub">
+            El Sistema de Información Turística Municipal es una plataforma orientada a centralizar la oferta turística local, facilitando la consulta de comercios, eventos, ubicaciones y experiencias para ciudadanos y visitantes.
+        </p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="about-card">
+                <div class="about-icon"><i class="bi bi-building"></i></div>
+                <h5>Institucional</h5>
+                <p>
+                    El sistema sirve como un canal digital municipal para presentar información organizada, validada y accesible para la comunidad.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="about-card">
+                <div class="about-icon"><i class="bi bi-compass"></i></div>
+                <h5>Turístico</h5>
+                <p>
+                    Integra puntos de interés, servicios, eventos y reservas con el objetivo de promover el desarrollo turístico del cantón.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="about-card">
+                <div class="about-icon"><i class="bi bi-people"></i></div>
+                <h5>Ciudadano</h5>
+                <p>
+                    Permite a los usuarios consultar información, gestionar reservas, publicar reseñas y participar activamente dentro del ecosistema del portal.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
