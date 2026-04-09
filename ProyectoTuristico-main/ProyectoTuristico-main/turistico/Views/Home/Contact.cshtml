@@ -1,0 +1,149 @@
+﻿@{
+    ViewBag.Title = "Contacto";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .contact-card {
+        border: 1px solid rgba(15,23,42,.08);
+        border-radius: 26px;
+        background: #fff;
+        box-shadow: 0 16px 40px rgba(15,23,42,.06);
+        overflow: hidden;
+    }
+
+    .contact-side {
+        background: linear-gradient(135deg, #0f3d2e 0%, #145544 100%);
+        color: #fff;
+        padding: 2rem;
+        height: 100%;
+    }
+
+        .contact-side h2 {
+            font-weight: 900;
+            margin-bottom: .7rem;
+        }
+
+        .contact-side p {
+            color: rgba(255,255,255,.82);
+            line-height: 1.7;
+        }
+
+    .contact-item {
+        display: flex;
+        gap: .85rem;
+        margin-top: 1rem;
+        align-items: flex-start;
+    }
+
+        .contact-item i {
+            font-size: 1.1rem;
+            margin-top: .15rem;
+        }
+
+    .contact-main {
+        padding: 2rem;
+    }
+
+    .contact-title {
+        font-weight: 900;
+        color: #0f172a;
+        margin-bottom: .4rem;
+    }
+
+    .contact-sub {
+        color: #64748b;
+        margin-bottom: 1.5rem;
+    }
+
+    .contact-box {
+        border: 1px solid rgba(15,23,42,.08);
+        border-radius: 18px;
+        padding: 1rem 1.1rem;
+        background: #f8fafc;
+        margin-bottom: 1rem;
+    }
+
+        .contact-box .label {
+            font-size: .82rem;
+            color: #64748b;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+
+        .contact-box .value {
+            font-size: 1rem;
+            color: #0f172a;
+            font-weight: 700;
+            margin-top: .25rem;
+        }
+</style>
+
+<div class="container py-5">
+    <div class="contact-card">
+        <div class="row g-0">
+            <div class="col-lg-5">
+                <div class="contact-side">
+                    <h2>Contacto municipal</h2>
+                    <p>
+                        Si necesitas orientación sobre el portal, soporte general o información institucional, puedes comunicarte por medio de los canales oficiales.
+                    </p>
+
+                    <div class="contact-item">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <div>
+                            <div class="fw-bold">Ubicación</div>
+                            <div class="text-white-50">Municipalidad de San Carlos, Costa Rica</div>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <i class="bi bi-telephone-fill"></i>
+                        <div>
+                            <div class="fw-bold">Teléfono</div>
+                            <div class="text-white-50">+506 0000-0000</div>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <i class="bi bi-envelope-fill"></i>
+                        <div>
+                            <div class="fw-bold">Correo</div>
+                            <div class="text-white-50">sitm@municipalidad.go.cr</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-7">
+                <div class="contact-main">
+                    <h3 class="contact-title">Canales de atención</h3>
+                    <p class="contact-sub">
+                        Aquí se muestran los datos de referencia para comunicación institucional del sistema.
+                    </p>
+
+                    <div class="contact-box">
+                        <div class="label">Correo electrónico</div>
+                        <div class="value">sitm@municipalidad.go.cr</div>
+                    </div>
+
+                    <div class="contact-box">
+                        <div class="label">Teléfono de atención</div>
+                        <div class="value">+506 0000-0000</div>
+                    </div>
+
+                    <div class="contact-box">
+                        <div class="label">Horario</div>
+                        <div class="value">Lunes a viernes, 8:00 a.m. a 4:00 p.m.</div>
+                    </div>
+
+                    <div class="contact-box mb-0">
+                        <div class="label">Soporte del portal</div>
+                        <div class="value">Atención para consultas sobre acceso, información turística y uso general del sistema.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
