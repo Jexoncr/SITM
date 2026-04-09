@@ -1,0 +1,616 @@
+﻿@{
+    Response.ContentEncoding = System.Text.Encoding.UTF8;
+    Response.Charset = "utf-8";
+}
+@model turistico.Models.PaginacionVM<turistico.Controllers.EventoListaVM>
+
+@{
+    ViewBag.Title = "Eventos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var eventos = Model?.Items ?? Enumerable.Empty<turistico.Controllers.EventoListaVM>();
+    var paginaActual = Model?.PaginaActual ?? 1;
+    var totalPaginas = Model?.TotalPaginas ?? 1;
+    var totalRegistros = Model?.TotalRegistros ?? 0;
+}
+
+<script>
+    document.body.classList.add("events-page-body");
+</script>
+
+<style>
+    :root {
+        --ev-green-900: #0f3d2e;
+        --ev-green-800: #145544;
+        --ev-green-700: #1b6b55;
+        --ev-green-soft: rgba(20,85,68,.08);
+        --ev-ink: #0f172a;
+        --ev-muted: #64748b;
+        --ev-card: rgba(255,255,255,.92);
+        --ev-shadow: 0 18px 42px rgba(15,23,42,.08);
+        --ev-shadow-soft: 0 10px 24px rgba(15,23,42,.06);
+    }
+
+    body.events-page-body {
+        background: linear-gradient(rgba(9,24,19,.42), rgba(9,24,19,.30)), radial-gradient(circle at 12% 10%, rgba(46,158,127,.10), transparent 36%), radial-gradient(circle at 88% 20%, rgba(27,122,92,.08), transparent 38%), radial-gradient(circle at 50% 100%, rgba(46,158,127,.06), transparent 44%), url('/Content/im/img4.png');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+
+    .events-shell {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 2rem 1rem 2.8rem;
+    }
+
+    .events-hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: 28px;
+        padding: 2.1rem 1.4rem;
+        margin-bottom: 1.4rem;
+        background: linear-gradient(135deg, rgba(15,61,46,.80), rgba(20,85,68,.58));
+        color: #fff;
+        border: 1px solid rgba(255,255,255,.14);
+        box-shadow: 0 22px 52px rgba(15,61,46,.18);
+        backdrop-filter: blur(10px);
+    }
+
+        .events-hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top right, rgba(255,255,255,.10), transparent 30%), radial-gradient(circle at bottom left, rgba(255,255,255,.04), transparent 24%);
+            pointer-events: none;
+        }
+
+    .events-hero-inner {
+        position: relative;
+        z-index: 2;
+    }
+
+    .events-hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .42rem;
+        padding: .52rem .82rem;
+        border-radius: 999px;
+        background: rgba(255,255,255,.10);
+        border: 1px solid rgba(255,255,255,.16);
+        font-weight: 800;
+        font-size: .8rem;
+        margin-bottom: .75rem;
+    }
+
+    .events-hero h1 {
+        font-weight: 900;
+        letter-spacing: -.02em;
+        margin-bottom: .65rem;
+        line-height: 1.08;
+    }
+
+    .events-hero p {
+        margin: 0;
+        max-width: 760px;
+        color: rgba(255,255,255,.92);
+        line-height: 1.8;
+        font-size: .96rem;
+    }
+
+    .events-chip-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .55rem;
+        margin-top: 1.1rem;
+    }
+
+    .events-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: .38rem;
+        padding: .52rem .8rem;
+        border-radius: 999px;
+        background: rgba(255,255,255,.10);
+        border: 1px solid rgba(255,255,255,.12);
+        font-size: .82rem;
+        font-weight: 800;
+        color: #fff;
+    }
+
+    .events-section-head {
+        background: rgba(255,255,255,.78);
+        border: 1px solid rgba(255,255,255,.14);
+        box-shadow: 0 12px 28px rgba(15,23,42,.06);
+        backdrop-filter: blur(10px);
+        border-radius: 22px;
+        padding: 1rem 1.1rem;
+        margin-bottom: 1.1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .events-title {
+        margin: 0;
+        font-weight: 900;
+        font-size: 1.55rem;
+        color: var(--ev-ink);
+        line-height: 1.1;
+    }
+
+    .events-sub {
+        color: #475569;
+        margin-top: .35rem;
+        font-size: .9rem;
+        line-height: 1.6;
+    }
+
+    .events-total {
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        padding: .6rem .82rem;
+        border-radius: 999px;
+        background: #fff;
+        border: 1px solid rgba(15,23,42,.08);
+        color: var(--ev-green-800);
+        font-weight: 800;
+        font-size: .8rem;
+        box-shadow: 0 10px 22px rgba(15,23,42,.04);
+    }
+
+    .event-card {
+        height: 100%;
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 22px;
+        background: var(--ev-card);
+        overflow: hidden;
+        box-shadow: var(--ev-shadow);
+        backdrop-filter: blur(12px);
+        transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+    }
+
+        .event-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 22px 46px rgba(15,23,42,.12);
+            border-color: rgba(20,85,68,.18);
+        }
+
+    .event-media-wrap {
+        position: relative;
+        height: 210px;
+        overflow: hidden;
+        background: #dcebe4;
+    }
+
+    .event-media {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform .4s ease;
+    }
+
+    .event-card:hover .event-media {
+        transform: scale(1.04);
+    }
+
+    .event-media-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(15,61,46,.28), transparent 60%);
+    }
+
+    .event-tag-floating {
+        position: absolute;
+        left: 14px;
+        top: 14px;
+        display: inline-flex;
+        align-items: center;
+        gap: .34rem;
+        background: rgba(255,255,255,.94);
+        color: #145544;
+        padding: .42rem .7rem;
+        border-radius: 999px;
+        font-size: .75rem;
+        font-weight: 800;
+        box-shadow: 0 8px 18px rgba(15,23,42,.10);
+    }
+
+    .event-body {
+        padding: 1.05rem;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .event-name {
+        font-weight: 900;
+        color: var(--ev-ink);
+        line-height: 1.25;
+        margin-bottom: .55rem;
+        font-size: 1.04rem;
+    }
+
+    .event-desc {
+        color: var(--ev-muted);
+        line-height: 1.7;
+        min-height: 68px;
+        margin-bottom: 1rem;
+        font-size: .88rem;
+    }
+
+    .event-meta {
+        display: grid;
+        gap: .78rem;
+        margin-bottom: 1.05rem;
+    }
+
+    .event-meta-item {
+        display: flex;
+        align-items: start;
+        gap: .72rem;
+    }
+
+    .event-meta-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        background: var(--ev-green-soft);
+        color: var(--ev-green-800);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        font-size: .92rem;
+    }
+
+    .event-meta-label {
+        display: block;
+        font-size: .72rem;
+        color: var(--ev-muted);
+        font-weight: 800;
+        margin-bottom: .08rem;
+        text-transform: uppercase;
+        letter-spacing: .03em;
+    }
+
+    .event-meta-value {
+        color: var(--ev-ink);
+        font-size: .9rem;
+        font-weight: 800;
+        line-height: 1.5;
+    }
+
+    .stock-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: .36rem;
+        border-radius: 999px;
+        padding: .46rem .76rem;
+        font-weight: 800;
+        font-size: .76rem;
+        width: fit-content;
+        margin-bottom: 1rem;
+    }
+
+    .stock-ok {
+        background: rgba(22,163,74,.10);
+        color: #166534;
+    }
+
+    .stock-low {
+        background: rgba(245,158,11,.14);
+        color: #92400e;
+    }
+
+    .stock-none {
+        background: rgba(220,53,69,.12);
+        color: #b42318;
+    }
+
+    .event-actions {
+        margin-top: auto;
+        display: flex;
+        gap: .6rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-event {
+        border-radius: 999px;
+        font-weight: 800;
+        padding: .7rem .95rem;
+        font-size: .84rem;
+    }
+
+    .pagination-shell {
+        margin-top: 1.5rem;
+        display: flex;
+        justify-content: center;
+    }
+
+    .pagination-premium {
+        display: flex;
+        align-items: center;
+        gap: .55rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: .8rem;
+        border-radius: 24px;
+        background: rgba(255,255,255,.92);
+        border: 1px solid rgba(255,255,255,.16);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 18px 34px rgba(15,23,42,.08);
+    }
+
+    .page-link-pro {
+        min-width: 46px;
+        height: 46px;
+        padding: 0 .95rem;
+        border-radius: 999px;
+        border: 1px solid rgba(15,23,42,.08);
+        background: #fff;
+        color: var(--ev-ink);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        font-weight: 900;
+        font-size: .86rem;
+        transition: all .18s ease;
+        box-shadow: 0 8px 18px rgba(15,23,42,.04);
+    }
+
+        .page-link-pro:hover {
+            transform: translateY(-1px);
+            color: var(--ev-green-800);
+            border-color: rgba(20,85,68,.18);
+            text-decoration: none;
+        }
+
+        .page-link-pro.active {
+            background: linear-gradient(135deg, #145544, #1f8a6c);
+            color: #fff;
+            border-color: #145544;
+            box-shadow: 0 10px 22px rgba(20,85,68,.22);
+        }
+
+        .page-link-pro.disabled {
+            opacity: .42;
+            pointer-events: none;
+        }
+
+    .page-separator {
+        min-width: 46px;
+        height: 46px;
+        padding: 0 .65rem;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,.7);
+        color: #64748b;
+        border: 1px dashed rgba(15,23,42,.10);
+        font-weight: 900;
+    }
+
+    .empty-events {
+        border-radius: 24px;
+        padding: 2.4rem 1.25rem;
+        background: rgba(255,255,255,.88);
+        border: 1px dashed rgba(15,23,42,.14);
+        text-align: center;
+        box-shadow: var(--ev-shadow-soft);
+        backdrop-filter: blur(10px);
+    }
+
+    .empty-events-icon {
+        width: 66px;
+        height: 66px;
+        border-radius: 20px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(20,85,68,.08);
+        color: #145544;
+        font-size: 1.7rem;
+        margin-bottom: .9rem;
+    }
+
+    .empty-events h4 {
+        color: var(--ev-ink);
+        font-weight: 900;
+        margin-bottom: .4rem;
+        font-size: 1.1rem;
+    }
+
+    .empty-events p {
+        color: var(--ev-muted);
+        margin: 0;
+        font-size: .9rem;
+    }
+
+    @@media (max-width: 991.98px) {
+        .events-hero {
+            padding: 1.6rem 1rem;
+            border-radius: 22px;
+        }
+
+        .events-section-head {
+            padding: .95rem 1rem;
+        }
+    }
+</style>
+
+<div class="events-shell">
+    <section class="events-hero">
+        <div class="events-hero-inner">
+            <div class="events-hero-badge">
+                <i class="bi bi-calendar-event"></i> Agenda turística municipal
+            </div>
+
+            <h1 class="display-6">Eventos y actividades turísticas</h1>
+            <p>
+                Descubre los principales eventos registrados dentro del portal turístico municipal y consulta su disponibilidad, ubicación, fechas y opciones de reserva.
+            </p>
+
+            <div class="events-chip-wrap">
+                <span class="events-chip"><i class="bi bi-calendar-event"></i> Agenda turística</span>
+                <span class="events-chip"><i class="bi bi-ticket-perforated"></i> Cupos disponibles</span>
+                <span class="events-chip"><i class="bi bi-shield-check"></i> Información oficial</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="events-section-head">
+        <div>
+            <h2 class="events-title">Próximos eventos</h2>
+            <div class="events-sub">Consulta detalle y disponibilidad de cada actividad registrada dentro del sistema.</div>
+        </div>
+
+        <div class="events-total">
+            <i class="bi bi-grid-3x3-gap"></i> Total: @totalRegistros
+        </div>
+    </div>
+
+    @if (eventos.Any())
+    {
+        <div class="row g-3 row-cols-1 row-cols-md-2 row-cols-xl-3">
+            @foreach (var e in eventos)
+            {
+                var descripcion = string.IsNullOrWhiteSpace(e.Descripcion)
+                    ? "Evento turístico disponible para reserva en el sistema."
+                    : e.Descripcion;
+
+                var lugar = string.IsNullOrWhiteSpace(e.LugarNombre)
+                    ? "Lugar por confirmar"
+                    : e.LugarNombre;
+
+                var categoria = string.IsNullOrWhiteSpace(e.Categoria)
+                    ? "General"
+                    : e.Categoria;
+
+                var fecha = e.FechaInicio.HasValue
+                    ? e.FechaInicio.Value.ToString("dd/MM/yyyy HH:mm")
+                    : "Fecha por confirmar";
+
+                var cupos = e.CuposDisponibles;
+                var stockClass = cupos <= 0 ? "stock-none" : (cupos <= 5 ? "stock-low" : "stock-ok");
+                var stockText = cupos <= 0 ? "Sin cupos disponibles" : (cupos <= 5 ? "Últimos cupos: " + cupos : "Cupos disponibles: " + cupos);
+
+                var imagen = string.IsNullOrWhiteSpace(e.ImagenUrl)
+                    ? Url.Content("~/Content/im/img4.png")
+                    : Url.Content(e.ImagenUrl);
+
+                <div class="col">
+                    <div class="event-card">
+                        <div class="event-media-wrap">
+                            <img src="@imagen"
+                                 alt="@e.Nombre"
+                                 class="event-media"
+                                 onerror="this.onerror=null;this.src='@Url.Content("~/Content/im/img4.png")';" />
+                            <div class="event-media-overlay"></div>
+
+                            <span class="event-tag-floating">
+                                <i class="bi bi-tag"></i> @categoria
+                            </span>
+                        </div>
+
+                        <div class="event-body">
+                            <h3 class="event-name">@e.Nombre</h3>
+
+                            <div class="event-desc">
+                                @descripcion
+                            </div>
+
+                            <div class="event-meta">
+                                <div class="event-meta-item">
+                                    <div class="event-meta-icon">
+                                        <i class="bi bi-geo-alt"></i>
+                                    </div>
+                                    <div>
+                                        <span class="event-meta-label">Lugar</span>
+                                        <div class="event-meta-value">@lugar</div>
+                                    </div>
+                                </div>
+
+                                <div class="event-meta-item">
+                                    <div class="event-meta-icon">
+                                        <i class="bi bi-calendar2-event"></i>
+                                    </div>
+                                    <div>
+                                        <span class="event-meta-label">Fecha</span>
+                                        <div class="event-meta-value">@fecha</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <span class="stock-pill @stockClass">
+                                <i class="bi bi-people"></i> @stockText
+                            </span>
+
+                            <div class="event-actions">
+                                <a href="@Url.Action("Detalle", "Eventos", new { id = e.Id })"
+                                   class="btn btn-outline-success btn-event flex-fill">
+                                    <i class="bi bi-eye me-1"></i> Detalles
+                                </a>
+
+                                <a href="@Url.Action("Contacto", "Eventos", new { id = e.Id })"
+                                   class="btn btn-success btn-event flex-fill">
+                                    <i class="bi bi-chat-dots me-1"></i> Contactar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        if (totalPaginas > 1)
+        {
+            <div class="pagination-shell">
+                <div class="pagination-premium">
+                    <a href="@Url.Action("Index", "Eventos", new { pagina = paginaActual - 1 })"
+                       class="page-link-pro @(paginaActual <= 1 ? "disabled" : "")"
+                       aria-label="Página anterior">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+
+                    @for (int i = 1; i <= totalPaginas; i++)
+                    {
+                        if (i == 1 || i == totalPaginas || Math.Abs(i - paginaActual) <= 1)
+                        {
+                            <a href="@Url.Action("Index", "Eventos", new { pagina = i })"
+                               class="page-link-pro @(i == paginaActual ? "active" : "")">
+                                @i
+                            </a>
+                        }
+                        else if (i == paginaActual - 2 || i == paginaActual + 2)
+                        {
+                            <span class="page-separator">...</span>
+                        }
+                    }
+
+                    <a href="@Url.Action("Index", "Eventos", new { pagina = paginaActual + 1 })"
+                       class="page-link-pro @(paginaActual >= totalPaginas ? "disabled" : "")"
+                       aria-label="Página siguiente">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="empty-events">
+            <div class="empty-events-icon">
+                <i class="bi bi-calendar-x"></i>
+            </div>
+            <h4>No hay eventos registrados</h4>
+            <p>Actualmente no existen eventos disponibles dentro del sistema.</p>
+        </div>
+    }
+</div>

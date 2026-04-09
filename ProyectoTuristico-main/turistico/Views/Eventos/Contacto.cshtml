@@ -1,0 +1,268 @@
+﻿@{
+    Response.ContentEncoding = System.Text.Encoding.UTF8;
+    Response.Charset = "utf-8";
+}
+@model turistico.Models.Evento
+
+@{
+    ViewBag.Title = Model != null ? "Contacto del evento" : "Contacto";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var evento = Model ?? new turistico.Models.Evento();
+
+    var nombreEvento = string.IsNullOrWhiteSpace(evento.Nombre) ? "Evento" : evento.Nombre;
+    var nombreComercio = evento.Comercio != null && !string.IsNullOrWhiteSpace(evento.Comercio.Nombre)
+        ? evento.Comercio.Nombre
+        : "-";
+    var telefono = evento.Comercio != null && !string.IsNullOrWhiteSpace(evento.Comercio.Telefono)
+        ? evento.Comercio.Telefono
+        : (evento.Lugar != null && !string.IsNullOrWhiteSpace(evento.Lugar.Telefono) ? evento.Lugar.Telefono : "-");
+    var whatsapp = evento.Comercio != null && !string.IsNullOrWhiteSpace(evento.Comercio.LinkWhatsApp)
+        ? evento.Comercio.LinkWhatsApp
+        : "";
+    var sitioWeb = evento.Lugar != null && !string.IsNullOrWhiteSpace(evento.Lugar.SitioWeb)
+        ? evento.Lugar.SitioWeb
+        : "";
+}
+
+<script>
+    document.body.classList.add("event-contact-body");
+</script>
+
+<style>
+    :root {
+        --ec-green-900: #0f3d2e;
+        --ec-green-800: #145544;
+        --ec-green-soft: rgba(20,85,68,.08);
+        --ec-ink: #0f172a;
+        --ec-muted: #64748b;
+        --ec-border: rgba(15,23,42,.08);
+        --ec-card: rgba(255,255,255,.90);
+        --ec-shadow: 0 18px 42px rgba(15,23,42,.08);
+        --ec-radius-xl: 26px;
+        --ec-radius-lg: 20px;
+    }
+
+    body.event-contact-body {
+        background: linear-gradient(rgba(9,24,19,.38), rgba(9,24,19,.26)), radial-gradient(circle at 12% 10%, rgba(46,158,127,.10), transparent 36%), radial-gradient(circle at 88% 20%, rgba(27,122,92,.08), transparent 38%), radial-gradient(circle at 50% 100%, rgba(46,158,127,.06), transparent 44%), url('/Content/im/img4.png');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+
+    .contact-event-wrap {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 2rem 1rem 2.7rem;
+    }
+
+    .contact-event-hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: 28px;
+        padding: 1.8rem 1.25rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, rgba(15,61,46,.78), rgba(20,85,68,.56));
+        color: #fff;
+        border: 1px solid rgba(255,255,255,.14);
+        box-shadow: 0 22px 52px rgba(15,61,46,.18);
+        backdrop-filter: blur(10px);
+    }
+
+        .contact-event-hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top right, rgba(255,255,255,.10), transparent 30%), radial-gradient(circle at bottom left, rgba(255,255,255,.04), transparent 24%);
+            pointer-events: none;
+        }
+
+    .contact-event-hero-inner {
+        position: relative;
+        z-index: 2;
+    }
+
+    .contact-event-hero h1 {
+        font-weight: 900;
+        margin-bottom: .5rem;
+        line-height: 1.08;
+    }
+
+    .contact-event-hero p {
+        color: rgba(255,255,255,.9);
+        line-height: 1.75;
+        margin: 0;
+        max-width: 720px;
+        font-size: .95rem;
+    }
+
+    .contact-event-card {
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 24px;
+        background: var(--ec-card);
+        box-shadow: var(--ec-shadow);
+        overflow: hidden;
+        backdrop-filter: blur(12px);
+    }
+
+    .contact-event-body {
+        padding: 1.2rem;
+    }
+
+    .section-title {
+        font-weight: 900;
+        color: var(--ec-ink);
+        margin-bottom: .25rem;
+        font-size: 1.2rem;
+    }
+
+    .section-sub {
+        color: var(--ec-muted);
+        margin-bottom: .95rem;
+        font-size: .88rem;
+    }
+
+    .contact-box {
+        border: 1px solid rgba(15,23,42,.07);
+        border-radius: 18px;
+        padding: .9rem;
+        background: rgba(255,255,255,.82);
+        margin-bottom: .8rem;
+        box-shadow: 0 8px 20px rgba(15,23,42,.04);
+    }
+
+    .contact-row {
+        display: flex;
+        align-items: start;
+        gap: .75rem;
+    }
+
+    .contact-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--ec-green-soft);
+        color: var(--ec-green-800);
+        font-size: .95rem;
+        flex: 0 0 auto;
+    }
+
+    .contact-label {
+        color: var(--ec-muted);
+        font-size: .72rem;
+        font-weight: 800;
+        margin-bottom: .08rem;
+        text-transform: uppercase;
+        letter-spacing: .03em;
+    }
+
+    .contact-value {
+        color: var(--ec-ink);
+        font-weight: 800;
+        line-height: 1.45;
+        word-break: break-word;
+        font-size: .9rem;
+    }
+
+    .contact-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .6rem;
+        margin-top: 1rem;
+    }
+
+    .btn-contact {
+        border-radius: 999px;
+        font-weight: 800;
+        padding: .74rem 1rem;
+        font-size: .84rem;
+    }
+
+    @@media (max-width: 991.98px) {
+        .contact-event-hero {
+            padding: 1.4rem 1rem;
+            border-radius: 22px;
+        }
+    }
+</style>
+
+<div class="contact-event-wrap">
+    <section class="contact-event-hero">
+        <div class="contact-event-hero-inner">
+            <h1 class="display-6">Contacto del evento</h1>
+            <p>
+                Revisa los medios oficiales de comunicación asociados al evento seleccionado.
+            </p>
+        </div>
+    </section>
+
+    <div class="contact-event-card">
+        <div class="contact-event-body">
+            <h2 class="section-title">@nombreEvento</h2>
+            <div class="section-sub">Información de contacto disponible para consultas y seguimiento.</div>
+
+            <div class="contact-box">
+                <div class="contact-row">
+                    <div class="contact-icon">
+                        <i class="bi bi-calendar-event"></i>
+                    </div>
+                    <div>
+                        <div class="contact-label">Evento</div>
+                        <div class="contact-value">@nombreEvento</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-box">
+                <div class="contact-row">
+                    <div class="contact-icon">
+                        <i class="bi bi-shop"></i>
+                    </div>
+                    <div>
+                        <div class="contact-label">Comercio relacionado</div>
+                        <div class="contact-value">@nombreComercio</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-box">
+                <div class="contact-row">
+                    <div class="contact-icon">
+                        <i class="bi bi-telephone"></i>
+                    </div>
+                    <div>
+                        <div class="contact-label">Teléfono</div>
+                        <div class="contact-value">@telefono</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-actions">
+                @if (!string.IsNullOrWhiteSpace(whatsapp))
+                {
+                    <a href="@whatsapp" target="_blank" class="btn btn-success btn-contact">
+                        <i class="bi bi-whatsapp me-1"></i> Abrir WhatsApp
+                    </a>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(sitioWeb))
+                {
+                    <a href="@(sitioWeb.StartsWith("http") ? sitioWeb : "http://" + sitioWeb)"
+                       target="_blank"
+                       class="btn btn-outline-dark btn-contact">
+                        <i class="bi bi-globe me-1"></i> Sitio web
+                    </a>
+                }
+
+                <a href="@Url.Action("Detalle", "Eventos", new { id = evento.Id })"
+                   class="btn btn-outline-success btn-contact">
+                    <i class="bi bi-arrow-left me-1"></i> Volver al detalle
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
