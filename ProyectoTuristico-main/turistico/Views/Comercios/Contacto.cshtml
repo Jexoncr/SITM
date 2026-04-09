@@ -1,0 +1,329 @@
+﻿@{
+    Response.ContentEncoding = System.Text.Encoding.UTF8;
+    Response.Charset = "utf-8";
+}
+@model turistico.Models.ComercioDTO
+
+@{
+    ViewBag.Title = Model != null ? "Contacto - " + Model.Nombre : "Contacto del comercio";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var comercio = Model ?? new turistico.Models.ComercioDTO();
+
+    var nombre = string.IsNullOrWhiteSpace(comercio.Nombre) ? "Comercio" : comercio.Nombre;
+    var telefono = string.IsNullOrWhiteSpace(comercio.Telefono) ? "" : comercio.Telefono;
+    var whatsapp = string.IsNullOrWhiteSpace(comercio.LinkWhatsApp) ? "" : comercio.LinkWhatsApp;
+    var sitioWeb = string.IsNullOrWhiteSpace(comercio.SitioWeb) ? "" : comercio.SitioWeb;
+    var direccion = string.IsNullOrWhiteSpace(comercio.Direccion) ? comercio.Ubicacion : comercio.Direccion;
+    direccion = string.IsNullOrWhiteSpace(direccion) ? "Ubicación no disponible" : direccion;
+    var horario = string.IsNullOrWhiteSpace(comercio.Horario) ? "No disponible" : comercio.Horario;
+}
+
+<script>
+    document.body.classList.add("commerce-contact-body");
+</script>
+
+<style>
+    :root {
+        --cc-green-900: #0f3d2e;
+        --cc-green-800: #145544;
+        --cc-green-soft: rgba(20,85,68,.08);
+        --cc-ink: #0f172a;
+        --cc-muted: #64748b;
+        --cc-border: rgba(15,23,42,.08);
+        --cc-card: rgba(255,255,255,.96);
+        --cc-shadow: 0 18px 44px rgba(15,23,42,.08);
+    }
+
+    body.commerce-contact-body {
+        background: radial-gradient(circle at top left, rgba(20,85,68,.07), transparent 30%), radial-gradient(circle at top right, rgba(46,158,127,.08), transparent 26%), linear-gradient(180deg, #fbfdfc 0%, #f4f8f6 48%, #eef4f1 100%);
+    }
+
+    .contact-shell-wrap {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 2rem 1rem 3rem;
+    }
+
+    .contact-top-note {
+        border-radius: 24px;
+        padding: 1.5rem 1.2rem;
+        margin-bottom: 1rem;
+        background: radial-gradient(circle at top right, rgba(46,158,127,.12), transparent 30%), linear-gradient(135deg, #ffffff 0%, #f7fbf8 55%, #eff7f2 100%);
+        border: 1px solid rgba(15,23,42,.06);
+        box-shadow: 0 18px 42px rgba(15,23,42,.06);
+    }
+
+        .contact-top-note h1 {
+            margin: 0 0 .55rem 0;
+            font-weight: 900;
+            color: var(--cc-ink);
+            line-height: 1.08;
+        }
+
+        .contact-top-note p {
+            margin: 0;
+            max-width: 760px;
+            color: var(--cc-muted);
+            line-height: 1.8;
+            font-size: .94rem;
+        }
+
+    .contact-main {
+        border-radius: 28px;
+        overflow: hidden;
+        background: var(--cc-card);
+        border: 1px solid rgba(15,23,42,.06);
+        box-shadow: var(--cc-shadow);
+    }
+
+    .contact-side,
+    .contact-content {
+        padding: 1.25rem;
+        height: 100%;
+    }
+
+    .contact-side {
+        background: linear-gradient(180deg, #fbfdfc 0%, #f7faf8 100%);
+        border-right: 1px solid rgba(15,23,42,.06);
+    }
+
+    .panel-title {
+        font-weight: 900;
+        color: var(--cc-ink);
+        font-size: 1.05rem;
+        margin-bottom: .2rem;
+    }
+
+    .panel-sub {
+        color: var(--cc-muted);
+        font-size: .86rem;
+        margin-bottom: 1rem;
+    }
+
+    .contact-card {
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: 18px;
+        padding: .95rem;
+        background: #fff;
+        box-shadow: 0 10px 22px rgba(15,23,42,.04);
+        margin-bottom: .8rem;
+    }
+
+        .contact-card:last-child {
+            margin-bottom: 0;
+        }
+
+    .contact-item {
+        display: flex;
+        align-items: start;
+        gap: .8rem;
+    }
+
+    .contact-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(20,85,68,.08);
+        color: var(--cc-green-800);
+        font-size: .95rem;
+        flex: 0 0 auto;
+    }
+
+    .contact-label {
+        font-size: .72rem;
+        color: var(--cc-muted);
+        font-weight: 800;
+        margin-bottom: .08rem;
+        text-transform: uppercase;
+        letter-spacing: .03em;
+    }
+
+    .contact-value {
+        color: var(--cc-ink);
+        font-weight: 800;
+        line-height: 1.55;
+        word-break: break-word;
+        font-size: .88rem;
+    }
+
+    .quick-actions {
+        display: grid;
+        gap: .8rem;
+    }
+
+    .quick-card {
+        border-radius: 20px;
+        padding: 1rem;
+        border: 1px solid rgba(15,23,42,.06);
+        background: linear-gradient(180deg, #ffffff 0%, #fbfcfc 100%);
+        box-shadow: 0 10px 22px rgba(15,23,42,.04);
+    }
+
+        .quick-card h3 {
+            font-size: .98rem;
+            font-weight: 900;
+            color: var(--cc-ink);
+            margin-bottom: .25rem;
+        }
+
+        .quick-card p {
+            font-size: .84rem;
+            color: var(--cc-muted);
+            line-height: 1.7;
+            margin-bottom: .9rem;
+        }
+
+    .btn-contact {
+        border-radius: 999px;
+        font-weight: 800;
+        padding: .76rem .96rem;
+        font-size: .84rem;
+    }
+
+    .nav-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .6rem;
+        margin-top: 1rem;
+    }
+</style>
+
+<div class="contact-shell-wrap">
+    <section class="contact-top-note">
+        <h1 class="display-6">Contacto del comercio</h1>
+        <p>
+            Consulta los canales de contacto disponibles para comunicarte con <strong>@nombre</strong> desde el portal turístico municipal.
+        </p>
+    </section>
+
+    <div class="contact-main">
+        <div class="row g-0">
+            <div class="col-lg-6">
+                <div class="contact-side">
+                    <div class="panel-title">@nombre</div>
+                    <div class="panel-sub">Información principal del comercio y medios de atención registrados.</div>
+
+                    <div class="contact-card">
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="bi bi-shop"></i>
+                            </div>
+                            <div>
+                                <div class="contact-label">Comercio</div>
+                                <div class="contact-value">@nombre</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="contact-card">
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="bi bi-geo-alt"></i>
+                            </div>
+                            <div>
+                                <div class="contact-label">Ubicación</div>
+                                <div class="contact-value">@direccion</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="contact-card">
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="bi bi-telephone"></i>
+                            </div>
+                            <div>
+                                <div class="contact-label">Teléfono</div>
+                                <div class="contact-value">
+                                    @if (!string.IsNullOrWhiteSpace(telefono))
+                                    {
+                                        @telefono
+                                    }
+                                    else
+                                    {
+                                        @:No disponible
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="contact-card">
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="bi bi-clock"></i>
+                            </div>
+                            <div>
+                                <div class="contact-label">Horario</div>
+                                <div class="contact-value">@horario</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="nav-actions">
+                        <a href="@Url.Action("Perfil", "Comercios", new { id = comercio.Id })"
+                           class="btn btn-outline-success btn-contact">
+                            <i class="bi bi-arrow-left-circle me-1"></i> Volver al perfil
+                        </a>
+
+                        <a href="@Url.Action("Index", "Comercios")"
+                           class="btn btn-outline-secondary btn-contact">
+                            <i class="bi bi-grid me-1"></i> Ver todos
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="contact-content">
+                    <div class="panel-title">Canales rápidos</div>
+                    <div class="panel-sub">Accesos directos para comunicarte con el comercio.</div>
+
+                    <div class="quick-actions">
+                        <div class="quick-card">
+                            <h3>WhatsApp</h3>
+                            <p>Utiliza este canal para una atención más ágil y directa con el comercio.</p>
+
+                            @if (!string.IsNullOrWhiteSpace(whatsapp))
+                            {
+                                <a href="@whatsapp" target="_blank" class="btn btn-success btn-contact w-100">
+                                    <i class="bi bi-whatsapp me-1"></i> Abrir WhatsApp
+                                </a>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-secondary btn-contact w-100" disabled>
+                                    <i class="bi bi-whatsapp me-1"></i> WhatsApp no disponible
+                                </button>
+                            }
+                        </div>
+
+                        <div class="quick-card">
+                            <h3>Sitio web</h3>
+                            <p>Consulta información adicional, promociones o detalles oficiales del comercio.</p>
+
+                            @if (!string.IsNullOrWhiteSpace(sitioWeb))
+                            {
+                                <a href="@(sitioWeb.StartsWith("http") ? sitioWeb : "http://" + sitioWeb)"
+                                   target="_blank"
+                                   class="btn btn-outline-dark btn-contact w-100">
+                                    <i class="bi bi-globe me-1"></i> Visitar sitio web
+                                </a>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-outline-secondary btn-contact w-100" disabled>
+                                    <i class="bi bi-globe me-1"></i> Sitio web no disponible
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
