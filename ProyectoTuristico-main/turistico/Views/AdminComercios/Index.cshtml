@@ -1,0 +1,853 @@
+﻿@model turistico.Models.PaginacionVM<turistico.Models.Comercio>
+
+@{
+    ViewBag.Title = "Administrar comercios";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+
+    var vm = Model ?? new turistico.Models.PaginacionVM<turistico.Models.Comercio>();
+    var comercios = vm.Items ?? new List<turistico.Models.Comercio>();
+
+    var q = (ViewBag.Q ?? "").ToString();
+    var estadoActual = (ViewBag.Estado ?? "").ToString();
+}
+
+<style>
+    :root {
+        --ac-green-900: #0f3d2e;
+        --ac-green-800: #145544;
+        --ac-green-soft: rgba(20,85,68,.08);
+        --ac-ink: #0f172a;
+        --ac-muted: #64748b;
+        --ac-card: rgba(255,255,255,.97);
+        --ac-shadow: 0 20px 48px rgba(15,23,42,.08);
+        --ac-shadow-soft: 0 10px 24px rgba(15,23,42,.05);
+        --ac-radius-xl: 28px;
+    }
+
+    .admin-commerce-shell {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .admin-commerce-hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: var(--ac-radius-xl);
+        padding: 1.8rem 1.25rem 1.55rem;
+        background: radial-gradient(circle at top right, rgba(46,158,127,.12), transparent 28%), linear-gradient(135deg, #ffffff 0%, #f7fbf8 55%, #eef7f2 100%);
+        border: 1px solid rgba(15,23,42,.06);
+        box-shadow: 0 18px 42px rgba(15,23,42,.06);
+    }
+
+        .admin-commerce-hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(20,85,68,.04), transparent 24%);
+            pointer-events: none;
+        }
+
+    .admin-commerce-hero-inner {
+        position: relative;
+        z-index: 2;
+    }
+
+    .admin-commerce-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .42rem;
+        padding: .5rem .82rem;
+        border-radius: 999px;
+        background: rgba(20,85,68,.08);
+        color: var(--ac-green-800);
+        border: 1px solid rgba(20,85,68,.10);
+        font-weight: 800;
+        font-size: .8rem;
+        margin-bottom: .75rem;
+    }
+
+    .admin-commerce-title {
+        margin: 0 0 .45rem;
+        color: var(--ac-ink);
+        font-weight: 950;
+        line-height: 1.04;
+        letter-spacing: -.03em;
+        font-size: clamp(1.9rem, 2.8vw, 2.8rem);
+    }
+
+    .admin-commerce-sub {
+        margin: 0;
+        color: var(--ac-muted);
+        line-height: 1.78;
+        max-width: 860px;
+        font-size: .94rem;
+    }
+
+    .admin-commerce-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .7rem;
+        margin-top: 1rem;
+    }
+
+    .btn-admin-commerce {
+        border-radius: 999px;
+        font-weight: 850;
+        padding: .78rem 1rem;
+        font-size: .84rem;
+    }
+
+    .admin-commerce-card {
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: var(--ac-radius-xl);
+        background: var(--ac-card);
+        box-shadow: var(--ac-shadow);
+        overflow: hidden;
+    }
+
+    .admin-commerce-head {
+        padding: 1rem 1.05rem;
+        border-bottom: 1px solid rgba(15,23,42,.06);
+        background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,250,252,.96));
+    }
+
+    .admin-commerce-head-title {
+        margin: 0;
+        color: var(--ac-ink);
+        font-weight: 950;
+        font-size: 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem;
+    }
+
+    .admin-commerce-head-sub {
+        margin-top: .2rem;
+        color: var(--ac-muted);
+        font-size: .84rem;
+        line-height: 1.6;
+    }
+
+    .filter-wrap {
+        padding: 1rem 1.05rem 0;
+    }
+
+    .filter-card {
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: 20px;
+        background: linear-gradient(180deg, rgba(248,250,252,.78), rgba(255,255,255,1));
+        padding: 1rem;
+        box-shadow: var(--ac-shadow-soft);
+    }
+
+    .form-label {
+        font-weight: 900;
+        color: var(--ac-ink);
+        font-size: .82rem;
+        margin-bottom: .45rem;
+    }
+
+    .form-control, .form-select {
+        border-radius: 14px;
+        min-height: 46px;
+        border: 1px solid rgba(15,23,42,.10);
+        box-shadow: none !important;
+        font-size: .9rem;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #1f8a6c;
+            box-shadow: 0 0 0 .2rem rgba(31,138,108,.12) !important;
+        }
+
+    .table-wrap {
+        overflow-x: auto;
+        padding: 1rem 1.05rem 1.05rem;
+    }
+
+    .admin-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        min-width: 1120px;
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: 20px;
+        overflow: hidden;
+        background: #fff;
+    }
+
+        .admin-table th, .admin-table td {
+            padding: .95rem 1rem;
+            border-bottom: 1px solid rgba(15,23,42,.06);
+            vertical-align: middle;
+        }
+
+        .admin-table th {
+            font-size: .78rem;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            color: #475569;
+            font-weight: 900;
+            background: #fbfcfd;
+            white-space: nowrap;
+        }
+
+        .admin-table td {
+            font-size: .9rem;
+            color: #0f172a;
+        }
+
+        .admin-table tr:last-child td {
+            border-bottom: none;
+        }
+
+    .commerce-main {
+        display: flex;
+        align-items: center;
+        gap: .85rem;
+        min-width: 280px;
+    }
+
+    .commerce-thumb {
+        width: 62px;
+        height: 62px;
+        border-radius: 16px;
+        object-fit: cover;
+        flex: 0 0 auto;
+        border: 1px solid rgba(15,23,42,.06);
+        box-shadow: 0 8px 18px rgba(15,23,42,.06);
+        background: #e8efe9;
+    }
+
+    .commerce-name {
+        font-weight: 900;
+        color: var(--ac-ink);
+        margin-bottom: .15rem;
+        font-size: .92rem;
+    }
+
+    .commerce-sub {
+        color: var(--ac-muted);
+        font-size: .8rem;
+        line-height: 1.55;
+        max-width: 320px;
+    }
+
+    .soft-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+        padding: .42rem .7rem;
+        border-radius: 999px;
+        font-size: .76rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .pill-ok {
+        background: rgba(22,163,74,.10);
+        color: #166534;
+    }
+
+    .pill-warn {
+        background: rgba(245,158,11,.14);
+        color: #946200;
+    }
+
+    .pill-bad {
+        background: rgba(220,53,69,.12);
+        color: #b42318;
+    }
+
+    .pill-sec {
+        background: rgba(59,130,246,.10);
+        color: #1d4ed8;
+    }
+
+    .action-set {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .45rem;
+        justify-content: flex-end;
+    }
+
+    .btn-row {
+        border-radius: 999px;
+        font-weight: 800;
+        font-size: .78rem;
+        padding: .58rem .84rem;
+        white-space: nowrap;
+    }
+
+    .btn-delete-soft {
+        border: 1px solid rgba(220,53,69,.18);
+        background: rgba(220,53,69,.06);
+        color: #b42318;
+    }
+
+        .btn-delete-soft:hover {
+            background: rgba(220,53,69,.12);
+            color: #991b1b;
+        }
+
+    .pager-stage {
+        padding: 0 1.05rem 1.2rem;
+    }
+
+    .pager-card {
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: 24px;
+        background: linear-gradient(180deg, rgba(248,250,252,.78), rgba(255,255,255,1));
+        box-shadow: var(--ac-shadow-soft);
+        padding: 1rem;
+    }
+
+    .pager-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-bottom: .9rem;
+    }
+
+    .pager-info {
+        color: var(--ac-muted);
+        font-size: .88rem;
+        font-weight: 700;
+    }
+
+    .pager-track {
+        width: 100%;
+        height: 10px;
+        background: #eef2f7;
+        border-radius: 999px;
+        overflow: hidden;
+        margin-bottom: 1rem;
+    }
+
+    .pager-track-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #145544, #36c28d);
+    }
+
+    .pager-rail {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .5rem;
+        align-items: center;
+    }
+
+    .pager-chip {
+        min-width: 42px;
+        height: 42px;
+        padding: 0 .9rem;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        font-weight: 800;
+        font-size: .84rem;
+        border: 1px solid rgba(15,23,42,.08);
+        background: #fff;
+        color: #0f172a;
+        box-shadow: var(--ac-shadow-soft);
+        transition: all .18s ease;
+    }
+
+        .pager-chip:hover {
+            text-decoration: none;
+            color: #145544;
+            border-color: rgba(20,85,68,.18);
+            transform: translateY(-1px);
+        }
+
+        .pager-chip.active {
+            background: linear-gradient(135deg, #145544, #1f8a6c);
+            color: #fff;
+            border-color: #145544;
+        }
+
+        .pager-chip.ghost {
+            background: rgba(20,85,68,.08);
+            color: #145544;
+        }
+
+        .pager-chip.disabled {
+            pointer-events: none;
+            opacity: .45;
+        }
+
+    .empty-shell {
+        padding: 2.6rem 1.2rem;
+        text-align: center;
+        background: linear-gradient(180deg, rgba(248,250,252,.78), rgba(255,255,255,1));
+    }
+
+    .empty-icon {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto .95rem;
+        border-radius: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(20,85,68,.08);
+        color: var(--ac-green-800);
+        font-size: 1.8rem;
+    }
+
+    .empty-shell h4 {
+        color: var(--ac-ink);
+        font-weight: 950;
+        margin-bottom: .35rem;
+    }
+
+    .empty-shell p {
+        color: var(--ac-muted);
+        margin: 0;
+        font-size: .9rem;
+    }
+
+    .sitm-toast-wrap {
+        position: fixed;
+        top: 18px;
+        right: 18px;
+        z-index: 3000;
+        display: grid;
+        gap: .75rem;
+        width: min(360px, calc(100vw - 36px));
+    }
+
+    .sitm-toast {
+        border-radius: 20px;
+        padding: 1rem 1rem;
+        box-shadow: 0 20px 45px rgba(15,23,42,.16);
+        border: 1px solid rgba(255,255,255,.14);
+        color: #fff;
+        animation: sitmToastIn .24s ease;
+    }
+
+        .sitm-toast.ok {
+            background: linear-gradient(135deg, #145544, #1f8a6c);
+        }
+
+        .sitm-toast.err {
+            background: linear-gradient(135deg, #991b1b, #dc2626);
+        }
+
+    .sitm-toast-title {
+        font-weight: 900;
+        margin-bottom: .18rem;
+    }
+
+    .sitm-toast-text {
+        opacity: .95;
+        line-height: 1.55;
+        font-size: .92rem;
+    }
+
+    @@keyframes sitmToastIn {
+        from {
+            opacity: 0;
+            transform: translateY(-8px) scale(.98);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .sitm-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15,23,42,.42);
+        z-index: 2990;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+    }
+
+        .sitm-modal-backdrop.show {
+            display: flex;
+        }
+
+    .sitm-modal {
+        width: min(520px, 100%);
+        border-radius: 26px;
+        background: #fff;
+        box-shadow: 0 30px 80px rgba(15,23,42,.24);
+        overflow: hidden;
+        border: 1px solid rgba(15,23,42,.08);
+    }
+
+    .sitm-modal-head {
+        padding: 1rem 1.1rem;
+        border-bottom: 1px solid rgba(15,23,42,.06);
+        background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(248,250,252,.98));
+    }
+
+    .sitm-modal-title {
+        margin: 0;
+        font-weight: 950;
+        color: #0f172a;
+        font-size: 1.02rem;
+    }
+
+    .sitm-modal-body {
+        padding: 1rem 1.1rem;
+        color: #475569;
+        line-height: 1.75;
+        font-size: .94rem;
+    }
+
+    .sitm-modal-actions {
+        padding: 0 1.1rem 1.1rem;
+        display: flex;
+        gap: .7rem;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+    }
+
+    .sitm-modal-btn {
+        border-radius: 999px;
+        font-weight: 800;
+        padding: .75rem 1rem;
+    }
+</style>
+
+<div class="admin-commerce-shell">
+    <section class="admin-commerce-hero">
+        <div class="admin-commerce-hero-inner">
+            <span class="admin-commerce-badge">
+                <i class="bi bi-shop-window"></i> Gestión comercial
+            </span>
+
+            <h1 class="admin-commerce-title">Administrar comercios</h1>
+            <p class="admin-commerce-sub">
+                Revisa comercios registrados, aplica filtros y navega entre páginas de forma más visual para evitar una lista infinita.
+            </p>
+
+            <div class="admin-commerce-actions">
+                <a href="@Url.Action("Create", "AdminComercios")" class="btn btn-success btn-admin-commerce">
+                    <i class="bi bi-plus-circle me-1"></i> Nuevo comercio
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <div class="admin-commerce-card">
+        <div class="admin-commerce-head">
+            <h2 class="admin-commerce-head-title">
+                <i class="bi bi-table"></i> Listado de comercios
+            </h2>
+            
+        </div>
+
+        <div class="filter-wrap">
+            @using (Html.BeginForm("Index", "AdminComercios", FormMethod.Get))
+            {
+                <div class="filter-card">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-12 col-lg-6">
+                            <label class="form-label">Buscar</label>
+                            <input type="text" name="q" value="@q" class="form-control" placeholder="Nombre, descripción, dirección, categoría o usuario..." />
+                        </div>
+
+                        <div class="col-12 col-lg-3">
+                            <label class="form-label">Estado</label>
+                            <select name="estado" class="form-select">
+                                <option value="" @(string.IsNullOrWhiteSpace(estadoActual) ? "selected" : "")>Todos</option>
+                                <option value="Pendiente" @(estadoActual == "Pendiente" ? "selected" : "")>Pendiente</option>
+                                <option value="Aprobado" @(estadoActual == "Aprobado" ? "selected" : "")>Aprobado</option>
+                                <option value="Rechazado" @(estadoActual == "Rechazado" ? "selected" : "")>Rechazado</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-lg-3">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-success btn-admin-commerce flex-fill">
+                                    <i class="bi bi-search me-1"></i> Filtrar
+                                </button>
+                                <a href="@Url.Action("Index", "AdminComercios")" class="btn btn-outline-secondary btn-admin-commerce">
+                                    Limpiar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (comercios.Any())
+        {
+            <div class="table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Comercio</th>
+                            <th>Lugar asociado</th>
+                            <th>Categoría</th>
+                            <th>Usuario comercio</th>
+                            <th>Teléfono</th>
+                            <th>Estado</th>
+                            <th class="text-end">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var c in comercios)
+                        {
+                            var estado = c.Lugar != null && !string.IsNullOrWhiteSpace(c.Lugar.Estado)
+                                ? c.Lugar.Estado
+                                : "Sin estado";
+
+                            var estadoClass = "pill-sec";
+                            if (estado == "Aprobado") { estadoClass = "pill-ok"; }
+                            else if (estado == "Pendiente") { estadoClass = "pill-warn"; }
+                            else if (estado == "Rechazado") { estadoClass = "pill-bad"; }
+
+                            var lugarNombre = c.Lugar != null && !string.IsNullOrWhiteSpace(c.Lugar.Nombre)
+                                ? c.Lugar.Nombre
+                                : "No disponible";
+
+                            var categoria = c.Lugar != null && c.Lugar.Categoria != null && !string.IsNullOrWhiteSpace(c.Lugar.Categoria.Nombre)
+                                ? c.Lugar.Categoria.Nombre
+                                : "Sin categoría";
+
+                            var usuarioComercio = c.User != null
+                                ? (string.IsNullOrWhiteSpace(((c.User.Nombre ?? "") + " " + (c.User.Apellido ?? "")).Trim())
+                                    ? c.User.Email
+                                    : ((c.User.Nombre ?? "") + " " + (c.User.Apellido ?? "")).Trim() + " (" + c.User.Email + ")")
+                                : "No asignado";
+
+                            var imagen = (c.Lugar != null && c.Lugar.ImagenesLugar != null && c.Lugar.ImagenesLugar.Any())
+                                ? Url.Content(c.Lugar.ImagenesLugar.OrderByDescending(i => i.Id).FirstOrDefault().UrlImagen)
+                                : Url.Content("~/Content/im/img4.png");
+
+                            <tr>
+                                <td>
+                                    <div class="commerce-main">
+                                        <img src="@imagen"
+                                             alt="@c.Nombre"
+                                             class="commerce-thumb"
+                                             onerror="this.onerror=null;this.src='@Url.Content("~/Content/im/img4.png")';" />
+                                        <div>
+                                            <div class="commerce-name">@c.Nombre</div>
+                                            <div class="commerce-sub">
+                                                @(string.IsNullOrWhiteSpace(c.Descripcion) ? "Sin descripción registrada." : c.Descripcion)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>@lugarNombre</td>
+                                <td>@categoria</td>
+                                <td>@usuarioComercio</td>
+                                <td>@(string.IsNullOrWhiteSpace(c.Telefono) ? "No disponible" : c.Telefono)</td>
+
+                                <td>
+                                    <span class="soft-pill @estadoClass">
+                                        <i class="bi bi-shield-check"></i> @estado
+                                    </span>
+                                </td>
+
+                                <td class="text-end">
+                                    <div class="action-set">
+                                        <a href="@Url.Action("Edit", "AdminComercios", new { id = c.Id })"
+                                           class="btn btn-outline-success btn-row">
+                                            <i class="bi bi-pencil-square me-1"></i> Editar
+                                        </a>
+
+                                        <button type="button"
+                                                class="btn btn-row btn-delete-soft js-delete-commerce"
+                                                data-id="@c.Id"
+                                                data-name="@c.Nombre"
+                                                data-url="@Url.Action("Delete", "AdminComercios")">
+                                            <i class="bi bi-trash3 me-1"></i> Eliminar
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            if (vm.TotalPaginas > 1)
+            {
+                var progreso = vm.TotalPaginas > 0 ? ((decimal)vm.PaginaActual / vm.TotalPaginas) * 100m : 0m;
+                var prevDisabled = vm.PaginaActual <= 1 ? "disabled" : "";
+                var nextDisabled = vm.PaginaActual >= vm.TotalPaginas ? "disabled" : "";
+
+                <div class="pager-stage">
+                    <div class="pager-card">
+                        <div class="pager-top">
+                            <div class="pager-info">
+                                Página @vm.PaginaActual de @vm.TotalPaginas · @vm.TotalRegistros registro(s) · @vm.RegistrosPorPagina por página
+                            </div>
+                            <div class="pager-info">
+                                Progreso visual: @progreso.ToString("0")%
+                            </div>
+                        </div>
+
+                        <div class="pager-track">
+                            <div class="pager-track-fill" style="width:@progreso.ToString(System.Globalization.CultureInfo.InvariantCulture)%"></div>
+                        </div>
+
+                        <div class="pager-rail">
+                            <a class="pager-chip ghost @prevDisabled"
+                               href="@Url.Action("Index", "AdminComercios", new { q = q, estado = estadoActual, pagina = vm.PaginaActual - 1 })">
+                                <i class="bi bi-arrow-left"></i>
+                            </a>
+
+                            @for (int i = 1; i <= vm.TotalPaginas; i++)
+                            {
+                                var active = i == vm.PaginaActual ? "active" : "";
+                                if (i == 1 || i == vm.TotalPaginas || Math.Abs(i - vm.PaginaActual) <= 1)
+                                {
+                                    <a class="pager-chip @active"
+                                       href="@Url.Action("Index", "AdminComercios", new { q = q, estado = estadoActual, pagina = i })">
+                                        @i
+                                    </a>
+                                }
+                                else if (i == vm.PaginaActual - 2 || i == vm.PaginaActual + 2)
+                                {
+                                    <span class="pager-chip ghost">…</span>
+                                }
+                            }
+
+                            <a class="pager-chip ghost @nextDisabled"
+                               href="@Url.Action("Index", "AdminComercios", new { q = q, estado = estadoActual, pagina = vm.PaginaActual + 1 })">
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty-shell">
+                <div class="empty-icon">
+                    <i class="bi bi-shop"></i>
+                </div>
+                <h4>No hay comercios registrados</h4>
+                <p>No hubo resultados con los filtros actuales.</p>
+            </div>
+        }
+    </div>
+</div>
+
+<div id="sitmToastWrap" class="sitm-toast-wrap"></div>
+
+<div id="sitmDeleteModal" class="sitm-modal-backdrop">
+    <div class="sitm-modal">
+        <div class="sitm-modal-head">
+            <h3 class="sitm-modal-title">Confirmar eliminación</h3>
+        </div>
+        <div class="sitm-modal-body" id="sitmDeleteModalText"></div>
+        <div class="sitm-modal-actions">
+            <button type="button" class="btn btn-outline-secondary sitm-modal-btn" id="sitmCancelDelete">Cancelar</button>
+            <button type="button" class="btn btn-danger sitm-modal-btn" id="sitmConfirmDelete">Sí, eliminar</button>
+        </div>
+    </div>
+</div>
+
+@Html.AntiForgeryToken()
+
+@section Scripts {
+    <script>
+        (function () {
+            const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+            const token = tokenInput ? tokenInput.value : '';
+            const toastWrap = document.getElementById('sitmToastWrap');
+            const modal = document.getElementById('sitmDeleteModal');
+            const modalText = document.getElementById('sitmDeleteModalText');
+            const btnCancel = document.getElementById('sitmCancelDelete');
+            const btnConfirm = document.getElementById('sitmConfirmDelete');
+
+            let currentDelete = null;
+
+            function showToast(type, title, text) {
+                const el = document.createElement('div');
+                el.className = 'sitm-toast ' + (type === 'ok' ? 'ok' : 'err');
+                el.innerHTML = '<div class="sitm-toast-title">' + title + '</div><div class="sitm-toast-text">' + text + '</div>';
+                toastWrap.appendChild(el);
+                setTimeout(function () {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(-6px)';
+                    setTimeout(function () { el.remove(); }, 250);
+                }, 3500);
+            }
+
+            function openDeleteModal(cfg) {
+                currentDelete = cfg;
+                modalText.innerHTML = 'Vas a eliminar <strong>' + cfg.name + '</strong>.<br><br>Si este comercio tiene un usuario asignado, eventos, reseñas u otros datos relacionados, el sistema no lo va a borrar y te mostrará una alerta en lugar de dejarte en una página de error.';
+                modal.classList.add('show');
+            }
+
+            function closeDeleteModal() {
+                modal.classList.remove('show');
+                currentDelete = null;
+            }
+
+            document.querySelectorAll('.js-delete-commerce').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    openDeleteModal({
+                        id: this.getAttribute('data-id'),
+                        name: this.getAttribute('data-name'),
+                        url: this.getAttribute('data-url')
+                    });
+                });
+            });
+
+            btnCancel.addEventListener('click', closeDeleteModal);
+            modal.addEventListener('click', function (e) {
+                if (e.target === modal) closeDeleteModal();
+            });
+
+            btnConfirm.addEventListener('click', function () {
+                if (!currentDelete) return;
+
+                const formData = new FormData();
+                formData.append('__RequestVerificationToken', token);
+                formData.append('id', currentDelete.id);
+
+                fetch(currentDelete.url, {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'same-origin'
+                })
+                .then(function (r) {
+                    if (r.ok) {
+                        showToast('ok', 'Comercio eliminado', 'La operación se ejecutó correctamente.');
+                        setTimeout(function () { window.location.reload(); }, 700);
+                        return;
+                    }
+
+                    showToast('err', 'No se pudo eliminar', 'Este comercio probablemente tiene usuario asignado, eventos o registros relacionados.');
+                })
+                .catch(function () {
+                    showToast('err', 'No se pudo eliminar', 'El comercio no se puede eliminar porque tiene información relacionada o hubo un error en el servidor.');
+                })
+                .finally(function () {
+                    closeDeleteModal();
+                });
+            });
+
+            @if (TempData["Ok"] != null)
+            {
+                <text>showToast('ok', 'Operación completada', '@Html.Raw(HttpUtility.JavaScriptStringEncode(TempData["Ok"].ToString()))');</text>
+            }
+
+            @if (TempData["Err"] != null)
+            {
+                <text>showToast('err', 'Ocurrió un problema', '@Html.Raw(HttpUtility.JavaScriptStringEncode(TempData["Err"].ToString()))');</text>
+            }
+        })();
+    </script>
+}
