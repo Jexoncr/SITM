@@ -1,0 +1,223 @@
+﻿@{
+    var ok = TempData["Ok"] as string;
+    var err = TempData["Err"] as string;
+    var warn = TempData["Warn"] as string;
+    var info = TempData["Info"] as string;
+}
+
+<style>
+    .sitm-alert-stack {
+        display: grid;
+        gap: .85rem;
+        margin-bottom: 1rem;
+    }
+
+    .sitm-alert {
+        border: 0;
+        border-radius: 18px;
+        padding: 1rem 1.1rem;
+        box-shadow: 0 12px 26px rgba(15, 23, 42, .08);
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+        animation: sitmAlertIn .28s ease;
+    }
+
+    .sitm-alert-body {
+        display: flex;
+        gap: .85rem;
+        align-items: flex-start;
+        min-width: 0;
+    }
+
+    .sitm-alert-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        font-size: 1.05rem;
+    }
+
+    .sitm-alert-title {
+        font-weight: 800;
+        margin: 0 0 .15rem 0;
+        line-height: 1.2;
+    }
+
+    .sitm-alert-text {
+        margin: 0;
+        color: #334155;
+        line-height: 1.45;
+        word-break: break-word;
+    }
+
+    .sitm-alert-close {
+        border: 0;
+        background: transparent;
+        color: inherit;
+        opacity: .65;
+        font-size: 1.05rem;
+        padding: .2rem;
+        line-height: 1;
+        transition: opacity .2s ease, transform .2s ease;
+    }
+
+        .sitm-alert-close:hover {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+    .sitm-alert-success {
+        background: linear-gradient(180deg, rgba(34,197,94,.12), rgba(34,197,94,.06));
+        color: #166534;
+    }
+
+        .sitm-alert-success .sitm-alert-icon {
+            background: rgba(34,197,94,.16);
+            color: #166534;
+        }
+
+    .sitm-alert-danger {
+        background: linear-gradient(180deg, rgba(239,68,68,.12), rgba(239,68,68,.06));
+        color: #991b1b;
+    }
+
+        .sitm-alert-danger .sitm-alert-icon {
+            background: rgba(239,68,68,.16);
+            color: #991b1b;
+        }
+
+    .sitm-alert-warning {
+        background: linear-gradient(180deg, rgba(245,158,11,.14), rgba(245,158,11,.07));
+        color: #92400e;
+    }
+
+        .sitm-alert-warning .sitm-alert-icon {
+            background: rgba(245,158,11,.16);
+            color: #92400e;
+        }
+
+    .sitm-alert-info {
+        background: linear-gradient(180deg, rgba(14,165,233,.14), rgba(14,165,233,.07));
+        color: #0c4a6e;
+    }
+
+        .sitm-alert-info .sitm-alert-icon {
+            background: rgba(14,165,233,.16);
+            color: #0c4a6e;
+        }
+
+    @@keyframes sitmAlertIn {
+        from {
+            opacity: 0;
+            transform: translateY(-8px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+@if (!string.IsNullOrWhiteSpace(ok) || !string.IsNullOrWhiteSpace(err) || !string.IsNullOrWhiteSpace(warn) || !string.IsNullOrWhiteSpace(info))
+{
+    <div class="sitm-alert-stack">
+        @if (!string.IsNullOrWhiteSpace(ok))
+        {
+            <div class="sitm-alert sitm-alert-success js-sitm-alert">
+                <div class="sitm-alert-body">
+                    <div class="sitm-alert-icon">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <div>
+                        <p class="sitm-alert-title">Operación completada</p>
+                        <p class="sitm-alert-text">@ok</p>
+                    </div>
+                </div>
+                <button type="button" class="sitm-alert-close js-sitm-alert-close" aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(err))
+        {
+            <div class="sitm-alert sitm-alert-danger js-sitm-alert">
+                <div class="sitm-alert-body">
+                    <div class="sitm-alert-icon">
+                        <i class="bi bi-exclamation-octagon-fill"></i>
+                    </div>
+                    <div>
+                        <p class="sitm-alert-title">Ocurrió un problema</p>
+                        <p class="sitm-alert-text">@err</p>
+                    </div>
+                </div>
+                <button type="button" class="sitm-alert-close js-sitm-alert-close" aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(warn))
+        {
+            <div class="sitm-alert sitm-alert-warning js-sitm-alert">
+                <div class="sitm-alert-body">
+                    <div class="sitm-alert-icon">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                    </div>
+                    <div>
+                        <p class="sitm-alert-title">Atención</p>
+                        <p class="sitm-alert-text">@warn</p>
+                    </div>
+                </div>
+                <button type="button" class="sitm-alert-close js-sitm-alert-close" aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(info))
+        {
+            <div class="sitm-alert sitm-alert-info js-sitm-alert">
+                <div class="sitm-alert-body">
+                    <div class="sitm-alert-icon">
+                        <i class="bi bi-info-circle-fill"></i>
+                    </div>
+                    <div>
+                        <p class="sitm-alert-title">Información</p>
+                        <p class="sitm-alert-text">@info</p>
+                    </div>
+                </div>
+                <button type="button" class="sitm-alert-close js-sitm-alert-close" aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+        }
+    </div>
+
+    <script>
+        (function () {
+            var closeButtons = document.querySelectorAll('.js-sitm-alert-close');
+            for (var i = 0; i < closeButtons.length; i++) {
+                closeButtons[i].addEventListener('click', function () {
+                    var alert = this.closest('.js-sitm-alert');
+                    if (alert) {
+                        alert.style.transition = 'opacity .2s ease, transform .2s ease';
+                        alert.style.opacity = '0';
+                        alert.style.transform = 'translateY(-6px)';
+                        setTimeout(function () {
+                            if (alert && alert.parentNode) {
+                                alert.parentNode.removeChild(alert);
+                            }
+                        }, 200);
+                    }
+                });
+            }
+        })();
+    </script>
+}
