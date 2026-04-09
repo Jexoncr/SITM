@@ -1,0 +1,479 @@
+﻿@model turistico.Controllers.CreateUsuarioVM
+
+@{
+    ViewBag.Title = "Crear Usuario";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    :root {
+        --auc-green-900: #0f3d2e;
+        --auc-green-800: #145544;
+        --auc-green-soft: rgba(20,85,68,.08);
+        --auc-ink: #0f172a;
+        --auc-muted: #64748b;
+        --auc-card: rgba(255,255,255,.97);
+        --auc-shadow: 0 20px 48px rgba(15,23,42,.08);
+        --auc-shadow-soft: 0 10px 24px rgba(15,23,42,.05);
+        --auc-radius-xl: 28px;
+        --auc-radius-lg: 22px;
+        --auc-info-bg: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+        --auc-info-border: rgba(16,185,129,.20);
+        --auc-warn-bg: linear-gradient(135deg, #fff7ed 0%, #fffaf3 100%);
+        --auc-warn-border: rgba(245,158,11,.24);
+    }
+
+    .user-form-shell {
+        display: grid;
+        gap: 1rem;
+        max-width: 1220px;
+    }
+
+    .user-form-hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: var(--auc-radius-xl);
+        padding: 1.9rem 1.25rem 1.55rem;
+        background: radial-gradient(circle at top right, rgba(46,158,127,.12), transparent 28%), linear-gradient(135deg, #ffffff 0%, #f7fbf8 55%, #eef7f2 100%);
+        border: 1px solid rgba(15,23,42,.06);
+        box-shadow: 0 18px 42px rgba(15,23,42,.06);
+    }
+
+        .user-form-hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(20,85,68,.04), transparent 24%);
+            pointer-events: none;
+        }
+
+    .user-form-hero-inner {
+        position: relative;
+        z-index: 2;
+    }
+
+    .user-form-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .42rem;
+        padding: .5rem .82rem;
+        border-radius: 999px;
+        background: rgba(20,85,68,.08);
+        color: var(--auc-green-800);
+        border: 1px solid rgba(20,85,68,.10);
+        font-weight: 800;
+        font-size: .8rem;
+        margin-bottom: .75rem;
+    }
+
+    .user-form-title {
+        margin: 0 0 .45rem;
+        color: var(--auc-ink);
+        font-weight: 950;
+        line-height: 1.04;
+        letter-spacing: -.03em;
+        font-size: clamp(2rem, 3vw, 2.9rem);
+    }
+
+    .user-form-sub {
+        margin: 0;
+        color: var(--auc-muted);
+        line-height: 1.78;
+        max-width: 860px;
+        font-size: .95rem;
+    }
+
+    .user-grid {
+        display: grid;
+        grid-template-columns: 1.1fr .9fr;
+        gap: 1rem;
+        align-items: start;
+    }
+
+    @@media (max-width: 991.98px) {
+        .user-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .card-premium {
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: var(--auc-radius-xl);
+        background: var(--auc-card);
+        box-shadow: var(--auc-shadow);
+        overflow: hidden;
+    }
+
+    .card-head {
+        padding: 1rem 1.05rem;
+        border-bottom: 1px solid rgba(15,23,42,.06);
+        background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,250,252,.96));
+    }
+
+    .card-head-title {
+        margin: 0;
+        color: var(--auc-ink);
+        font-weight: 950;
+        font-size: 1rem;
+    }
+
+    .card-head-sub {
+        margin-top: .2rem;
+        color: var(--auc-muted);
+        font-size: .84rem;
+        line-height: 1.6;
+    }
+
+    .card-body-premium {
+        padding: 1.1rem;
+    }
+
+    .form-label {
+        font-weight: 900;
+        color: var(--auc-ink);
+        font-size: .84rem;
+        margin-bottom: .45rem;
+    }
+
+    .form-control {
+        border-radius: 16px;
+        min-height: 48px;
+        border: 1px solid rgba(15,23,42,.10);
+        box-shadow: none !important;
+        font-size: .92rem;
+    }
+
+        .form-control:focus {
+            border-color: #1f8a6c;
+            box-shadow: 0 0 0 .2rem rgba(31,138,108,.12) !important;
+        }
+
+    .toggle-box {
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: 18px;
+        padding: .95rem 1rem;
+        background: linear-gradient(180deg, rgba(248,250,252,.78), rgba(255,255,255,1));
+        box-shadow: var(--auc-shadow-soft);
+    }
+
+    .commerce-toggle {
+        border: 1px solid rgba(16,185,129,.18);
+        background: linear-gradient(180deg, rgba(236,253,245,.9), rgba(255,255,255,1));
+    }
+
+    .role-list {
+        display: grid;
+        gap: .75rem;
+    }
+
+    .role-item {
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: 16px;
+        padding: .9rem 1rem;
+        background: linear-gradient(180deg, rgba(248,250,252,.78), rgba(255,255,255,1));
+        box-shadow: var(--auc-shadow-soft);
+    }
+
+        .role-item.role-highlight {
+            border-color: rgba(16,185,129,.22);
+            background: linear-gradient(180deg, rgba(236,253,245,.92), rgba(255,255,255,1));
+        }
+
+    .role-title {
+        font-weight: 900;
+        color: var(--auc-ink);
+        font-size: .9rem;
+        line-height: 1.2;
+    }
+
+    .role-sub {
+        color: var(--auc-muted);
+        font-size: .8rem;
+        line-height: 1.55;
+    }
+
+    .info-box,
+    .warning-box {
+        border-radius: 18px;
+        padding: 1rem 1rem;
+        margin-bottom: 1rem;
+        display: none;
+    }
+
+        .info-box.show,
+        .warning-box.show {
+            display: block;
+        }
+
+    .info-box {
+        background: var(--auc-info-bg);
+        border: 1px solid var(--auc-info-border);
+        color: #065f46;
+    }
+
+    .warning-box {
+        background: var(--auc-warn-bg);
+        border: 1px solid var(--auc-warn-border);
+        color: #92400e;
+    }
+
+    .info-title,
+    .warning-title {
+        font-weight: 900;
+        margin-bottom: .18rem;
+        font-size: .95rem;
+    }
+
+    .info-text,
+    .warning-text {
+        font-size: .88rem;
+        line-height: 1.7;
+        margin: 0;
+    }
+
+    .password-block {
+        transition: all .22s ease;
+    }
+
+        .password-block.hidden-pass {
+            display: none;
+        }
+
+    .form-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .7rem;
+        margin-top: 1rem;
+    }
+
+    .btn-premium {
+        border-radius: 999px;
+        font-weight: 850;
+        padding: .8rem 1rem;
+    }
+</style>
+
+<div class="user-form-shell">
+    <section class="user-form-hero">
+        <div class="user-form-hero-inner">
+            <span class="user-form-badge">
+                <i class="bi bi-person-plus"></i> Administración de usuarios
+            </span>
+            <h1 class="user-form-title">Crear usuario</h1>
+            <p class="user-form-sub">
+                Registra una nueva cuenta administrativa o funcional dentro del sistema, define sus roles y establece si inicia bloqueada o activa.
+            </p>
+        </div>
+    </section>
+
+    @using (Html.BeginForm("Create", "AdminUsuarios", FormMethod.Post, new { autocomplete = "off", id = "createUserForm" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="user-grid">
+            <div class="card-premium">
+                <div class="card-head">
+                    <h2 class="card-head-title">Datos de la cuenta</h2>
+                    <div class="card-head-sub">Información personal y credenciales iniciales del usuario.</div>
+                </div>
+
+                <div class="card-body-premium">
+                    @Html.ValidationSummary(false, "", new { @class = "text-danger mb-3" })
+
+                    <div class="warning-box @(Model != null && Model.EsUsuarioComercio ? "show" : "")" id="tempPasswordAlert">
+                        <div class="warning-title">
+                            <i class="bi bi-exclamation-triangle-fill me-1"></i> Contraseña temporal automática
+                        </div>
+                        <p class="warning-text">
+                            Este usuario será creado como <strong>Comercio</strong>. El sistema generará una contraseña temporal y, al iniciar sesión, deberá cambiarla antes de continuar.
+                        </p>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label">Nombre</label>
+                            @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control", placeholder = "Nombre" })
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label">Apellido</label>
+                            @Html.TextBoxFor(m => m.Apellido, new { @class = "form-control", placeholder = "Apellido" })
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Correo electrónico</label>
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", type = "email", placeholder = "correo@dominio.com" })
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label">Teléfono</label>
+                            @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", placeholder = "Teléfono" })
+                        </div>
+
+                        <div class="col-12">
+                            <div class="toggle-box commerce-toggle">
+                                @Html.CheckBoxFor(m => m.EsUsuarioComercio, new { @class = "form-check-input", id = "EsUsuarioComercio" })
+                                <label for="EsUsuarioComercio" class="mb-0 fw-bold">Crear como usuario de comercio</label>
+                            </div>
+                        </div>
+
+                        <div class="col-12 password-block @(Model != null && Model.EsUsuarioComercio ? "hidden-pass" : "")" id="passwordFieldsBlock">
+                            <label class="form-label">Contraseña</label>
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Contraseña", id = "PasswordInput" })
+                        </div>
+
+                        <div class="col-12 password-block @(Model != null && Model.EsUsuarioComercio ? "hidden-pass" : "")" id="confirmPasswordFieldsBlock">
+                            <label class="form-label">Confirmar contraseña</label>
+                            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", placeholder = "Confirmar contraseña", id = "ConfirmPasswordInput" })
+                        </div>
+
+                        <div class="col-12">
+                            <div class="toggle-box">
+                                @Html.CheckBoxFor(m => m.Bloqueado, new { @class = "form-check-input", id = "Bloqueado" })
+                                <label for="Bloqueado" class="mb-0 fw-bold">Crear usuario bloqueado</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success btn-premium">
+                            <i class="bi bi-check2-circle me-1"></i> Guardar usuario
+                        </button>
+
+                        <a href="@Url.Action("Index", "AdminUsuarios")" class="btn btn-outline-secondary btn-premium">
+                            Cancelar
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-premium">
+                <div class="card-head">
+                    <h2 class="card-head-title">Roles asignados</h2>
+                    <div class="card-head-sub">Selecciona los roles que tendrá el usuario al crearse. El controller ya trabaja con `RoleCheckVM`. :contentReference[oaicite:2]{index=2}</div>
+                </div>
+
+                <div class="card-body-premium">
+                    <div class="info-box show">
+                        <div class="info-title">
+                            <i class="bi bi-info-circle-fill me-1"></i> Consejo
+                        </div>
+                        <p class="info-text">
+                            Si marcas el rol <strong>Comercio</strong>, también se activará automáticamente la modalidad de contraseña temporal.
+                        </p>
+                    </div>
+
+                    @if (Model != null && Model.Roles != null && Model.Roles.Any())
+                    {
+                        <div class="role-list">
+                            @for (int i = 0; i < Model.Roles.Count; i++)
+                            {
+                                var roleId = "role_" + i;
+                                var esComercio = string.Equals(Model.Roles[i].RoleName, "Comercio", StringComparison.OrdinalIgnoreCase);
+
+                                @Html.HiddenFor(m => m.Roles[i].RoleName)
+
+                                <label class="role-item @(esComercio ? "role-highlight" : "")">
+                                    @Html.CheckBoxFor(m => m.Roles[i].Assigned, new
+                                    {
+                                        @class = "form-check-input js-role-check",
+                                        id = roleId,
+                                        data_role_name = Model.Roles[i].RoleName
+                                    })
+                                    <div>
+                                        <div class="role-title">@Model.Roles[i].RoleName</div>
+                                        <div class="role-sub">
+                                            @(esComercio ? "Este rol activa contraseña temporal y cambio obligatorio al iniciar sesión." : "Rol disponible dentro del sistema.")
+                                        </div>
+                                    </div>
+                                </label>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-muted">No hay roles disponibles para asignar.</div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            const comercioToggle = document.getElementById('EsUsuarioComercio');
+            const alertBox = document.getElementById('tempPasswordAlert');
+            const passwordBlock = document.getElementById('passwordFieldsBlock');
+            const confirmPasswordBlock = document.getElementById('confirmPasswordFieldsBlock');
+            const passwordInput = document.getElementById('PasswordInput');
+            const confirmPasswordInput = document.getElementById('ConfirmPasswordInput');
+            const roleChecks = document.querySelectorAll('.js-role-check');
+
+            function esRolComercio(check) {
+                const roleName = (check.getAttribute('data_role_name') || '').toLowerCase();
+                return roleName === 'comercio';
+            }
+
+            function obtenerCheckComercio() {
+                for (let i = 0; i < roleChecks.length; i++) {
+                    if (esRolComercio(roleChecks[i])) return roleChecks[i];
+                }
+                return null;
+            }
+
+            function refrescarVistaComercio() {
+                const activo = comercioToggle && comercioToggle.checked;
+
+                if (alertBox) {
+                    alertBox.classList.toggle('show', activo);
+                }
+
+                if (passwordBlock) {
+                    passwordBlock.classList.toggle('hidden-pass', activo);
+                }
+
+                if (confirmPasswordBlock) {
+                    confirmPasswordBlock.classList.toggle('hidden-pass', activo);
+                }
+
+                if (passwordInput) {
+                    passwordInput.disabled = activo;
+                    if (activo) passwordInput.value = '';
+                }
+
+                if (confirmPasswordInput) {
+                    confirmPasswordInput.disabled = activo;
+                    if (activo) confirmPasswordInput.value = '';
+                }
+
+                const checkComercio = obtenerCheckComercio();
+                if (checkComercio) {
+                    checkComercio.checked = activo;
+                }
+            }
+
+            if (comercioToggle) {
+                comercioToggle.addEventListener('change', refrescarVistaComercio);
+            }
+
+            roleChecks.forEach(function (check) {
+                check.addEventListener('change', function () {
+                    if (esRolComercio(this) && comercioToggle) {
+                        comercioToggle.checked = this.checked;
+                        refrescarVistaComercio();
+                    }
+                });
+            });
+
+            refrescarVistaComercio();
+        })();
+    </script>
+}

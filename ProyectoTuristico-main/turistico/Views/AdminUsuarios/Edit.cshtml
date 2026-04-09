@@ -1,0 +1,398 @@
+﻿@model turistico.Controllers.EditUsuarioVM
+
+@{
+    ViewBag.Title = "Editar Usuario";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    :root {
+        --aue-green-900: #0f3d2e;
+        --aue-green-800: #145544;
+        --aue-green-soft: rgba(20,85,68,.08);
+        --aue-ink: #0f172a;
+        --aue-muted: #64748b;
+        --aue-card: rgba(255,255,255,.97);
+        --aue-shadow: 0 20px 48px rgba(15,23,42,.08);
+        --aue-shadow-soft: 0 10px 24px rgba(15,23,42,.05);
+        --aue-radius-xl: 28px;
+        --aue-radius-lg: 22px;
+    }
+
+    .user-edit-shell {
+        display: grid;
+        gap: 1rem;
+        max-width: 1260px;
+    }
+
+    .user-edit-hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: var(--aue-radius-xl);
+        padding: 1.9rem 1.25rem 1.55rem;
+        background: radial-gradient(circle at top right, rgba(46,158,127,.12), transparent 28%), linear-gradient(135deg, #ffffff 0%, #f7fbf8 55%, #eef7f2 100%);
+        border: 1px solid rgba(15,23,42,.06);
+        box-shadow: 0 18px 42px rgba(15,23,42,.06);
+    }
+
+        .user-edit-hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(20,85,68,.04), transparent 24%);
+            pointer-events: none;
+        }
+
+    .user-edit-hero-inner {
+        position: relative;
+        z-index: 2;
+    }
+
+    .user-edit-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .42rem;
+        padding: .5rem .82rem;
+        border-radius: 999px;
+        background: rgba(20,85,68,.08);
+        color: var(--aue-green-800);
+        border: 1px solid rgba(20,85,68,.10);
+        font-weight: 800;
+        font-size: .8rem;
+        margin-bottom: .75rem;
+    }
+
+    .user-edit-title {
+        margin: 0 0 .45rem;
+        color: var(--aue-ink);
+        font-weight: 950;
+        line-height: 1.04;
+        letter-spacing: -.03em;
+        font-size: clamp(2rem, 3vw, 2.9rem);
+    }
+
+    .user-edit-sub {
+        margin: 0;
+        color: var(--aue-muted);
+        line-height: 1.78;
+        max-width: 860px;
+        font-size: .95rem;
+    }
+
+    .user-grid {
+        display: grid;
+        grid-template-columns: 1.1fr .9fr;
+        gap: 1rem;
+        align-items: start;
+    }
+
+    @@media (max-width: 991.98px) {
+        .user-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .card-premium {
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: var(--aue-radius-xl);
+        background: var(--aue-card);
+        box-shadow: var(--aue-shadow);
+        overflow: hidden;
+    }
+
+    .card-head {
+        padding: 1rem 1.05rem;
+        border-bottom: 1px solid rgba(15,23,42,.06);
+        background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,250,252,.96));
+    }
+
+    .card-head-title {
+        margin: 0;
+        color: var(--aue-ink);
+        font-weight: 950;
+        font-size: 1rem;
+    }
+
+    .card-head-sub {
+        margin-top: .2rem;
+        color: var(--aue-muted);
+        font-size: .84rem;
+        line-height: 1.6;
+    }
+
+    .card-body-premium {
+        padding: 1.1rem;
+    }
+
+    .form-label {
+        font-weight: 900;
+        color: var(--aue-ink);
+        font-size: .84rem;
+        margin-bottom: .45rem;
+    }
+
+    .form-control {
+        border-radius: 16px;
+        min-height: 48px;
+        border: 1px solid rgba(15,23,42,.10);
+        box-shadow: none !important;
+        font-size: .92rem;
+    }
+
+        .form-control:focus {
+            border-color: #1f8a6c;
+            box-shadow: 0 0 0 .2rem rgba(31,138,108,.12) !important;
+        }
+
+    .readonly-box {
+        border-radius: 16px;
+        min-height: 48px;
+        border: 1px solid rgba(15,23,42,.08);
+        background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+        display: flex;
+        align-items: center;
+        padding: .75rem .95rem;
+        color: #334155;
+        font-weight: 700;
+        font-size: .92rem;
+    }
+
+    .toggle-box {
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: 18px;
+        padding: .95rem 1rem;
+        background: linear-gradient(180deg, rgba(248,250,252,.78), rgba(255,255,255,1));
+        box-shadow: var(--aue-shadow-soft);
+    }
+
+    .role-list {
+        display: grid;
+        gap: .75rem;
+    }
+
+    .role-item {
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: 16px;
+        padding: .9rem 1rem;
+        background: linear-gradient(180deg, rgba(248,250,252,.78), rgba(255,255,255,1));
+        box-shadow: var(--aue-shadow-soft);
+    }
+
+    .role-title {
+        font-weight: 900;
+        color: var(--aue-ink);
+        font-size: .9rem;
+        line-height: 1.2;
+    }
+
+    .role-sub {
+        color: var(--aue-muted);
+        font-size: .8rem;
+        line-height: 1.55;
+    }
+
+    .reset-box {
+        border: 1px dashed rgba(15,23,42,.12);
+        border-radius: 18px;
+        padding: 1rem;
+        background: linear-gradient(180deg, rgba(248,250,252,.65), rgba(255,255,255,1));
+        box-shadow: var(--aue-shadow-soft);
+    }
+
+        .reset-box + .reset-box {
+            margin-top: 1rem;
+        }
+
+    .reset-title {
+        color: var(--aue-ink);
+        font-weight: 900;
+        font-size: .92rem;
+        margin-bottom: .25rem;
+    }
+
+    .reset-sub {
+        color: var(--aue-muted);
+        font-size: .82rem;
+        line-height: 1.6;
+        margin-bottom: .75rem;
+    }
+
+    .soft-note {
+        border-radius: 16px;
+        padding: .85rem .95rem;
+        background: rgba(20,85,68,.06);
+        border: 1px solid rgba(20,85,68,.12);
+        color: #145544;
+        font-size: .85rem;
+        line-height: 1.6;
+        margin-bottom: .9rem;
+    }
+
+    .form-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .7rem;
+        margin-top: 1rem;
+    }
+
+    .btn-premium {
+        border-radius: 999px;
+        font-weight: 850;
+        padding: .8rem 1rem;
+    }
+</style>
+
+<div class="user-edit-shell">
+    <section class="user-edit-hero">
+        <div class="user-edit-hero-inner">
+            <span class="user-edit-badge">
+                <i class="bi bi-pencil-square"></i> Administración de usuarios
+            </span>
+            <h1 class="user-edit-title">Editar usuario</h1>
+            <p class="user-edit-sub">
+                Ajusta la información básica, bloqueo, roles y credenciales de acceso desde una sola vista administrativa.
+            </p>
+        </div>
+    </section>
+
+    <div class="user-grid">
+        <div class="card-premium">
+            <div class="card-head">
+                <h2 class="card-head-title">Información de la cuenta</h2>
+                <div class="card-head-sub">Actualiza los datos generales y los roles asignados a este usuario.</div>
+            </div>
+
+            <div class="card-body-premium">
+                @using (Html.BeginForm("Edit", "AdminUsuarios", FormMethod.Post, new { autocomplete = "off" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(m => m.UserId)
+
+                    @Html.ValidationSummary(false, "", new { @class = "text-danger mb-3" })
+
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label">Nombre</label>
+                            @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control", placeholder = "Nombre" })
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label">Apellido</label>
+                            @Html.TextBoxFor(m => m.Apellido, new { @class = "form-control", placeholder = "Apellido" })
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Correo electrónico</label>
+                            <div class="readonly-box">@Model.Email</div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Teléfono</label>
+                            @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", placeholder = "Teléfono" })
+                        </div>
+
+                        <div class="col-12">
+                            <div class="toggle-box">
+                                @Html.CheckBoxFor(m => m.Bloqueado, new { @class = "form-check-input", id = "Bloqueado" })
+                                <label for="Bloqueado" class="mb-0 fw-bold">Usuario bloqueado</label>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Roles</label>
+
+                            @if (Model != null && Model.Roles != null && Model.Roles.Any())
+                            {
+                                <div class="role-list">
+                                    @for (int i = 0; i < Model.Roles.Count; i++)
+                                    {
+                                        @Html.HiddenFor(m => m.Roles[i].RoleName)
+
+                                        <label class="role-item">
+                                            @Html.CheckBoxFor(m => m.Roles[i].Assigned, new { @class = "form-check-input" })
+                                            <div>
+                                                <div class="role-title">@Model.Roles[i].RoleName</div>
+                                                <div class="role-sub">Rol asignable dentro del sistema.</div>
+                                            </div>
+                                        </label>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-muted">No hay roles disponibles.</div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success btn-premium">
+                            <i class="bi bi-check2-circle me-1"></i> Guardar cambios
+                        </button>
+
+                        <a href="@Url.Action("Index", "AdminUsuarios")" class="btn btn-outline-secondary btn-premium">
+                            Cancelar
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="card-premium">
+            <div class="card-head">
+                <h2 class="card-head-title">Gestión de contraseña</h2>
+                <div class="card-head-sub">Restablece una contraseña manual o genera una contraseña temporal para el usuario.</div>
+            </div>
+
+            <div class="card-body-premium">
+                <div class="soft-note">
+                    Usa contraseña manual si deseas definir una clave específica. Usa contraseña temporal si quieres obligar al usuario a cambiarla en su próximo acceso.
+                </div>
+
+                @using (Html.BeginForm("ResetPassword", "AdminUsuarios", FormMethod.Post, new { autocomplete = "off" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.UserId" />
+
+                    <div class="reset-box">
+                        <div class="reset-title">Restablecer contraseña manualmente</div>
+                        <div class="reset-sub">
+                            Define una nueva contraseña para este usuario. El cambio se aplicará inmediatamente.
+                        </div>
+
+                        <div class="mb-3">
+                            <input type="password" name="newPassword" class="form-control" placeholder="Nueva contraseña" />
+                        </div>
+
+                        <button type="submit" class="btn btn-outline-danger btn-premium">
+                            <i class="bi bi-key me-1"></i> Restablecer contraseña
+                        </button>
+                    </div>
+                }
+
+                @using (Html.BeginForm("ResetPasswordTemporal", "AdminUsuarios", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.UserId" />
+
+                    <div class="reset-box">
+                        <div class="reset-title">Generar contraseña temporal</div>
+                        <div class="reset-sub">
+                            El sistema generará una contraseña temporal y obligará al usuario a cambiarla al iniciar sesión.
+                        </div>
+
+                        <button type="submit" class="btn btn-outline-warning btn-premium">
+                            <i class="bi bi-shield-lock me-1"></i> Generar temporal
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
