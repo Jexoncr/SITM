@@ -1,0 +1,636 @@
+﻿@model IEnumerable<turistico.Controllers.ReservaUsuarioVM>
+
+@{
+
+    ViewBag.Title = "Mis Reservas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var reservas = Model ?? Enumerable.Empty<turistico.Controllers.ReservaUsuarioVM>();
+
+    Func<string, string> estadoClass = (estadoTexto) =>
+    {
+        var valor = (estadoTexto ?? "").Trim().ToLowerInvariant();
+        if (valor.Contains("cancel")) return "status-cancel";
+        if (valor.Contains("pend")) return "status-pending";
+        return "status-ok";
+    };
+
+    Func<string, string> estadoIcon = (estadoTexto) =>
+    {
+        var valor = (estadoTexto ?? "").Trim().ToLowerInvariant();
+        if (valor.Contains("cancel")) return "bi-x-octagon";
+        if (valor.Contains("pend")) return "bi-hourglass-split";
+        return "bi-check-circle";
+    };
+
+    Func<string, string> tipoIcon = (tipoTexto) =>
+    {
+        var valor = (tipoTexto ?? "").Trim().ToLowerInvariant();
+        if (valor.Contains("evento")) return "bi-calendar-event";
+        if (valor.Contains("tour")) return "bi-signpost-2";
+        if (valor.Contains("actividad")) return "bi-compass";
+        return "bi-bookmark-check";
+    };
+
+    Func<DateTime, string> fmt = (fecha) => fecha.ToString("dd/MM/yyyy HH:mm");
+
+    var activas = reservas.Count(r => !((r.Estado ?? "").ToLowerInvariant().Contains("cancel")));
+    var canceladas = reservas.Count(r => ((r.Estado ?? "").ToLowerInvariant().Contains("cancel")));
+}
+
+<style>
+    :root {
+        --booking-green-900: #0f3d2e;
+        --booking-green-800: #145544;
+        --booking-green-700: #1b6b55;
+        --booking-soft: rgba(20,85,68,.08);
+        --booking-ink: #0f172a;
+        --booking-muted: #64748b;
+        --booking-card: rgba(255,255,255,.97);
+        --booking-shadow: 0 18px 42px rgba(15,23,42,.08);
+        --booking-shadow-soft: 0 10px 24px rgba(15,23,42,.05);
+        --booking-radius-xl: 28px;
+        --booking-radius-lg: 22px;
+        --booking-radius-md: 16px;
+    }
+
+    .booking-shell {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .booking-hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: var(--booking-radius-xl);
+        padding: 1.8rem 1.25rem 1.55rem;
+        background: radial-gradient(circle at top right, rgba(46,158,127,.12), transparent 28%), linear-gradient(135deg, #ffffff 0%, #f7fbf8 55%, #eef7f2 100%);
+        border: 1px solid rgba(15,23,42,.06);
+        box-shadow: 0 18px 42px rgba(15,23,42,.06);
+    }
+
+    .booking-hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, rgba(20,85,68,.04), transparent 24%);
+        pointer-events: none;
+    }
+
+    .booking-hero-inner {
+        position: relative;
+        z-index: 2;
+    }
+
+    .booking-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .42rem;
+        padding: .5rem .82rem;
+        border-radius: 999px;
+        background: rgba(20,85,68,.08);
+        color: var(--booking-green-800);
+        border: 1px solid rgba(20,85,68,.10);
+        font-weight: 800;
+        font-size: .8rem;
+        margin-bottom: .75rem;
+    }
+
+    .booking-title {
+        margin: 0 0 .45rem;
+        color: var(--booking-ink);
+        font-weight: 950;
+        line-height: 1.04;
+        letter-spacing: -.03em;
+        font-size: clamp(1.9rem, 2.8vw, 2.8rem);
+    }
+
+    .booking-sub {
+        margin: 0;
+        color: var(--booking-muted);
+        line-height: 1.78;
+        max-width: 860px;
+        font-size: .94rem;
+    }
+
+    .booking-stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: .85rem;
+        margin-top: 1rem;
+    }
+
+    @@media (max-width: 767.98px) {
+        .booking-stats {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .booking-stat {
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: 18px;
+        background: rgba(255,255,255,.85);
+        padding: .9rem 1rem;
+        box-shadow: var(--booking-shadow-soft);
+    }
+
+    .booking-stat-label {
+        color: var(--booking-muted);
+        font-size: .78rem;
+        text-transform: uppercase;
+        letter-spacing: .03em;
+        font-weight: 800;
+        margin-bottom: .2rem;
+    }
+
+    .booking-stat-value {
+        color: var(--booking-ink);
+        font-weight: 950;
+        font-size: 1.45rem;
+        line-height: 1;
+    }
+
+    .booking-card {
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: var(--booking-radius-xl);
+        background: var(--booking-card);
+        box-shadow: var(--booking-shadow);
+        overflow: hidden;
+    }
+
+    .booking-card-head {
+        padding: 1rem 1.05rem;
+        border-bottom: 1px solid rgba(15,23,42,.06);
+        background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,250,252,.96));
+    }
+
+    .booking-card-title {
+        margin: 0;
+        color: var(--booking-ink);
+        font-weight: 950;
+        font-size: 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem;
+    }
+
+    .booking-card-sub {
+        margin-top: .2rem;
+        color: var(--booking-muted);
+        font-size: .84rem;
+        line-height: 1.6;
+    }
+
+    .booking-item {
+        padding: 1rem 1.05rem;
+        border-bottom: 1px solid rgba(15,23,42,.06);
+    }
+
+    .booking-item:last-child {
+        border-bottom: none;
+    }
+
+    .booking-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 16px;
+        background: var(--booking-soft);
+        color: var(--booking-green-800);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+        flex: 0 0 auto;
+    }
+
+    .booking-name {
+        margin: 0 0 .2rem;
+        color: var(--booking-ink);
+        font-weight: 900;
+        font-size: 1rem;
+        line-height: 1.2;
+    }
+
+    .booking-meta {
+        color: var(--booking-muted);
+        font-size: .84rem;
+        line-height: 1.6;
+    }
+
+    .booking-date-box {
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: 16px;
+        background: linear-gradient(180deg, rgba(248,250,252,.76), rgba(255,255,255,1));
+        padding: .8rem .9rem;
+        box-shadow: var(--booking-shadow-soft);
+    }
+
+    .booking-date-label {
+        color: var(--booking-muted);
+        font-size: .72rem;
+        text-transform: uppercase;
+        letter-spacing: .03em;
+        font-weight: 800;
+        margin-bottom: .18rem;
+    }
+
+    .booking-date-value {
+        color: var(--booking-ink);
+        font-weight: 850;
+        font-size: .9rem;
+        line-height: 1.5;
+    }
+
+    .booking-status {
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+        padding: .46rem .74rem;
+        border-radius: 999px;
+        font-size: .78rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .status-ok {
+        background: rgba(22,163,74,.10);
+        color: #166534;
+    }
+
+    .status-pending {
+        background: rgba(245,158,11,.14);
+        color: #946200;
+    }
+
+    .status-cancel {
+        background: rgba(220,53,69,.12);
+        color: #b42318;
+    }
+
+    .btn-booking {
+        border-radius: 999px;
+        font-weight: 800;
+        padding: .62rem .9rem;
+        font-size: .82rem;
+    }
+
+    .empty-bookings {
+        padding: 2.6rem 1.2rem;
+        text-align: center;
+        background: linear-gradient(180deg, rgba(248,250,252,.78), rgba(255,255,255,1));
+    }
+
+    .empty-bookings-icon {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto .95rem;
+        border-radius: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(20,85,68,.08);
+        color: var(--booking-green-800);
+        font-size: 1.8rem;
+    }
+
+    .empty-bookings h4 {
+        color: var(--booking-ink);
+        font-weight: 950;
+        margin-bottom: .35rem;
+    }
+
+    .empty-bookings p {
+        color: var(--booking-muted);
+        margin: 0 0 1rem;
+        font-size: .9rem;
+    }
+
+    .sitm-toast-wrap {
+        position: fixed;
+        top: 18px;
+        right: 18px;
+        z-index: 3000;
+        display: grid;
+        gap: .75rem;
+        width: min(360px, calc(100vw - 36px));
+    }
+
+    .sitm-toast {
+        border-radius: 20px;
+        padding: 1rem 1rem;
+        box-shadow: 0 20px 45px rgba(15,23,42,.16);
+        border: 1px solid rgba(255,255,255,.14);
+        color: #fff;
+        animation: sitmToastIn .24s ease;
+    }
+
+    .sitm-toast.ok {
+        background: linear-gradient(135deg, #145544, #1f8a6c);
+    }
+
+    .sitm-toast.err {
+        background: linear-gradient(135deg, #991b1b, #dc2626);
+    }
+
+    .sitm-toast-title {
+        font-weight: 900;
+        margin-bottom: .18rem;
+    }
+
+    .sitm-toast-text {
+        opacity: .95;
+        line-height: 1.55;
+        font-size: .92rem;
+    }
+
+    @@keyframes sitmToastIn {
+        from {  
+            opacity: 0;
+            transform: translateY(-8px) scale(.98);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .sitm-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15,23,42,.42);
+        z-index: 2990;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+    }
+
+    .sitm-modal-backdrop.show {
+        display: flex;
+    }
+
+    .sitm-modal {
+        width: min(520px, 100%);
+        border-radius: 26px;
+        background: #fff;
+        box-shadow: 0 30px 80px rgba(15,23,42,.24);
+        overflow: hidden;
+        border: 1px solid rgba(15,23,42,.08);
+    }
+
+    .sitm-modal-head {
+        padding: 1rem 1.1rem;
+        border-bottom: 1px solid rgba(15,23,42,.06);
+        background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(248,250,252,.98));
+    }
+
+    .sitm-modal-title {
+        margin: 0;
+        font-weight: 950;
+        color: #0f172a;
+        font-size: 1.02rem;
+    }
+
+    .sitm-modal-body {
+        padding: 1rem 1.1rem;
+        color: #475569;
+        line-height: 1.75;
+        font-size: .94rem;
+    }
+
+    .sitm-modal-actions {
+        padding: 0 1.1rem 1.1rem;
+        display: flex;
+        gap: .7rem;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+    }
+
+    .sitm-modal-btn {
+        border-radius: 999px;
+        font-weight: 800;
+        padding: .75rem 1rem;
+    }
+</style>
+
+<div class="booking-shell">
+    <section class="booking-hero">
+        <div class="booking-hero-inner">
+            <span class="booking-badge">
+                <i class="bi bi-ticket-perforated"></i> Historial personal
+            </span>
+
+            <h1 class="booking-title">Mis reservas</h1>
+            <p class="booking-sub">
+                Consulta el estado de tus reservas, revisa la información principal y cancela las que ya no deseas mantener.
+            </p>
+
+            <div class="booking-stats">
+                <div class="booking-stat">
+                    <div class="booking-stat-label">Total</div>
+                    <div class="booking-stat-value">@reservas.Count()</div>
+                </div>
+
+                <div class="booking-stat">
+                    <div class="booking-stat-label">Activas</div>
+                    <div class="booking-stat-value">@activas</div>
+                </div>
+
+                <div class="booking-stat">
+                    <div class="booking-stat-label">Canceladas</div>
+                    <div class="booking-stat-value">@canceladas</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="booking-card">
+        <div class="booking-card-head">
+            <h2 class="booking-card-title">
+                <i class="bi bi-journal-check me-2"></i>Listado de reservas
+            </h2>
+            <div class="booking-card-sub">Revisa fecha, cantidad de personas y estado de cada reserva.</div>
+        </div>
+
+        @if (!reservas.Any())
+        {
+            <div class="empty-bookings">
+                <div class="empty-bookings-icon">
+                    <i class="bi bi-calendar-x"></i>
+                </div>
+                <h4>No tienes reservas todavía</h4>
+                <p>
+                    Cuando realices una reserva de evento o actividad turística, aparecerá aquí con toda su información y estado.
+                </p>
+                <a href="@Url.Action("Index", "Eventos")" class="btn btn-success btn-booking px-4">
+                    <i class="bi bi-compass me-1"></i> Explorar eventos
+                </a>
+            </div>
+        }
+        else
+        {
+            foreach (var r in reservas)
+            {
+                var rango = r.FechaFin.HasValue
+                    ? $"{fmt(r.FechaInicio)} - {fmt(r.FechaFin.Value)}"
+                    : fmt(r.FechaInicio);
+
+                <div class="booking-item">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-12 col-xl-5">
+                            <div class="d-flex align-items-start gap-3">
+                                <div class="booking-icon">
+                                    <i class="bi @tipoIcon(r.Tipo)"></i>
+                                </div>
+
+                                <div>
+                                    <h3 class="booking-name">@r.Titulo</h3>
+                                    <div class="booking-meta">
+                                        <strong>Tipo:</strong> @r.Tipo
+                                        &nbsp;·&nbsp;
+                                        <strong>Personas:</strong> @r.Personas
+                                        &nbsp;·&nbsp;
+                                        <strong>Plan:</strong> @r.Plan
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-xl-3">
+                            <div class="booking-date-box">
+                                <div class="booking-date-label">Fecha de la reserva</div>
+                                <div class="booking-date-value">
+                                    <i class="bi bi-calendar-event me-1"></i>@rango
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-xl-2">
+                            <span class="booking-status @estadoClass(r.Estado)">
+                                <i class="bi @estadoIcon(r.Estado)"></i> @r.Estado
+                            </span>
+                        </div>
+
+                        <div class="col-12 col-xl-2">
+                            <div class="d-flex flex-wrap gap-2 justify-content-xl-end">
+                                <a href="@Url.Action("DetalleReserva", "Reservas", new { id = r.Id })"
+                                   class="btn btn-sm btn-outline-success btn-booking">
+                                    <i class="bi bi-eye me-1"></i> Detalle
+                                </a>
+
+                                @if (r.PuedeCancelar)
+                                {
+                                    using (Html.BeginForm("CancelarReserva", "Reservas", FormMethod.Post, new { id = "cancelForm_" + r.Id, style = "display:none;" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@r.Id" />
+                                    }
+
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-danger btn-booking js-cancel-reserva"
+                                            data-id="@r.Id"
+                                            data-name="@r.Titulo">
+                                        <i class="bi bi-x-octagon me-1"></i> Cancelar
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<div id="sitmToastWrap" class="sitm-toast-wrap"></div>
+
+<div id="sitmCancelModal" class="sitm-modal-backdrop">
+    <div class="sitm-modal">
+        <div class="sitm-modal-head">
+            <h3 class="sitm-modal-title">Confirmar cancelación</h3>
+        </div>
+        <div class="sitm-modal-body" id="sitmCancelModalText"></div>
+        <div class="sitm-modal-actions">
+            <button type="button" class="btn btn-outline-secondary sitm-modal-btn" id="sitmCancelClose">Volver</button>
+            <button type="button" class="btn btn-danger sitm-modal-btn" id="sitmCancelConfirm">Sí, cancelar</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            const toastWrap = document.getElementById('sitmToastWrap');
+            const modal = document.getElementById('sitmCancelModal');
+            const modalText = document.getElementById('sitmCancelModalText');
+            const btnClose = document.getElementById('sitmCancelClose');
+            const btnConfirm = document.getElementById('sitmCancelConfirm');
+
+            let currentCancelId = null;
+            let currentCancelName = null;
+
+            function showToast(type, title, text) {
+                const el = document.createElement('div');
+                el.className = 'sitm-toast ' + (type === 'ok' ? 'ok' : 'err');
+                el.innerHTML = '<div class="sitm-toast-title">' + title + '</div><div class="sitm-toast-text">' + text + '</div>';
+                toastWrap.appendChild(el);
+
+                setTimeout(function () {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(-6px)';
+                    setTimeout(function () { el.remove(); }, 250);
+                }, 3500);
+            }
+
+            function openCancelModal(id, name) {
+                currentCancelId = id;
+                currentCancelName = name;
+                modalText.innerHTML = 'Vas a cancelar la reserva de <strong>' + name + '</strong>.<br><br>Esta acción actualizará tu historial y liberará los cupos relacionados si corresponde.';
+                modal.classList.add('show');
+            }
+
+            function closeCancelModal() {
+                modal.classList.remove('show');
+                currentCancelId = null;
+                currentCancelName = null;
+            }
+
+            document.querySelectorAll('.js-cancel-reserva').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    openCancelModal(
+                        this.getAttribute('data-id'),
+                        this.getAttribute('data-name')
+                    );
+                });
+            });
+
+            btnClose.addEventListener('click', closeCancelModal);
+
+            modal.addEventListener('click', function (e) {
+                if (e.target === modal) {
+                    closeCancelModal();
+                }
+            });
+
+            btnConfirm.addEventListener('click', function () {
+                if (!currentCancelId) return;
+
+                const form = document.getElementById('cancelForm_' + currentCancelId);
+                if (form) {
+                    form.submit();
+                }
+            });
+
+            @if (TempData["Ok"] != null)
+            {
+                <text>showToast('ok', 'Operación completada', '@Html.Raw(HttpUtility.JavaScriptStringEncode(TempData["Ok"].ToString()))');</text>
+            }
+
+            @if (TempData["Err"] != null)
+            {
+                <text>showToast('err', 'Ocurrió un problema', '@Html.Raw(HttpUtility.JavaScriptStringEncode(TempData["Err"].ToString()))');</text>
+            }
+        })();
+    </script>
+}
