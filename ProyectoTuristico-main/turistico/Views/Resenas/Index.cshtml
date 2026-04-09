@@ -1,0 +1,802 @@
+﻿@model turistico.Models.PaginacionVM<turistico.Models.Resena>
+@using System.Web.Mvc
+
+@{
+    ViewBag.Title = "Reseñas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var resenas = Model?.Items ?? Enumerable.Empty<turistico.Models.Resena>();
+    var comercios = ViewBag.Comercios as IEnumerable<SelectListItem> ?? Enumerable.Empty<SelectListItem>();
+    var isAuth = Request.IsAuthenticated;
+
+    var paginaActual = Model?.PaginaActual ?? 1;
+    var totalPaginas = Model?.TotalPaginas ?? 1;
+    var totalRegistros = Model?.TotalRegistros ?? 0;
+
+    int? comercioId = ViewBag.ComercioId as int?;
+    int? eventoId = ViewBag.EventoId as int?;
+    int? lugarId = ViewBag.LugarId as int?;
+}
+
+<script>
+    document.body.classList.add("reviews-page-body");
+</script>
+
+<style>
+    :root {
+        --rv-green-900: #0f3d2e;
+        --rv-green-800: #145544;
+        --rv-green-700: #1b6b55;
+        --rv-green-soft: rgba(20,85,68,.08);
+        --rv-ink: #0f172a;
+        --rv-muted: #64748b;
+        --rv-border: rgba(15,23,42,.08);
+        --rv-card: rgba(255,255,255,.97);
+        --rv-soft: #f6faf8;
+        --rv-shadow: 0 22px 52px rgba(15,23,42,.08);
+        --rv-shadow-soft: 0 12px 28px rgba(15,23,42,.05);
+        --rv-radius-xl: 30px;
+        --rv-radius-lg: 24px;
+        --rv-radius-md: 18px;
+    }
+
+    body.reviews-page-body {
+        background: radial-gradient(circle at top left, rgba(20,85,68,.07), transparent 30%), radial-gradient(circle at top right, rgba(46,158,127,.08), transparent 26%), linear-gradient(180deg, #fbfdfc 0%, #f4f8f6 48%, #eef4f1 100%);
+    }
+
+    .reviews-shell {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem 1rem 3rem;
+    }
+
+    .reviews-hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: var(--rv-radius-xl);
+        padding: 2.2rem 1.5rem 1.8rem;
+        margin-bottom: 1.2rem;
+        background: radial-gradient(circle at top right, rgba(46,158,127,.12), transparent 28%), linear-gradient(135deg, #ffffff 0%, #f7fbf8 55%, #eef7f2 100%);
+        border: 1px solid rgba(15,23,42,.06);
+        box-shadow: 0 22px 50px rgba(15,23,42,.06);
+    }
+
+    .reviews-hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, rgba(20,85,68,.04), transparent 24%);
+        pointer-events: none;
+    }
+
+    .reviews-hero-inner {
+        position: relative;
+        z-index: 2;
+    }
+
+    .reviews-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        padding: .55rem .88rem;
+        border-radius: 999px;
+        background: rgba(20,85,68,.08);
+        color: var(--rv-green-800);
+        border: 1px solid rgba(20,85,68,.10);
+        font-weight: 800;
+        font-size: .8rem;
+        margin-bottom: .85rem;
+    }
+
+    .reviews-hero h1 {
+        margin: 0 0 .55rem 0;
+        font-weight: 950;
+        letter-spacing: -.03em;
+        color: var(--rv-ink);
+        line-height: 1.02;
+        font-size: clamp(2rem, 3vw, 3.1rem);
+    }
+
+    .reviews-hero p {
+        max-width: 860px;
+        margin: 0;
+        color: var(--rv-muted);
+        line-height: 1.85;
+        font-size: .96rem;
+    }
+
+    .hero-actions {
+        display: flex;
+        gap: .65rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+
+    .hero-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: .42rem;
+        padding: .52rem .82rem;
+        border-radius: 999px;
+        background: #fff;
+        color: var(--rv-green-800);
+        border: 1px solid rgba(15,23,42,.07);
+        font-size: .8rem;
+        font-weight: 800;
+        box-shadow: 0 8px 18px rgba(15,23,42,.04);
+    }
+
+    .reviews-main {
+        display: grid;
+        grid-template-columns: 1.35fr .92fr;
+        gap: 1rem;
+        align-items: start;
+    }
+
+    @@media (max-width: 991.98px) {
+        .reviews-main {
+            grid-template-columns: 1fr;
+        }
+
+        .sticky-form {
+            position: static !important;
+            top: auto !important;
+        }
+    }
+
+    .panel-card {
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: 28px;
+        background: var(--rv-card);
+        box-shadow: var(--rv-shadow-soft);
+        overflow: hidden;
+    }
+
+    .panel-head {
+        padding: 1rem 1rem .95rem;
+        border-bottom: 1px solid rgba(15,23,42,.06);
+        background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(248,250,252,.96));
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: .8rem;
+        flex-wrap: wrap;
+    }
+
+    .panel-title {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 950;
+        color: var(--rv-ink);
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem;
+    }
+
+    .panel-sub {
+        color: var(--rv-muted);
+        font-size: .82rem;
+        font-weight: 700;
+    }
+
+    .panel-body {
+        padding: 1rem;
+    }
+
+    .review-card {
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: 22px;
+        box-shadow: var(--rv-shadow-soft);
+        overflow: hidden;
+        background: #fff;
+        transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+    }
+
+    .review-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 22px 44px rgba(15,23,42,.08);
+        border-color: rgba(20,85,68,.12);
+    }
+
+    .review-card + .review-card {
+        margin-top: .95rem;
+    }
+
+    .review-card-body {
+        padding: 1.2rem;
+    }
+
+    .review-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: .95rem;
+        margin-bottom: .9rem;
+    }
+
+    .review-user {
+        display: flex;
+        align-items: center;
+        gap: .8rem;
+    }
+
+    .review-avatar {
+        width: 46px;
+        height: 46px;
+        border-radius: 999px;
+        background: rgba(20,85,68,.08);
+        border: 1px solid rgba(20,85,68,.10);
+        color: var(--rv-green-800);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 950;
+        flex: 0 0 auto;
+    }
+
+    .review-user-name {
+        font-weight: 900;
+        color: var(--rv-ink);
+        line-height: 1.15;
+        font-size: .94rem;
+    }
+
+    .review-meta {
+        color: var(--rv-muted);
+        font-size: .82rem;
+        margin-top: .15rem;
+    }
+
+    .rating-pill {
+        border-radius: 999px;
+        padding: .5rem .8rem;
+        background: rgba(20,85,68,.08);
+        color: var(--rv-green-800);
+        border: 1px solid rgba(20,85,68,.10);
+        font-weight: 900;
+        font-size: .82rem;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+    }
+
+    .review-context {
+        display: flex;
+        gap: .5rem;
+        flex-wrap: wrap;
+        margin-bottom: .85rem;
+    }
+
+    .review-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+        padding: .4rem .68rem;
+        border-radius: 999px;
+        background: #f8fafc;
+        color: #334155;
+        border: 1px solid rgba(15,23,42,.06);
+        font-size: .76rem;
+        font-weight: 800;
+    }
+
+    .review-tag-pending {
+        background: #fff8db;
+        color: #8a6a00;
+        border-color: rgba(138,106,0,.14);
+    }
+
+    .review-tag-danger {
+        background: #fdecec;
+        color: #9f1239;
+        border-color: rgba(159,18,57,.14);
+    }
+
+    .review-text {
+        color: #334155;
+        line-height: 1.82;
+        font-size: .9rem;
+    }
+
+    .review-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
+        gap: .8rem;
+        margin-top: 1rem;
+    }
+
+    .review-gallery img {
+        width: 100%;
+        height: 112px;
+        object-fit: cover;
+        border-radius: 16px;
+        box-shadow: 0 8px 18px rgba(15,23,42,.08);
+        border: 1px solid rgba(15,23,42,.04);
+    }
+
+    .sticky-form {
+        position: sticky;
+        top: 92px;
+    }
+
+    .form-intro {
+        border-radius: 18px;
+        background: linear-gradient(180deg, #fbfdfc 0%, #f7faf8 100%);
+        border: 1px solid rgba(15,23,42,.06);
+        padding: .95rem 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .form-intro-title {
+        font-weight: 900;
+        color: var(--rv-ink);
+        margin-bottom: .15rem;
+        font-size: .96rem;
+    }
+
+    .form-intro-sub {
+        color: var(--rv-muted);
+        font-size: .84rem;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .form-label {
+        font-weight: 900;
+        color: var(--rv-ink);
+        font-size: .84rem;
+        margin-bottom: .45rem;
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 16px;
+        border-color: rgba(15,23,42,.08);
+        min-height: 48px;
+        font-size: .9rem;
+        box-shadow: none !important;
+    }
+
+    textarea.form-control {
+        min-height: 130px;
+    }
+
+    .star-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: .65rem;
+    }
+
+    .star-option {
+        position: relative;
+    }
+
+    .star-option input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .star-option label {
+        width: 100%;
+        border: 1px solid rgba(15,23,42,.08);
+        border-radius: 18px;
+        background: #fff;
+        padding: .9rem .6rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: .34rem;
+        font-weight: 800;
+        color: var(--rv-ink);
+        cursor: pointer;
+        transition: all .2s ease;
+        box-shadow: 0 8px 18px rgba(15,23,42,.04);
+        min-height: 88px;
+    }
+
+    .star-option label i {
+        font-size: 1.05rem;
+        color: #f59e0b;
+    }
+
+    .star-option input:checked + label,
+    .star-option label:hover {
+        border-color: rgba(20,85,68,.20);
+        background: rgba(20,85,68,.05);
+        transform: translateY(-2px);
+    }
+
+    .upload-box {
+        border: 1px dashed rgba(15,23,42,.12);
+        border-radius: 18px;
+        padding: 1rem;
+        background: linear-gradient(180deg, #fbfdfc 0%, #ffffff 100%);
+    }
+
+    .upload-hint {
+        color: var(--rv-muted);
+        font-size: .82rem;
+        line-height: 1.6;
+        margin-top: .5rem;
+    }
+
+    .action-row {
+        display: flex;
+        gap: .65rem;
+        flex-wrap: wrap;
+        margin-top: 1.2rem;
+    }
+
+    .btn-premium {
+        border-radius: 999px;
+        font-weight: 800;
+        padding: .8rem 1rem;
+        font-size: .84rem;
+    }
+
+    .login-box {
+        border: 1px dashed rgba(15,23,42,.12);
+        border-radius: 18px;
+        padding: 1.1rem;
+        background: linear-gradient(180deg, #fbfdfc 0%, #ffffff 100%);
+        text-align: center;
+    }
+
+    .empty-box {
+        border-radius: 28px;
+        padding: 2.5rem 1.2rem;
+        background: #fff;
+        border: 1px dashed rgba(15,23,42,.12);
+        text-align: center;
+        box-shadow: var(--rv-shadow-soft);
+    }
+
+    .empty-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 22px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(20,85,68,.08);
+        color: var(--rv-green-800);
+        font-size: 1.8rem;
+        margin-bottom: .95rem;
+    }
+
+    .empty-box h4 {
+        font-weight: 950;
+        color: var(--rv-ink);
+        margin-bottom: .35rem;
+        font-size: 1.08rem;
+    }
+
+    .empty-box p {
+        margin: 0;
+        color: var(--rv-muted);
+        font-size: .9rem;
+    }
+
+    .pagination-shell {
+        margin-top: 1.3rem;
+        display: flex;
+        justify-content: center;
+    }
+
+    .pagination-premium {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .5rem;
+        align-items: center;
+        justify-content: center;
+        padding: .8rem;
+        border-radius: 22px;
+        background: rgba(255,255,255,.95);
+        border: 1px solid rgba(15,23,42,.06);
+        box-shadow: 0 18px 36px rgba(15,23,42,.06);
+    }
+
+    .page-chip {
+        min-width: 44px;
+        height: 44px;
+        padding: 0 .9rem;
+        border-radius: 999px;
+        border: 1px solid rgba(15,23,42,.08);
+        background: #fff;
+        color: var(--rv-ink);
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: all .2s ease;
+    }
+
+    .page-chip:hover {
+        color: var(--rv-green-800);
+        border-color: rgba(20,85,68,.22);
+        transform: translateY(-1px);
+        text-decoration: none;
+    }
+
+    .page-chip.active {
+        background: linear-gradient(135deg, #145544, #1f8a6c);
+        color: #fff;
+        border-color: #145544;
+        box-shadow: 0 10px 22px rgba(20,85,68,.22);
+    }
+
+    .page-chip.disabled {
+        opacity: .45;
+        pointer-events: none;
+    }
+
+    @@media (max-width: 768px) {
+        .star-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .star-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="reviews-shell">
+    <section class="reviews-hero">
+        <div class="reviews-hero-inner">
+            <span class="reviews-badge">
+                <i class="bi bi-chat-square-heart"></i> Opiniones ciudadanas
+            </span>
+
+            <h1>Reseñas y experiencias</h1>
+
+            <p>
+                Consulta opiniones publicadas por los usuarios y comparte tu experiencia seleccionando directamente el comercio desde el formulario.
+            </p>
+
+            <div class="hero-actions">
+                <span class="hero-chip"><i class="bi bi-images"></i> Reseñas con imágenes</span>
+                <span class="hero-chip"><i class="bi bi-star-fill"></i> Calificaciones visibles</span>
+                <span class="hero-chip"><i class="bi bi-list-check"></i> Selección directa de comercio</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="reviews-main">
+        <div class="panel-card">
+            <div class="panel-head">
+                <h2 class="panel-title">
+                    <i class="bi bi-chat-quote"></i> Reseñas publicadas
+                </h2>
+                <div class="panel-sub">Total: @totalRegistros</div>
+            </div>
+
+            <div class="panel-body">
+                @if (!resenas.Any())
+                {
+                    <div class="empty-box">
+                        <div class="empty-icon">
+                            <i class="bi bi-chat-square-text"></i>
+                        </div>
+                        <h4>No hay reseñas aprobadas para mostrar</h4>
+                        <p>Aún no existen opiniones visibles registradas.</p>
+                    </div>
+                }
+                else
+                {
+                    foreach (var r in resenas)
+                    {
+                        var nombre = ((r.User?.Nombre ?? "") + " " + (r.User?.Apellido ?? "")).Trim();
+                        var displayUser = string.IsNullOrWhiteSpace(nombre) ? (r.User?.Email ?? "Usuario") : nombre;
+                        var initial = string.IsNullOrWhiteSpace(displayUser) ? "U" : displayUser.Substring(0, 1).ToUpper();
+
+                        var contexto = !string.IsNullOrWhiteSpace(r.Tipo) ? r.Tipo : "Reseña";
+                        var contextoNombre =
+                            r.Comercio != null ? r.Comercio.Nombre :
+                            r.Evento != null ? r.Evento.Nombre :
+                            r.Lugar != null ? r.Lugar.Nombre :
+                            "Elemento";
+
+                        var estadoTexto = string.IsNullOrWhiteSpace(r.Estado) ? "Aprobada" : r.Estado;
+                        var estadoClase = "review-tag";
+
+                        if (estadoTexto == "Pendiente")
+                        {
+                            estadoClase = "review-tag review-tag-pending";
+                        }
+                        else if (estadoTexto == "Rechazada" || estadoTexto == "Oculta")
+                        {
+                            estadoClase = "review-tag review-tag-danger";
+                        }
+
+                        <div class="review-card">
+                            <div class="review-card-body">
+                                <div class="review-top">
+                                    <div class="review-user">
+                                        <div class="review-avatar">@initial</div>
+                                        <div>
+                                            <div class="review-user-name">@displayUser</div>
+                                            <div class="review-meta">@r.Fecha.ToString("dd/MM/yyyy HH:mm")</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="rating-pill">
+                                        <i class="bi bi-star-fill"></i> @r.Calificacion / 5
+                                    </div>
+                                </div>
+
+                                <div class="review-context">
+                                    <span class="review-tag">
+                                        <i class="bi bi-tag"></i> @contexto
+                                    </span>
+                                    <span class="review-tag">
+                                        <i class="bi bi-geo-alt"></i> @contextoNombre
+                                    </span>
+                                    <span class="@estadoClase">
+                                        <i class="bi bi-shield-check"></i> @estadoTexto
+                                    </span>
+                                </div>
+
+                                <div class="review-text">
+                                    @(string.IsNullOrWhiteSpace(r.Comentario) ? "Sin comentario." : r.Comentario)
+                                </div>
+
+                                @if (r.Imagenes != null && r.Imagenes.Any())
+                                {
+                                    <div class="review-gallery">
+                                        @foreach (var img in r.Imagenes)
+                                        {
+                                            <img src="@img.UrlImagen" alt="Imagen de reseña" />
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    if (totalPaginas > 1)
+                    {
+                        <div class="pagination-shell">
+                            <div class="pagination-premium">
+                                <a href="@Url.Action("Index", "Resenas", new { comercioId = comercioId, eventoId = eventoId, lugarId = lugarId, pagina = paginaActual - 1 })"
+                                   class="page-chip @(paginaActual <= 1 ? "disabled" : "")">
+                                    <i class="bi bi-chevron-left"></i>
+                                </a>
+
+                                @for (int i = 1; i <= totalPaginas; i++)
+                                {
+                                    if (i == paginaActual || i == 1 || i == totalPaginas || Math.Abs(i - paginaActual) <= 1)
+                                    {
+                                        <a href="@Url.Action("Index", "Resenas", new { comercioId = comercioId, eventoId = eventoId, lugarId = lugarId, pagina = i })"
+                                           class="page-chip @(i == paginaActual ? "active" : "")">
+                                            @i
+                                        </a>
+                                    }
+                                    else if (i == paginaActual - 2 || i == paginaActual + 2)
+                                    {
+                                        <span class="page-chip disabled">...</span>
+                                    }
+                                }
+
+                                <a href="@Url.Action("Index", "Resenas", new { comercioId = comercioId, eventoId = eventoId, lugarId = lugarId, pagina = paginaActual + 1 })"
+                                   class="page-chip @(paginaActual >= totalPaginas ? "disabled" : "")">
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <div class="panel-card sticky-form">
+            <div class="panel-head">
+                <h2 class="panel-title">
+                    <i class="bi bi-pencil-square"></i> Publicar reseña
+                </h2>
+                <div class="panel-sub">Selecciona el comercio desde aquí</div>
+            </div>
+
+            <div class="panel-body">
+                @if (isAuth)
+                {
+                    <div class="form-intro">
+                        <div class="form-intro-title">Comparte tu experiencia</div>
+                        <p class="form-intro-sub">
+                            Selecciona un comercio, asigna una calificación y agrega tu comentario e imágenes.
+                        </p>
+                    </div>
+
+                    using (Html.BeginForm("Create", "Resenas", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden" name="Tipo" value="Comercio" />
+                        <input type="hidden" name="EventoId" value="" />
+                        <input type="hidden" name="LugarId" value="" />
+
+                        <div class="mb-4">
+                            <label class="form-label">Comercio</label>
+                            <select name="ComercioId" class="form-select" required>
+                                <option value="">Seleccione un comercio...</option>
+                                @foreach (var item in comercios)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Calificación</label>
+
+                            <div class="star-grid">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    var optionId = "star_" + i;
+                                    <div class="star-option">
+                                        <input type="radio" id="@optionId" name="Calificacion" value="@i" />
+                                        <label for="@optionId">
+                                            <i class="bi bi-star-fill"></i>
+                                            <span>@i estrella@(i > 1 ? "s" : "")</span>
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Comentario</label>
+                            <textarea name="Comentario"
+                                      class="form-control"
+                                      rows="5"
+                                      placeholder="Comparte tu experiencia con claridad, respeto y detalle..."></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Imágenes (opcional)</label>
+                            <div class="upload-box">
+                                <input type="file"
+                                       name="Imagenes"
+                                       class="form-control"
+                                       accept="image/*"
+                                       multiple />
+                                <div class="upload-hint">
+                                    Puedes subir varias imágenes JPG, PNG o WEBP. Máximo 5 MB por archivo.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="action-row">
+                            <button type="submit" class="btn btn-success btn-premium">
+                                <i class="bi bi-send me-1"></i> Enviar reseña
+                            </button>
+
+                            <button type="reset" class="btn btn-outline-secondary btn-premium">
+                                <i class="bi bi-arrow-counterclockwise me-1"></i> Limpiar
+                            </button>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="login-box">
+                        <p class="text-muted mb-3">
+                            Inicia sesión para publicar tu reseña dentro del portal.
+                        </p>
+
+                        <a href="@Url.Action("Login", "Account", new { returnUrl = Request.RawUrl })"
+                           class="btn btn-success btn-premium w-100">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Iniciar sesión
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
