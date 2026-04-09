@@ -1,0 +1,30 @@
+﻿@model turistico.Models.Comercio
+
+@{
+    ViewBag.Title = "Mi Comercio";
+    Layout = "~/Views/Shared/_LayoutComercio.cshtml";
+}
+
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-4">
+        <h2 class="fw-bold text-success mb-4">
+            <i class="bi bi-shop me-2"></i>Mi comercio
+        </h2>
+
+        <div class="row g-4">
+            <div class="col-12 col-lg-6">
+                <p><strong>Nombre:</strong> @Model.Nombre</p>
+                <p><strong>Descripción:</strong> @(string.IsNullOrWhiteSpace(Model.Descripcion) ? "-" : Model.Descripcion)</p>
+                <p><strong>Teléfono:</strong> @(string.IsNullOrWhiteSpace(Model.Telefono) ? "-" : Model.Telefono)</p>
+                <p><strong>WhatsApp:</strong> @(string.IsNullOrWhiteSpace(Model.LinkWhatsApp) ? "-" : Model.LinkWhatsApp)</p>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <p><strong>Categoría:</strong> @(Model.Lugar?.Categoria?.Nombre ?? "-")</p>
+                <p><strong>Dirección:</strong> @(Model.Lugar?.Direccion ?? "-")</p>
+                <p><strong>Referencia mapa:</strong> @(Model.Lugar?.DireccionMapa ?? "-")</p>
+                <p><strong>Estado:</strong> @(Model.Lugar?.Estado ?? "-")</p>
+            </div>
+        </div>
+    </div>
+</div>
