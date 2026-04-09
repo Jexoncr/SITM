@@ -1,0 +1,338 @@
+﻿@model turistico.Controllers.CambiarContrasenaTemporalVM
+
+@{
+    ViewBag.Title = "Cambiar contraseña";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    :root {
+        --cp-green-950: #0a241c;
+        --cp-green-900: #0f3d2e;
+        --cp-green-800: #145544;
+        --cp-green-700: #1b6b55;
+        --cp-green-100: #e9f6f0;
+        --cp-ink: #0f172a;
+        --cp-muted: #64748b;
+        --cp-border: rgba(15,23,42,.08);
+        --cp-shadow: 0 24px 60px rgba(15,23,42,.10);
+        --cp-shadow-soft: 0 14px 28px rgba(15,23,42,.06);
+    }
+
+    .pass-page {
+        min-height: calc(100vh - 120px);
+        background: radial-gradient(circle at top left, rgba(20,85,68,.08), transparent 26%), radial-gradient(circle at top right, rgba(46,158,127,.10), transparent 22%), linear-gradient(180deg, #f8fcfa 0%, #f1f7f4 48%, #edf4f1 100%);
+        display: flex;
+        align-items: center;
+        padding: 2rem 0;
+    }
+
+    .pass-shell {
+        width: 100%;
+    }
+
+    .pass-card {
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: 34px;
+        box-shadow: var(--cp-shadow);
+        overflow: hidden;
+        background: rgba(255,255,255,.96);
+        backdrop-filter: blur(10px);
+    }
+
+    .pass-hero {
+        position: relative;
+        background: radial-gradient(circle at top right, rgba(255,255,255,.14), transparent 24%), linear-gradient(135deg, #0b2f23 0%, #145544 55%, #1b6b55 100%);
+        color: #fff;
+        padding: 2.3rem 2rem;
+        height: 100%;
+    }
+
+        .pass-hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,.02), transparent 28%);
+            pointer-events: none;
+        }
+
+    .pass-hero-inner {
+        position: relative;
+        z-index: 1;
+    }
+
+    .pass-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        padding: .55rem .88rem;
+        border-radius: 999px;
+        background: rgba(255,255,255,.12);
+        border: 1px solid rgba(255,255,255,.18);
+        color: #fff;
+        font-weight: 800;
+        font-size: .8rem;
+        margin-bottom: 1rem;
+    }
+
+    .pass-hero h2 {
+        font-weight: 950;
+        margin-bottom: .8rem;
+        font-size: clamp(2rem, 3vw, 2.8rem);
+        line-height: 1.05;
+        letter-spacing: -.03em;
+    }
+
+    .pass-hero p {
+        color: rgba(255,255,255,.92);
+        line-height: 1.85;
+        margin: 0;
+        font-size: .95rem;
+    }
+
+    .pass-tip-grid {
+        display: grid;
+        gap: .8rem;
+        margin-top: 1.4rem;
+    }
+
+    .pass-tip {
+        display: flex;
+        gap: .7rem;
+        align-items: flex-start;
+        padding: .9rem 1rem;
+        border-radius: 18px;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.10);
+    }
+
+        .pass-tip i {
+            margin-top: .2rem;
+        }
+
+        .pass-tip strong {
+            display: block;
+            font-size: .9rem;
+            margin-bottom: .15rem;
+        }
+
+        .pass-tip span {
+            color: rgba(255,255,255,.84);
+            font-size: .84rem;
+            line-height: 1.6;
+        }
+
+    .pass-form-wrap {
+        padding: 2rem 2rem 2.1rem;
+        background: radial-gradient(circle at top, rgba(20,85,68,.03), transparent 20%), linear-gradient(180deg, rgba(255,255,255,1), rgba(250,252,251,1));
+    }
+
+    .pass-form-head {
+        margin-bottom: 1.1rem;
+    }
+
+    .pass-form-title {
+        color: var(--cp-ink);
+        font-weight: 950;
+        margin: 0 0 .3rem;
+        font-size: 1.35rem;
+        letter-spacing: -.02em;
+    }
+
+    .pass-form-sub {
+        color: var(--cp-muted);
+        margin: 0;
+        line-height: 1.7;
+        font-size: .92rem;
+    }
+
+    .pass-alert-box {
+        border-radius: 18px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #fff7ed, #fffaf5);
+        border: 1px solid rgba(245,158,11,.20);
+        color: #92400e;
+    }
+
+        .pass-alert-box strong {
+            display: block;
+            margin-bottom: .18rem;
+        }
+
+    .pass-field-card {
+        border: 1px solid var(--cp-border);
+        border-radius: 22px;
+        padding: 1rem;
+        background: linear-gradient(180deg, #ffffff, #fbfcfc);
+        box-shadow: var(--cp-shadow-soft);
+        margin-bottom: 1rem;
+    }
+
+    .form-label {
+        font-weight: 900;
+        color: var(--cp-ink);
+        font-size: .84rem;
+        margin-bottom: .45rem;
+    }
+
+    .form-control {
+        min-height: 50px;
+        border-radius: 16px;
+        border: 1px solid rgba(15,23,42,.10);
+        box-shadow: none !important;
+        font-size: .93rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+        .form-control:focus {
+            border-color: #1f8a6c;
+            box-shadow: 0 0 0 .2rem rgba(31,138,108,.12) !important;
+        }
+
+    .field-help {
+        margin-top: .45rem;
+        color: var(--cp-muted);
+        font-size: .8rem;
+        line-height: 1.55;
+    }
+
+    .pass-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .8rem;
+        margin-top: .6rem;
+    }
+
+    .btn-pass {
+        border-radius: 999px;
+        font-weight: 850;
+        padding: .88rem 1.2rem;
+    }
+
+    @@media (max-width: 991.98px) {
+        .pass-hero,
+        .pass-form-wrap {
+            padding: 1.4rem;
+        }
+
+        .pass-card {
+            border-radius: 26px;
+        }
+    }
+</style>
+
+<div class="pass-page">
+    <div class="container pass-shell">
+        <div class="row justify-content-center">
+            <div class="col-12 col-xl-11">
+                <div class="pass-card">
+                    <div class="row g-0">
+                        <div class="col-lg-5">
+                            <div class="pass-hero d-flex flex-column justify-content-center">
+                                <div class="pass-hero-inner">
+                                    <span class="pass-badge">
+                                        <i class="bi bi-shield-lock"></i> Seguridad de acceso
+                                    </span>
+
+                                    <h2>Cambiar contraseña temporal</h2>
+                                    <p>
+                                        Tu cuenta fue creada con una contraseña temporal. Antes de continuar dentro del sistema, debes establecer una contraseña nueva, segura y personal.
+                                    </p>
+
+                                    <div class="pass-tip-grid">
+                                        <div class="pass-tip">
+                                            <i class="bi bi-key-fill"></i>
+                                            <div>
+                                                <strong>Nueva clave personal</strong>
+                                                <span>Solo tú conocerás esta contraseña después del cambio.</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="pass-tip">
+                                            <i class="bi bi-shield-check"></i>
+                                            <div>
+                                                <strong>Mayor seguridad</strong>
+                                                <span>La contraseña temporal dejará de funcionar inmediatamente.</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="pass-tip">
+                                            <i class="bi bi-box-arrow-in-right"></i>
+                                            <div>
+                                                <strong>Acceso completo</strong>
+                                                <span>Al guardar la nueva contraseña, podrás entrar normalmente al portal.</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-7">
+                            <div class="pass-form-wrap">
+                                <div class="pass-form-head">
+                                    <h3 class="pass-form-title">Actualiza tus credenciales</h3>
+                                    <p class="pass-form-sub">
+                                        Completa los campos para finalizar el proceso de activación segura de tu cuenta.
+                                    </p>
+                                </div>
+
+                                @if (ViewBag.HideAlerts == null || ViewBag.HideAlerts == false)
+                                {
+                                    @Html.Partial("_Alerts")
+                                }
+                                <div class="pass-alert-box">
+                                    <strong><i class="bi bi-info-circle-fill me-1"></i> Importante</strong>
+                                    La contraseña actual es la temporal que te asignaron al crear la cuenta.
+                                </div>
+
+                                @using (Html.BeginForm("CambiarContrasenaTemporal", "Account", FormMethod.Post, new { autocomplete = "off" }))
+                                {
+                                    @Html.AntiForgeryToken()
+
+                                    <div class="pass-field-card">
+                                        <label class="form-label fw-semibold">Contraseña actual</label>
+                                        @Html.PasswordFor(m => m.ContrasenaActual, new { @class = "form-control", placeholder = "Contraseña temporal actual" })
+                                        <div class="field-help">
+                                            Escribe la contraseña temporal con la que ingresaste al sistema.
+                                        </div>
+                                    </div>
+
+                                    <div class="pass-field-card">
+                                        <label class="form-label fw-semibold">Nueva contraseña</label>
+                                        @Html.PasswordFor(m => m.NuevaContrasena, new { @class = "form-control", placeholder = "Nueva contraseña" })
+                                        <div class="field-help">
+                                            Usa una combinación segura con letras, números y caracteres especiales si es posible.
+                                        </div>
+                                    </div>
+
+                                    <div class="pass-field-card">
+                                        <label class="form-label fw-semibold">Confirmar nueva contraseña</label>
+                                        @Html.PasswordFor(m => m.ConfirmarNuevaContrasena, new { @class = "form-control", placeholder = "Confirmar nueva contraseña" })
+                                        <div class="field-help">
+                                            Repite la nueva contraseña exactamente igual.
+                                        </div>
+                                    </div>
+
+                                    @Html.ValidationSummary(false, "", new { @class = "text-danger mb-3" })
+
+                                    <div class="pass-actions">
+                                        <button type="submit" class="btn btn-success btn-pass">
+                                            <i class="bi bi-check2-circle me-1"></i> Guardar nueva contraseña
+                                        </button>
+
+                                        <a href="@Url.Action("Login", "Account")" class="btn btn-outline-secondary btn-pass">
+                                            Cancelar
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,131 @@
+﻿@model turistico.Models.LoginVM
+
+@{
+    ViewBag.Title = "Iniciar Sesión";
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+}
+
+<style>
+    .auth-shell {
+        min-height: 90vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: radial-gradient(circle at top left, rgba(34,197,94,.06), transparent 20%), #f4f8f5;
+        padding: 2rem 1rem;
+    }
+
+    .auth-card {
+        width: 100%;
+        max-width: 440px;
+        border: 0;
+        border-radius: 22px;
+        overflow: hidden;
+        box-shadow: 0 20px 50px rgba(15,23,42,.08);
+    }
+
+        .auth-card .card-body {
+            padding: 2rem;
+        }
+
+    .auth-brand {
+        text-align: center;
+        margin-bottom: 1.6rem;
+    }
+
+        .auth-brand h3 {
+            font-weight: 900;
+            color: #198754;
+            margin-bottom: .2rem;
+        }
+
+        .auth-brand p {
+            color: #64748b;
+            margin: 0;
+        }
+
+    .auth-btn {
+        font-weight: 800;
+        border-radius: 999px;
+        padding: .8rem 1rem;
+    }
+</style>
+
+<div class="auth-shell">
+    <div class="card auth-card">
+        <div class="card-body">
+            <div class="auth-brand">
+                <h3>SITM</h3>
+                <p>Sistema de Información Turística Municipal</p>
+            </div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger rounded-4">
+                    @Html.ValidationSummary(false, "", new { @class = "mb-0" })
+                </div>
+            }
+
+            @using (Html.BeginForm("Login", "Account", new { returnUrl = ViewBag.ReturnUrl }, FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Correo electrónico</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                        @Html.TextBoxFor(m => m.Email, new
+                        {
+                            @class = "form-control",
+                            type = "email",
+                            placeholder = "Correo",
+                            autocomplete = "username"
+                        })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Contraseña</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        @Html.PasswordFor(m => m.Password, new
+                        {
+                            @class = "form-control",
+                            placeholder = "Contraseña",
+                            autocomplete = "current-password"
+                        })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="form-check mb-3">
+                    @Html.CheckBoxFor(m => m.RememberMe, new { @class = "form-check-input", id = "rememberMe" })
+                    <label class="form-check-label small" for="rememberMe">Recordarme</label>
+                </div>
+
+                <div class="d-flex justify-content-end mb-3">
+                    <a href="@Url.Action("Recuperar","Home")" class="text-success text-decoration-none small">
+                        ¿Olvidaste tu contraseña?
+                    </a>
+                </div>
+
+                <div class="d-grid mb-3">
+                    <button type="submit" class="btn btn-success auth-btn">
+                        Ingresar
+                    </button>
+                </div>
+            }
+
+            <div class="d-grid mb-2">
+                <a href="@Url.Action("Register", "Account")" class="btn btn-outline-success auth-btn">
+                    Crear cuenta nueva
+                </a>
+            </div>
+
+            <div class="text-center mt-4">
+                <small class="text-muted">Únete para descubrir lo mejor del SITM</small>
+            </div>
+        </div>
+    </div>
+</div>

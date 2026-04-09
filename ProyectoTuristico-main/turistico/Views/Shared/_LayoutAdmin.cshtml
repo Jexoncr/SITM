@@ -1,0 +1,604 @@
+@using System
+@using Microsoft.AspNet.Identity
+
+@{
+    Response.ContentEncoding = System.Text.Encoding.UTF8;
+    Response.Charset = "utf-8";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title - SITM Admin</title>
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <style>
+        :root {
+            --la-green-950: #0b2d22;
+            --la-green-900: #0f3d2e;
+            --la-green-800: #145544;
+            --la-green-700: #1b6b55;
+            --la-soft: rgba(20,85,68,.08);
+            --la-border: rgba(15,23,42,.08);
+            --la-ink: #0f172a;
+            --la-muted: #64748b;
+            --la-shadow-soft: 0 10px 24px rgba(15,23,42,.05);
+            --la-sidebar: 292px;
+            --la-topbar: 86px;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at top left, rgba(20,85,68,.06), transparent 28%), radial-gradient(circle at top right, rgba(46,158,127,.06), transparent 22%), linear-gradient(180deg, #fbfdfc 0%, #f5f8f6 52%, #eef4f1 100%);
+            color: var(--la-ink);
+            margin: 0;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .admin-shell {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .admin-sidebar {
+            width: var(--la-sidebar);
+            background: linear-gradient(180deg, rgba(11,45,34,.98) 0%, rgba(15,61,46,.98) 100%);
+            color: #fff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 1040;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 10px 0 30px rgba(15,23,42,.10);
+        }
+
+        .sidebar-top {
+            padding: 1.35rem 1.15rem 1rem;
+            border-bottom: 1px solid rgba(255,255,255,.08);
+        }
+
+        .brand-wrap {
+            display: flex;
+            align-items: center;
+            gap: .85rem;
+        }
+
+        .brand-logo {
+            width: 52px;
+            height: 52px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, rgba(255,255,255,.18), rgba(255,255,255,.08));
+            border: 1px solid rgba(255,255,255,.14);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.35rem;
+            color: #fff;
+        }
+
+        .brand-title {
+            margin: 0;
+            font-size: 1.05rem;
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: -.02em;
+        }
+
+        .brand-sub {
+            margin-top: .18rem;
+            color: rgba(255,255,255,.72);
+            font-size: .8rem;
+            line-height: 1.4;
+        }
+
+        .sidebar-user {
+            margin-top: 1rem;
+            padding: .85rem .95rem;
+            border-radius: 18px;
+            background: rgba(255,255,255,.07);
+            border: 1px solid rgba(255,255,255,.08);
+        }
+
+        .sidebar-user-label {
+            font-size: .72rem;
+            color: rgba(255,255,255,.65);
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            font-weight: 800;
+            margin-bottom: .3rem;
+        }
+
+        .sidebar-user-name {
+            font-size: .92rem;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.4;
+        }
+
+        .sidebar-user-mail {
+            color: rgba(255,255,255,.68);
+            font-size: .78rem;
+            margin-top: .12rem;
+            word-break: break-word;
+        }
+
+        .sidebar-nav {
+            padding: 1rem .85rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .nav-group {
+            margin-bottom: 1rem;
+        }
+
+        .nav-group-label {
+            color: rgba(255,255,255,.56);
+            font-size: .72rem;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            font-weight: 800;
+            margin: 0 0 .55rem .5rem;
+        }
+
+        .nav-link-admin {
+            display: flex;
+            align-items: center;
+            gap: .8rem;
+            padding: .82rem .9rem;
+            border-radius: 16px;
+            color: rgba(255,255,255,.84);
+            text-decoration: none;
+            font-size: .9rem;
+            font-weight: 700;
+            transition: all .18s ease;
+            margin-bottom: .28rem;
+            border: 1px solid transparent;
+        }
+
+            .nav-link-admin:hover,
+            .nav-link-admin:focus {
+                color: #fff;
+                background: rgba(255,255,255,.08);
+                border-color: rgba(255,255,255,.08);
+                text-decoration: none;
+            }
+
+            .nav-link-admin.active {
+                color: #fff;
+                background: linear-gradient(135deg, rgba(32,135,103,.85), rgba(20,85,68,.92));
+                border-color: rgba(255,255,255,.08);
+                box-shadow: 0 10px 20px rgba(0,0,0,.12);
+            }
+
+            .nav-link-admin i {
+                font-size: 1rem;
+                width: 18px;
+                text-align: center;
+                flex: 0 0 auto;
+            }
+
+        .sidebar-bottom {
+            padding: .95rem .85rem 1.05rem;
+            border-top: 1px solid rgba(255,255,255,.08);
+        }
+
+        .admin-main {
+            margin-left: var(--la-sidebar);
+            width: calc(100% - var(--la-sidebar));
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+            height: var(--la-topbar);
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            background: rgba(255,255,255,.78);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(15,23,42,.06);
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: .95rem;
+            min-width: 0;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            border: 0;
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: rgba(20,85,68,.08);
+            color: var(--la-green-800);
+            font-size: 1.2rem;
+        }
+
+        .topbar-title-wrap {
+            min-width: 0;
+        }
+
+        .topbar-title {
+            margin: 0;
+            color: var(--la-ink);
+            font-size: 1.15rem;
+            font-weight: 900;
+            line-height: 1.15;
+            letter-spacing: -.02em;
+        }
+
+        .topbar-sub {
+            margin-top: .15rem;
+            color: var(--la-muted);
+            font-size: .82rem;
+            line-height: 1.45;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: .65rem;
+            flex-wrap: wrap;
+        }
+
+        .topbar-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            padding: .56rem .84rem;
+            border-radius: 999px;
+            background: rgba(20,85,68,.08);
+            color: var(--la-green-800);
+            font-size: .8rem;
+            font-weight: 800;
+            border: 1px solid rgba(20,85,68,.10);
+            white-space: nowrap;
+        }
+
+        .topbar-link,
+        .topbar-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: .45rem;
+            padding: .68rem .92rem;
+            border-radius: 999px;
+            background: #fff;
+            color: var(--la-ink);
+            text-decoration: none;
+            border: 1px solid rgba(15,23,42,.08);
+            font-size: .82rem;
+            font-weight: 800;
+            box-shadow: var(--la-shadow-soft);
+            line-height: 1;
+            min-height: 42px;
+        }
+
+            .topbar-link:hover,
+            .topbar-button:hover {
+                text-decoration: none;
+                color: var(--la-green-800);
+            }
+
+        .topbar-button {
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            outline: none;
+        }
+
+        .admin-content {
+            padding: 1.25rem;
+            flex: 1;
+        }
+
+        .alert-wrap .alert {
+            border-radius: 18px;
+            border: 1px solid rgba(15,23,42,.06);
+            box-shadow: var(--la-shadow-soft);
+            padding: .95rem 1rem;
+            font-size: .9rem;
+            font-weight: 700;
+        }
+
+        .sidebar-backdrop {
+            display: none;
+        }
+
+        @@media (max-width: 991.98px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+                transition: transform .22s ease;
+            }
+
+                .admin-sidebar.show {
+                    transform: translateX(0);
+                }
+
+            .sidebar-backdrop {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(15,23,42,.36);
+                z-index: 1035;
+            }
+
+                .sidebar-backdrop.show {
+                    display: block;
+                }
+
+            .admin-main {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .mobile-menu-btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .topbar-right .topbar-chip {
+                display: none;
+            }
+        }
+
+        @@media (max-width: 575.98px) {
+            .admin-topbar {
+                padding: .9rem .85rem;
+            }
+
+            .admin-content {
+                padding: .95rem;
+            }
+
+            .topbar-title {
+                font-size: 1rem;
+            }
+
+            .topbar-sub {
+                font-size: .78rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    @{
+        var currentAction = (ViewContext.RouteData.Values["action"] ?? "").ToString();
+        var currentController = (ViewContext.RouteData.Values["controller"] ?? "").ToString();
+
+        Func<string, string, string> navClass = (controller, action) =>
+        {
+            var active = currentController.Equals(controller, StringComparison.OrdinalIgnoreCase)
+                         && (string.IsNullOrWhiteSpace(action) || currentAction.Equals(action, StringComparison.OrdinalIgnoreCase));
+            return active ? "nav-link-admin active" : "nav-link-admin";
+        };
+    }
+
+    <div class="admin-shell">
+        <aside id="adminSidebar" class="admin-sidebar">
+            <div class="sidebar-top">
+                <div class="brand-wrap">
+                    <div class="brand-logo">
+                        <i class="bi bi-buildings"></i>
+                    </div>
+                    <div>
+                        <h1 class="brand-title">SITM Admin</h1>
+                        <div class="brand-sub">Sistema Tur&iacute;stico Municipal</div>
+                    </div>
+                </div>
+
+                <div class="sidebar-user">
+                    <div class="sidebar-user-label">Sesi&oacute;n actual</div>
+                    <div class="sidebar-user-name">
+                        @(string.IsNullOrWhiteSpace(User.Identity.GetUserName()) ? "Administrador" : User.Identity.GetUserName())
+                    </div>
+                    <div class="sidebar-user-mail">Panel administrativo</div>
+                </div>
+            </div>
+
+            <div class="sidebar-nav">
+                <div class="nav-group">
+                    <div class="nav-group-label">General</div>
+                    <a href="@Url.Action("Dashboard", "Admin")" class="@navClass("Admin", "Dashboard")">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </div>
+
+                <div class="nav-group">
+                    <div class="nav-group-label">Gesti&oacute;n principal</div>
+
+                    <a href="@Url.Action("Index", "AdminComercios")" class="@(currentController.Equals("AdminComercios", StringComparison.OrdinalIgnoreCase) ? "nav-link-admin active" : "nav-link-admin")">
+                        <i class="bi bi-shop-window"></i>
+                        <span>Comercios</span>
+                    </a>
+
+                    <a href="@Url.Action("Index", "AdminEventos")" class="@(currentController.Equals("AdminEventos", StringComparison.OrdinalIgnoreCase) ? "nav-link-admin active" : "nav-link-admin")">
+                        <i class="bi bi-calendar-event"></i>
+                        <span>Eventos</span>
+                    </a>
+
+                    <a href="@Url.Action("Index", "AdminUsuarios")" class="@(currentController.Equals("AdminUsuarios", StringComparison.OrdinalIgnoreCase) ? "nav-link-admin active" : "nav-link-admin")">
+                        <i class="bi bi-people"></i>
+                        <span>Usuarios</span>
+                    </a>
+
+                    <a href="@Url.Action("Index", "AdminRoles")" class="@(currentController.Equals("AdminRoles", StringComparison.OrdinalIgnoreCase) ? "nav-link-admin active" : "nav-link-admin")">
+                        <i class="bi bi-shield-lock"></i>
+                        <span>Roles</span>
+                    </a>
+
+                    <a href="@Url.Action("Index", "AdminResenas")" class="@(currentController.Equals("AdminResenas", StringComparison.OrdinalIgnoreCase) ? "nav-link-admin active" : "nav-link-admin")">
+                        <i class="bi bi-chat-square-heart"></i>
+                        <span>Rese&ntilde;as</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="sidebar-bottom">
+                <a href="@Url.Action("Index", "Home")" class="nav-link-admin">
+                    <i class="bi bi-house-door"></i>
+                    <span>Volver al sitio</span>
+                </a>
+            </div>
+        </aside>
+
+        <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
+
+        <main class="admin-main">
+            <header class="admin-topbar">
+                <div class="topbar-left">
+                    <button id="mobileMenuBtn" type="button" class="mobile-menu-btn" aria-label="Abrir men&uacute;">
+                        <i class="bi bi-list"></i>
+                    </button>
+
+                    <div class="topbar-title-wrap">
+                        <h2 class="topbar-title">@ViewBag.Title</h2>
+                        <div class="topbar-sub">Panel de administraci&oacute;n del SITM</div>
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <span class="topbar-chip">
+                        <i class="bi bi-shield-check"></i> Admin
+                    </span>
+
+                    <a href="@Url.Action("Index", "Home")" class="topbar-link">
+                        <i class="bi bi-globe2"></i> Ver sitio
+                    </a>
+
+                    <button type="button" class="topbar-button" id="btnCerrarSesionAdmin">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Cerrar sesi&oacute;n</span>
+                    </button>
+                </div>
+            </header>
+
+            <section class="admin-content">
+                <div class="alert-wrap">
+                    @if (TempData["Ok"] != null)
+                    {
+                        <div class="alert alert-success">
+                            @TempData["Ok"]
+                        </div>
+                    }
+
+                    @if (TempData["Err"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            @TempData["Err"]
+                        </div>
+                    }
+                </div>
+
+                @RenderBody()
+            </section>
+        </main>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+
+    <script>
+        (function () {
+            var btn = document.getElementById('mobileMenuBtn');
+            var sidebar = document.getElementById('adminSidebar');
+            var backdrop = document.getElementById('sidebarBackdrop');
+
+            if (btn && sidebar && backdrop) {
+                function openSidebar() {
+                    sidebar.classList.add('show');
+                    backdrop.classList.add('show');
+                }
+
+                function closeSidebar() {
+                    sidebar.classList.remove('show');
+                    backdrop.classList.remove('show');
+                }
+
+                btn.addEventListener('click', function () {
+                    if (sidebar.classList.contains('show')) {
+                        closeSidebar();
+                    } else {
+                        openSidebar();
+                    }
+                });
+
+                backdrop.addEventListener('click', closeSidebar);
+
+                window.addEventListener('resize', function () {
+                    if (window.innerWidth > 991) {
+                        closeSidebar();
+                    }
+                });
+            }
+
+            function expireCookie(name) {
+                document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+                document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=' + window.location.hostname;
+                document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax';
+            }
+
+            function cerrarSesionLocal() {
+                var cookies = [
+                    '.AspNet.ApplicationCookie',
+                    '.ASPXAUTH',
+                    'ASP.NET_SessionId',
+                    '.AspNet.ExternalCookie',
+                    '.AspNet.TwoFactorCookie',
+                    '.AspNet.TwoFactorRememberBrowser'
+                ];
+
+                for (var i = 0; i < cookies.length; i++) {
+                    expireCookie(cookies[i]);
+                }
+
+                try {
+                    if (window.sessionStorage) sessionStorage.clear();
+                    if (window.localStorage) localStorage.clear();
+                } catch (e) { }
+
+                window.location.href = '@Url.Action("Login", "Account")';
+            }
+
+            var btnCerrarSesion = document.getElementById('btnCerrarSesionAdmin');
+            if (btnCerrarSesion) {
+                btnCerrarSesion.addEventListener('click', function () {
+                    cerrarSesionLocal();
+                });
+            }
+        })();
+    </script>
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>
