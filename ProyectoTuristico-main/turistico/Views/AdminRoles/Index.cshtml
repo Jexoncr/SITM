@@ -1,0 +1,613 @@
+﻿@model IEnumerable<Microsoft.AspNet.Identity.EntityFramework.IdentityRole>
+
+@{
+    ViewBag.Title = "Administrar Roles";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+
+    var roles = Model ?? Enumerable.Empty<Microsoft.AspNet.Identity.EntityFramework.IdentityRole>();
+}
+
+<style>
+    :root {
+        --rl-green-950: #0a241c;
+        --rl-green-900: #0f3d2e;
+        --rl-green-800: #145544;
+        --rl-green-700: #1b6b55;
+        --rl-green-soft: rgba(20,85,68,.08);
+        --rl-ink: #0f172a;
+        --rl-muted: #64748b;
+        --rl-card: rgba(255,255,255,.97);
+        --rl-shadow: 0 20px 48px rgba(15,23,42,.08);
+        --rl-shadow-soft: 0 10px 24px rgba(15,23,42,.05);
+        --rl-radius-xl: 28px;
+        --rl-radius-lg: 22px;
+    }
+
+    .roles-page {
+        position: relative;
+        min-height: calc(100vh - 140px);
+        display: grid;
+        gap: 1rem;
+        padding-bottom: 1rem;
+    }
+
+        .roles-page::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: radial-gradient(circle at top left, rgba(20,85,68,.07), transparent 26%), radial-gradient(circle at top right, rgba(46,158,127,.08), transparent 24%), linear-gradient(180deg, #fbfdfc 0%, #f4f8f6 52%, #eef4f1 100%);
+        }
+
+    .roles-hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: var(--rl-radius-xl);
+        padding: 1.8rem 1.25rem 1.55rem;
+        background: radial-gradient(circle at top right, rgba(46,158,127,.12), transparent 28%), linear-gradient(135deg, #ffffff 0%, #f7fbf8 55%, #eef7f2 100%);
+        border: 1px solid rgba(15,23,42,.06);
+        box-shadow: 0 18px 42px rgba(15,23,42,.06);
+    }
+
+        .roles-hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(20,85,68,.04), transparent 24%);
+            pointer-events: none;
+        }
+
+    .roles-hero-inner {
+        position: relative;
+        z-index: 2;
+    }
+
+    .roles-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .42rem;
+        padding: .5rem .82rem;
+        border-radius: 999px;
+        background: rgba(20,85,68,.08);
+        color: var(--rl-green-800);
+        border: 1px solid rgba(20,85,68,.10);
+        font-weight: 800;
+        font-size: .8rem;
+        margin-bottom: .75rem;
+    }
+
+    .roles-title {
+        margin: 0 0 .45rem;
+        color: var(--rl-ink);
+        font-weight: 950;
+        line-height: 1.04;
+        letter-spacing: -.03em;
+        font-size: clamp(1.9rem, 2.8vw, 2.8rem);
+    }
+
+    .roles-sub {
+        margin: 0;
+        color: var(--rl-muted);
+        line-height: 1.78;
+        max-width: 860px;
+        font-size: .94rem;
+    }
+
+    .roles-grid {
+        display: grid;
+        grid-template-columns: .9fr 1.1fr;
+        gap: 1rem;
+        align-items: start;
+    }
+
+    @@media (max-width: 991.98px) {
+        .roles-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .roles-card {
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: var(--rl-radius-xl);
+        background: var(--rl-card);
+        box-shadow: var(--rl-shadow);
+        overflow: hidden;
+        height: 100%;
+    }
+
+    .roles-head {
+        padding: 1rem 1.05rem;
+        border-bottom: 1px solid rgba(15,23,42,.06);
+        background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,250,252,.96));
+    }
+
+    .roles-head-title {
+        margin: 0;
+        color: var(--rl-ink);
+        font-weight: 950;
+        font-size: 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem;
+    }
+
+    .roles-head-sub {
+        margin-top: .2rem;
+        color: var(--rl-muted);
+        font-size: .84rem;
+        line-height: 1.6;
+    }
+
+    .roles-body {
+        padding: 1rem;
+    }
+
+    .roles-input {
+        border-radius: 16px;
+        min-height: 48px;
+        border: 1px solid rgba(15,23,42,.10);
+        box-shadow: none !important;
+        font-size: .92rem;
+    }
+
+        .roles-input:focus {
+            border-color: #1f8a6c;
+            box-shadow: 0 0 0 .2rem rgba(31,138,108,.12) !important;
+        }
+
+    .roles-label {
+        color: var(--rl-ink);
+        font-weight: 900;
+        font-size: .84rem;
+        margin-bottom: .45rem;
+    }
+
+    .btn-role {
+        border-radius: 999px;
+        font-weight: 850;
+        padding: .78rem 1rem;
+        font-size: .84rem;
+    }
+
+    .role-list {
+        display: grid;
+        gap: .8rem;
+    }
+
+    .role-item {
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: 20px;
+        padding: 1rem;
+        background: linear-gradient(180deg, rgba(248,250,252,.76), rgba(255,255,255,1));
+        box-shadow: var(--rl-shadow-soft);
+        transition: transform .18s ease, box-shadow .18s ease;
+    }
+
+        .role-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 28px rgba(15,23,42,.08);
+        }
+
+    .role-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .role-name {
+        color: var(--rl-ink);
+        font-weight: 900;
+        font-size: .98rem;
+        margin-bottom: .15rem;
+    }
+
+    .role-sub {
+        color: var(--rl-muted);
+        font-size: .82rem;
+        line-height: 1.6;
+        margin: 0;
+        word-break: break-all;
+    }
+
+    .role-id-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+        padding: .44rem .7rem;
+        border-radius: 999px;
+        background: rgba(59,130,246,.08);
+        color: #1d4ed8;
+        border: 1px solid rgba(59,130,246,.15);
+        font-size: .74rem;
+        font-weight: 800;
+        margin-top: .7rem;
+    }
+
+    .role-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .5rem;
+        justify-content: flex-end;
+        min-width: 150px;
+    }
+
+    .btn-delete-soft {
+        border: 1px solid rgba(220,53,69,.18);
+        background: rgba(220,53,69,.06);
+        color: #b42318;
+    }
+
+        .btn-delete-soft:hover {
+            background: rgba(220,53,69,.12);
+            color: #991b1b;
+        }
+
+    .btn-protected {
+        border: 1px solid rgba(148,163,184,.18);
+        background: rgba(148,163,184,.10);
+        color: #475569;
+        cursor: default;
+    }
+
+    .empty-shell {
+        text-align: center;
+        padding: 2.3rem 1rem;
+    }
+
+    .empty-icon {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto .95rem;
+        border-radius: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(20,85,68,.08);
+        color: var(--rl-green-800);
+        font-size: 1.8rem;
+    }
+
+    .empty-shell h4 {
+        color: var(--rl-ink);
+        font-weight: 950;
+        margin-bottom: .35rem;
+    }
+
+    .empty-shell p {
+        color: var(--rl-muted);
+        margin: 0;
+        font-size: .9rem;
+    }
+
+    .sitm-toast-wrap {
+        position: fixed;
+        top: 18px;
+        right: 18px;
+        z-index: 3000;
+        display: grid;
+        gap: .75rem;
+        width: min(420px, calc(100vw - 36px));
+    }
+
+    .sitm-toast {
+        border-radius: 20px;
+        padding: 1rem;
+        box-shadow: 0 20px 45px rgba(15,23,42,.16);
+        border: 1px solid rgba(255,255,255,.14);
+        color: #fff;
+        animation: sitmToastIn .24s ease;
+    }
+
+        .sitm-toast.ok {
+            background: linear-gradient(135deg, #145544, #1f8a6c);
+        }
+
+        .sitm-toast.err {
+            background: linear-gradient(135deg, #991b1b, #dc2626);
+        }
+
+    .sitm-toast-title {
+        font-weight: 900;
+        margin-bottom: .18rem;
+    }
+
+    .sitm-toast-text {
+        opacity: .95;
+        line-height: 1.55;
+        font-size: .92rem;
+        word-break: break-word;
+    }
+
+    @@keyframes sitmToastIn {
+        from {
+            opacity: 0;
+            transform: translateY(-8px) scale(.98);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .sitm-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15,23,42,.42);
+        z-index: 2990;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+    }
+
+        .sitm-modal-backdrop.show {
+            display: flex;
+        }
+
+    .sitm-modal {
+        width: min(520px, 100%);
+        border-radius: 26px;
+        background: #fff;
+        box-shadow: 0 30px 80px rgba(15,23,42,.24);
+        overflow: hidden;
+        border: 1px solid rgba(15,23,42,.08);
+    }
+
+    .sitm-modal-head {
+        padding: 1rem 1.1rem;
+        border-bottom: 1px solid rgba(15,23,42,.06);
+        background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(248,250,252,.98));
+    }
+
+    .sitm-modal-title {
+        margin: 0;
+        font-weight: 950;
+        color: #0f172a;
+        font-size: 1.02rem;
+    }
+
+    .sitm-modal-body {
+        padding: 1rem 1.1rem;
+        color: #475569;
+        line-height: 1.75;
+        font-size: .94rem;
+    }
+
+    .sitm-modal-actions {
+        padding: 0 1.1rem 1.1rem;
+        display: flex;
+        gap: .7rem;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+    }
+
+    .sitm-modal-btn {
+        border-radius: 999px;
+        font-weight: 800;
+        padding: .75rem 1rem;
+    }
+</style>
+
+<div class="roles-page">
+    <section class="roles-hero">
+        <div class="roles-hero-inner">
+            <span class="roles-badge">
+                <i class="bi bi-shield-lock"></i> Gestión de permisos
+            </span>
+
+            <h1 class="roles-title">Administrar roles</h1>
+            <p class="roles-sub">
+                Crea y elimina roles dentro del sistema para organizar accesos administrativos y operativos de manera más controlada.
+            </p>
+        </div>
+    </section>
+
+    <div class="roles-grid">
+        <div class="roles-card">
+            <div class="roles-head">
+                <h2 class="roles-head-title">
+                    <i class="bi bi-plus-circle"></i> Crear nuevo rol
+                </h2>
+                <div class="roles-head-sub">
+                    Registra un nuevo rol funcional para uso interno.
+                </div>
+            </div>
+
+            <div class="roles-body">
+                @using (Html.BeginForm("Create", "AdminRoles", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label class="roles-label">Nombre del rol</label>
+                        <input type="text"
+                               name="name"
+                               class="form-control roles-input"
+                               placeholder="Ej. Moderador, Supervisor, Auditor..." />
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-role">
+                        <i class="bi bi-check2-circle me-1"></i> Crear rol
+                    </button>
+                }
+            </div>
+        </div>
+
+        <div class="roles-card">
+            <div class="roles-head">
+                <h2 class="roles-head-title">
+                    <i class="bi bi-list-check"></i> Roles existentes
+                </h2>
+                <div class="roles-head-sub">
+                    Listado de roles disponibles dentro del sistema.
+                </div>
+            </div>
+
+            <div class="roles-body">
+                @if (roles.Any())
+                {
+                    <div class="role-list">
+                        @foreach (var r in roles)
+                        {
+                            <div class="role-item">
+                                <div class="role-row">
+                                    <div class="flex-grow-1">
+                                        <div class="role-name">@r.Name</div>
+                                        <p class="role-sub">Rol disponible para asignación dentro del sistema.</p>
+                                        <span class="role-id-chip">
+                                            <i class="bi bi-hash"></i> @r.Id
+                                        </span>
+                                    </div>
+
+                                    <div class="role-actions">
+                                        @if (r.Name != "Admin")
+                                        {
+                                            <button type="button"
+                                                    class="btn btn-role btn-delete-soft js-delete-role"
+                                                    data-id="@r.Id"
+                                                    data-name="@r.Name"
+                                                    data-url="@Url.Action("Delete", "AdminRoles")">
+                                                <i class="bi bi-trash3 me-1"></i> Eliminar
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <span class="btn btn-role btn-protected">
+                                                <i class="bi bi-shield-lock me-1"></i> Protegido
+                                            </span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-shell">
+                        <div class="empty-icon">
+                            <i class="bi bi-shield"></i>
+                        </div>
+                        <h4>No hay roles creados</h4>
+                        <p>Los nuevos roles administrativos aparecerán aquí.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="sitmToastWrap" class="sitm-toast-wrap"></div>
+
+<div id="sitmDeleteModal" class="sitm-modal-backdrop">
+    <div class="sitm-modal">
+        <div class="sitm-modal-head">
+            <h3 class="sitm-modal-title">Confirmar eliminación</h3>
+        </div>
+        <div class="sitm-modal-body" id="sitmDeleteModalText"></div>
+        <div class="sitm-modal-actions">
+            <button type="button" class="btn btn-outline-secondary sitm-modal-btn" id="sitmCancelDelete">Cancelar</button>
+            <button type="button" class="btn btn-danger sitm-modal-btn" id="sitmConfirmDelete">Sí, eliminar</button>
+        </div>
+    </div>
+</div>
+
+@Html.AntiForgeryToken()
+
+@section Scripts {
+    <script>
+        (function () {
+            const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+            const token = tokenInput ? tokenInput.value : '';
+            const toastWrap = document.getElementById('sitmToastWrap');
+            const modal = document.getElementById('sitmDeleteModal');
+            const modalText = document.getElementById('sitmDeleteModalText');
+            const btnCancel = document.getElementById('sitmCancelDelete');
+            const btnConfirm = document.getElementById('sitmConfirmDelete');
+
+            let currentDelete = null;
+
+            function showToast(type, title, text, delay) {
+                const el = document.createElement('div');
+                el.className = 'sitm-toast ' + (type || 'ok');
+                el.innerHTML =
+                    '<div class="sitm-toast-title">' + title + '</div>' +
+                    '<div class="sitm-toast-text">' + text + '</div>';
+                toastWrap.appendChild(el);
+
+                setTimeout(function () {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(-6px)';
+                    setTimeout(function () { el.remove(); }, 250);
+                }, delay || 5000);
+            }
+
+            function openDeleteModal(cfg) {
+                currentDelete = cfg;
+                modalText.innerHTML = 'Vas a eliminar el rol <strong>' + cfg.name + '</strong>.<br><br>Si el rol está siendo usado por usuarios o tiene restricciones internas, la operación puede fallar.';
+                modal.classList.add('show');
+            }
+
+            function closeDeleteModal() {
+                modal.classList.remove('show');
+                currentDelete = null;
+            }
+
+            document.querySelectorAll('.js-delete-role').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    openDeleteModal({
+                        id: this.getAttribute('data-id'),
+                        name: this.getAttribute('data-name'),
+                        url: this.getAttribute('data-url')
+                    });
+                });
+            });
+
+            btnCancel.addEventListener('click', closeDeleteModal);
+            modal.addEventListener('click', function (e) {
+                if (e.target === modal) closeDeleteModal();
+            });
+
+            btnConfirm.addEventListener('click', function () {
+                if (!currentDelete) return;
+
+                const formData = new FormData();
+                formData.append('__RequestVerificationToken', token);
+                formData.append('id', currentDelete.id);
+
+                fetch(currentDelete.url, {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'same-origin'
+                })
+                .then(function (r) {
+                    if (r.ok) {
+                        showToast('ok', 'Rol eliminado', 'La operación se ejecutó correctamente.');
+                        setTimeout(function () { window.location.reload(); }, 700);
+                        return;
+                    }
+
+                    showToast('err', 'No se pudo eliminar', 'El rol está en uso o hubo una restricción del sistema.');
+                })
+                .catch(function () {
+                    showToast('err', 'No se pudo eliminar', 'Ocurrió un problema al eliminar el rol.');
+                })
+                .finally(function () {
+                    closeDeleteModal();
+                });
+            });
+
+            @if (TempData["Ok"] != null)
+            {
+                <text>showToast('ok', 'Operación completada', '@Html.Raw(HttpUtility.JavaScriptStringEncode(TempData["Ok"].ToString()))', 5000);</text>
+            }
+
+            @if (TempData["Err"] != null)
+            {
+                <text>showToast('err', 'Ocurrió un problema', '@Html.Raw(HttpUtility.JavaScriptStringEncode(TempData["Err"].ToString()))', 7000);</text>
+            }
+        })();
+    </script>
+}
