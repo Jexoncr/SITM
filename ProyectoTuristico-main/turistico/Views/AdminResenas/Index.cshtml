@@ -1,0 +1,448 @@
+﻿@model IEnumerable<turistico.Models.Resena>
+
+@{
+    ViewBag.Title = "Administrar Reseñas";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+
+    var resenas = Model ?? Enumerable.Empty<turistico.Models.Resena>();
+}
+
+<style>
+    :root {
+        --ar-green-900: #0f3d2e;
+        --ar-green-800: #145544;
+        --ar-green-soft: rgba(20,85,68,.08);
+        --ar-ink: #0f172a;
+        --ar-muted: #64748b;
+        --ar-card: rgba(255,255,255,.97);
+        --ar-shadow: 0 20px 48px rgba(15,23,42,.08);
+        --ar-shadow-soft: 0 10px 24px rgba(15,23,42,.05);
+        --ar-radius-xl: 28px;
+        --ar-radius-lg: 22px;
+    }
+
+    .admin-reviews-shell {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .admin-reviews-hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: var(--ar-radius-xl);
+        padding: 1.8rem 1.25rem 1.55rem;
+        background: radial-gradient(circle at top right, rgba(46,158,127,.12), transparent 28%), linear-gradient(135deg, #ffffff 0%, #f7fbf8 55%, #eef7f2 100%);
+        border: 1px solid rgba(15,23,42,.06);
+        box-shadow: 0 18px 42px rgba(15,23,42,.06);
+    }
+
+        .admin-reviews-hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(20,85,68,.04), transparent 24%);
+            pointer-events: none;
+        }
+
+    .admin-reviews-hero-inner {
+        position: relative;
+        z-index: 2;
+    }
+
+    .admin-reviews-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .42rem;
+        padding: .5rem .82rem;
+        border-radius: 999px;
+        background: rgba(20,85,68,.08);
+        color: var(--ar-green-800);
+        border: 1px solid rgba(20,85,68,.10);
+        font-weight: 800;
+        font-size: .8rem;
+        margin-bottom: .75rem;
+    }
+
+    .admin-reviews-title {
+        margin: 0 0 .45rem;
+        color: var(--ar-ink);
+        font-weight: 950;
+        line-height: 1.04;
+        letter-spacing: -.03em;
+        font-size: clamp(1.9rem, 2.8vw, 2.8rem);
+    }
+
+    .admin-reviews-sub {
+        margin: 0;
+        color: var(--ar-muted);
+        line-height: 1.78;
+        max-width: 860px;
+        font-size: .94rem;
+    }
+
+    .admin-reviews-card {
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: var(--ar-radius-xl);
+        background: var(--ar-card);
+        box-shadow: var(--ar-shadow);
+        overflow: hidden;
+    }
+
+    .admin-reviews-head {
+        padding: 1rem 1.05rem;
+        border-bottom: 1px solid rgba(15,23,42,.06);
+        background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,250,252,.96));
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .admin-reviews-head-title {
+        margin: 0;
+        color: var(--ar-ink);
+        font-weight: 950;
+        font-size: 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem;
+    }
+
+    .admin-reviews-head-sub {
+        margin-top: .2rem;
+        color: var(--ar-muted);
+        font-size: .84rem;
+        line-height: 1.6;
+    }
+
+    .admin-reviews-count {
+        display: inline-flex;
+        align-items: center;
+        gap: .4rem;
+        padding: .5rem .8rem;
+        border-radius: 999px;
+        background: rgba(20,85,68,.08);
+        color: var(--ar-green-800);
+        font-weight: 800;
+        font-size: .8rem;
+    }
+
+    .review-admin-item {
+        padding: 1rem;
+        border-bottom: 1px solid rgba(15,23,42,.06);
+    }
+
+        .review-admin-item:last-child {
+            border-bottom: none;
+        }
+
+    .review-admin-box {
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: 20px;
+        padding: 1rem;
+        background: linear-gradient(180deg, rgba(248,250,252,.75), rgba(255,255,255,1));
+        box-shadow: var(--ar-shadow-soft);
+    }
+
+    .review-admin-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .review-admin-user {
+        color: var(--ar-ink);
+        font-weight: 900;
+        font-size: .95rem;
+        line-height: 1.2;
+        margin-bottom: .2rem;
+    }
+
+    .review-admin-meta {
+        color: var(--ar-muted);
+        font-size: .82rem;
+        line-height: 1.65;
+    }
+
+    .review-admin-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .45rem;
+        margin-top: .8rem;
+    }
+
+    .soft-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+        padding: .42rem .7rem;
+        border-radius: 999px;
+        font-size: .76rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .pill-rating {
+        background: rgba(59,130,246,.10);
+        color: #1d4ed8;
+    }
+
+    .pill-aprobada {
+        background: rgba(22,163,74,.10);
+        color: #166534;
+    }
+
+    .pill-pendiente {
+        background: rgba(245,158,11,.14);
+        color: #946200;
+    }
+
+    .pill-oculta,
+    .pill-rechazada {
+        background: rgba(220,53,69,.12);
+        color: #b42318;
+    }
+
+    .review-admin-text {
+        color: #334155;
+        line-height: 1.8;
+        font-size: .9rem;
+        margin-top: .9rem;
+    }
+
+    .review-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: .75rem;
+        margin-top: 1rem;
+    }
+
+        .review-gallery img {
+            width: 100%;
+            height: 110px;
+            object-fit: cover;
+            border-radius: 14px;
+            box-shadow: 0 6px 16px rgba(15,23,42,.08);
+            border: 1px solid rgba(15,23,42,.05);
+        }
+
+    .review-actions {
+        margin-top: 1rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: .55rem;
+    }
+
+    .btn-review-admin {
+        border-radius: 999px;
+        font-weight: 800;
+        font-size: .8rem;
+        padding: .66rem .9rem;
+    }
+
+    .motivo-box {
+        margin-top: .85rem;
+        border: 1px dashed rgba(15,23,42,.12);
+        border-radius: 16px;
+        padding: .85rem;
+        background: #fff;
+    }
+
+    .motivo-label {
+        color: var(--ar-ink);
+        font-weight: 900;
+        font-size: .82rem;
+        margin-bottom: .35rem;
+    }
+
+    .motivo-text {
+        color: var(--ar-muted);
+        font-size: .84rem;
+        line-height: 1.6;
+    }
+
+    .motivo-textarea {
+        border-radius: 14px;
+        min-height: 90px;
+        border: 1px solid rgba(15,23,42,.10);
+        box-shadow: none !important;
+        margin-bottom: .65rem;
+        font-size: .9rem;
+    }
+
+    .empty-shell {
+        padding: 2.6rem 1.2rem;
+        text-align: center;
+        background: linear-gradient(180deg, rgba(248,250,252,.78), rgba(255,255,255,1));
+    }
+
+    .empty-icon {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto .95rem;
+        border-radius: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(20,85,68,.08);
+        color: var(--ar-green-800);
+        font-size: 1.8rem;
+    }
+
+    .empty-shell h4 {
+        color: var(--ar-ink);
+        font-weight: 950;
+        margin-bottom: .35rem;
+    }
+
+    .empty-shell p {
+        color: var(--ar-muted);
+        margin: 0;
+        font-size: .9rem;
+    }
+</style>
+
+<div class="admin-reviews-shell">
+    <section class="admin-reviews-hero">
+        <div class="admin-reviews-hero-inner">
+            <span class="admin-reviews-badge">
+                <i class="bi bi-chat-square-heart"></i> Moderación institucional
+            </span>
+
+            <h1 class="admin-reviews-title">Administrar reseñas</h1>
+            <p class="admin-reviews-sub">
+                Revisa opiniones publicadas por usuarios, valida su contenido y aplica acciones de aprobación, ocultamiento o rechazo con un flujo administrativo más claro.
+            </p>
+        </div>
+    </section>
+
+    <div class="admin-reviews-card">
+        <div class="admin-reviews-head">
+            <div>
+                <h2 class="admin-reviews-head-title">
+                    <i class="bi bi-list-check"></i> Listado de reseñas
+                </h2>
+                <div class="admin-reviews-head-sub">
+                    Vista administrativa con estado, usuario, contexto y acciones de moderación.
+                </div>
+            </div>
+
+            <div class="admin-reviews-count">
+                <i class="bi bi-collection"></i> Total: @resenas.Count()
+            </div>
+        </div>
+
+        @if (resenas.Any())
+        {
+            foreach (var r in resenas)
+            {
+                var nombre = ((r.User?.Nombre ?? "") + " " + (r.User?.Apellido ?? "")).Trim();
+                var displayUser = string.IsNullOrWhiteSpace(nombre) ? (r.User?.Email ?? "Usuario") : nombre;
+
+                var contexto =
+                    r.Comercio != null ? r.Comercio.Nombre :
+                    r.Evento != null ? r.Evento.Nombre :
+                    r.Lugar != null ? r.Lugar.Nombre :
+                    "Elemento";
+
+                var estado = string.IsNullOrWhiteSpace(r.Estado) ? "Pendiente" : r.Estado;
+                var estadoClass = "pill-pendiente";
+
+                if (estado == "Aprobada") { estadoClass = "pill-aprobada"; }
+                else if (estado == "Oculta") { estadoClass = "pill-oculta"; }
+                else if (estado == "Rechazada") { estadoClass = "pill-rechazada"; }
+
+                <div class="review-admin-item">
+                    <div class="review-admin-box">
+                        <div class="review-admin-top">
+                            <div>
+                                <div class="review-admin-user">@displayUser</div>
+                                <div class="review-admin-meta">
+                                    <strong>Fecha:</strong> @r.Fecha.ToString("dd/MM/yyyy HH:mm")
+                                    &nbsp;·&nbsp;
+                                    <strong>Contexto:</strong> @contexto
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="review-admin-badges">
+                            <span class="soft-pill pill-rating">
+                                <i class="bi bi-star-fill"></i> @r.Calificacion / 5
+                            </span>
+
+                            <span class="soft-pill @estadoClass">
+                                <i class="bi bi-shield-check"></i> @estado
+                            </span>
+                        </div>
+
+                        <div class="review-admin-text">
+                            @(string.IsNullOrWhiteSpace(r.Comentario) ? "Sin comentario." : r.Comentario)
+                        </div>
+
+                        @if (r.Imagenes != null && r.Imagenes.Any())
+                        {
+                            <div class="review-gallery">
+                                @foreach (var img in r.Imagenes)
+                                {
+                                    <img src="@img.UrlImagen" alt="Imagen de reseña" />
+                                }
+                            </div>
+                        }
+
+                        <div class="review-actions">
+                            @using (Html.BeginForm("Aprobar", "AdminResenas", FormMethod.Post, new { @class = "d-inline-block" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@r.Id" />
+                                <button type="submit" class="btn btn-outline-success btn-review-admin">
+                                    <i class="bi bi-check2-circle me-1"></i> Aprobar
+                                </button>
+                            }
+
+                            @using (Html.BeginForm("Ocultar", "AdminResenas", FormMethod.Post, new { @class = "d-inline-block" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@r.Id" />
+                                <button type="submit" class="btn btn-outline-warning btn-review-admin">
+                                    <i class="bi bi-eye-slash me-1"></i> Ocultar
+                                </button>
+                            }
+                        </div>
+
+                        <div class="motivo-box">
+                            <div class="motivo-label">Rechazar con motivo</div>
+                            <div class="motivo-text">
+                                Utiliza esta opción si necesitas dejar trazabilidad de la razón administrativa.
+                            </div>
+
+                            @using (Html.BeginForm("Rechazar", "AdminResenas", FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@r.Id" />
+                                <textarea name="motivo"
+                                          class="form-control motivo-textarea"
+                                          placeholder="Escribe el motivo del rechazo..."></textarea>
+                                <button type="submit" class="btn btn-outline-danger btn-review-admin">
+                                    <i class="bi bi-x-circle me-1"></i> Rechazar
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty-shell">
+                <div class="empty-icon">
+                    <i class="bi bi-chat-square-text"></i>
+                </div>
+                <h4>No hay reseñas registradas</h4>
+                <p>Cuando los usuarios publiquen reseñas, aparecerán aquí para su revisión.</p>
+            </div>
+        }
+    </div>
+</div>
