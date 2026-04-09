@@ -1,0 +1,614 @@
+﻿@{
+    Response.ContentEncoding = System.Text.Encoding.UTF8;
+    Response.Charset = "utf-8";
+}
+@model turistico.Models.PaginacionVM<turistico.Models.ComercioDTO>
+
+@{
+    ViewBag.Title = "Comercios";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var comercios = Model?.Items ?? Enumerable.Empty<turistico.Models.ComercioDTO>();
+    var paginaActual = Model?.PaginaActual ?? 1;
+    var totalPaginas = Model?.TotalPaginas ?? 1;
+    var totalRegistros = Model?.TotalRegistros ?? 0;
+}
+
+<script>
+    document.body.classList.add("commerce-page-body");
+</script>
+
+<style>
+    :root {
+        --co-green-900: #103a2d;
+        --co-green-800: #145544;
+        --co-green-700: #1d6a54;
+        --co-accent: #d8b46a;
+        --co-ink: #111827;
+        --co-muted: #667085;
+        --co-card: rgba(255,255,255,.94);
+        --co-card-border: rgba(17,24,39,.08);
+        --co-shadow: 0 18px 40px rgba(17,24,39,.08);
+        --co-shadow-soft: 0 10px 24px rgba(17,24,39,.06);
+        --co-radius-xl: 30px;
+        --co-radius-lg: 24px;
+        --co-radius-md: 18px;
+    }
+
+    body.commerce-page-body {
+        background: radial-gradient(circle at top left, rgba(16,58,45,.08), transparent 24%), radial-gradient(circle at 100% 0%, rgba(216,180,106,.10), transparent 22%), linear-gradient(180deg, #f7f5f0 0%, #f1efe9 42%, #ebe8e1 100%);
+        background-attachment: fixed;
+    }
+
+    .commerce-shell {
+        max-width: 1360px;
+        margin: 0 auto;
+        padding: 2rem 1rem 3rem;
+    }
+
+    .commerce-hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: var(--co-radius-xl);
+        padding: 2.3rem 1.6rem 1.9rem;
+        margin-bottom: 1.3rem;
+        background: radial-gradient(circle at top right, rgba(216,180,106,.14), transparent 22%), linear-gradient(135deg, #173f33 0%, #1b4b3c 52%, #285745 100%);
+        color: #fff;
+        border: 1px solid rgba(255,255,255,.08);
+        box-shadow: 0 22px 46px rgba(17,24,39,.14);
+    }
+
+        .commerce-hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(255,255,255,.04), transparent 24%), radial-gradient(circle at bottom left, rgba(216,180,106,.10), transparent 24%);
+            pointer-events: none;
+        }
+
+        .commerce-hero::after {
+            content: "";
+            position: absolute;
+            right: -90px;
+            top: -90px;
+            width: 280px;
+            height: 280px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.05);
+            filter: blur(2px);
+        }
+
+    .commerce-hero-inner {
+        position: relative;
+        z-index: 2;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        padding: .58rem .88rem;
+        border-radius: 999px;
+        background: rgba(255,255,255,.10);
+        border: 1px solid rgba(255,255,255,.14);
+        color: #fff;
+        font-weight: 800;
+        font-size: .8rem;
+        margin-bottom: .95rem;
+        backdrop-filter: blur(8px);
+    }
+
+    .commerce-hero h1 {
+        margin: 0 0 .65rem 0;
+        font-weight: 950;
+        font-size: clamp(2rem, 3vw, 3rem);
+        letter-spacing: -.03em;
+        line-height: 1.02;
+        color: #fff;
+    }
+
+    .commerce-hero p {
+        max-width: 860px;
+        margin: 0;
+        color: rgba(255,255,255,.90);
+        line-height: 1.85;
+        font-size: .97rem;
+    }
+
+    .hero-inline-stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .7rem;
+        margin-top: 1.15rem;
+    }
+
+    .hero-stat {
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem;
+        padding: .62rem .88rem;
+        border-radius: 999px;
+        background: rgba(255,255,255,.10);
+        border: 1px solid rgba(255,255,255,.12);
+        color: #fff;
+        font-size: .82rem;
+        font-weight: 800;
+        backdrop-filter: blur(8px);
+    }
+
+        .hero-stat i {
+            color: #f4deb0;
+        }
+
+    .directory-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 1rem;
+        margin: 1.05rem 0 1.15rem;
+    }
+
+        .directory-head h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 950;
+            color: var(--co-ink);
+            letter-spacing: -.02em;
+        }
+
+        .directory-head p {
+            margin: .22rem 0 0;
+            color: var(--co-muted);
+            font-size: .92rem;
+            line-height: 1.65;
+        }
+
+    .directory-count {
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem;
+        padding: .62rem .9rem;
+        border-radius: 999px;
+        background: rgba(255,255,255,.84);
+        border: 1px solid rgba(17,24,39,.06);
+        color: var(--co-green-800);
+        font-weight: 800;
+        font-size: .82rem;
+        white-space: nowrap;
+        box-shadow: 0 10px 20px rgba(17,24,39,.05);
+        backdrop-filter: blur(10px);
+    }
+
+    .commerce-card {
+        height: 100%;
+        border-radius: 24px;
+        overflow: hidden;
+        background: var(--co-card);
+        border: 1px solid rgba(255,255,255,.36);
+        box-shadow: var(--co-shadow);
+        transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+        display: flex;
+        flex-direction: column;
+        backdrop-filter: blur(10px);
+    }
+
+        .commerce-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 24px 48px rgba(17,24,39,.12);
+            border-color: rgba(16,58,45,.14);
+        }
+
+    .commerce-media {
+        position: relative;
+        overflow: hidden;
+        background: #dde4de;
+    }
+
+    .commerce-image {
+        width: 100%;
+        height: 230px;
+        object-fit: cover;
+        display: block;
+        transition: transform .4s ease;
+    }
+
+    .commerce-card:hover .commerce-image {
+        transform: scale(1.05);
+    }
+
+    .commerce-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(17,24,39,.34), rgba(0,0,0,0) 62%);
+    }
+
+    .commerce-category {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        display: inline-flex;
+        align-items: center;
+        gap: .38rem;
+        padding: .44rem .72rem;
+        border-radius: 999px;
+        background: rgba(255,255,255,.94);
+        color: var(--co-green-800);
+        border: 1px solid rgba(17,24,39,.05);
+        font-size: .75rem;
+        font-weight: 800;
+        box-shadow: 0 10px 24px rgba(17,24,39,.08);
+    }
+
+    .commerce-status {
+        position: absolute;
+        right: 14px;
+        bottom: 14px;
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+        padding: .44rem .72rem;
+        border-radius: 999px;
+        background: rgba(22,163,74,.16);
+        color: #166534;
+        font-size: .75rem;
+        font-weight: 800;
+        border: 1px solid rgba(22,163,74,.14);
+        backdrop-filter: blur(6px);
+    }
+
+    .commerce-body {
+        padding: 1.08rem 1.08rem 1.15rem;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    .commerce-name {
+        font-size: 1.08rem;
+        font-weight: 950;
+        color: var(--co-ink);
+        line-height: 1.18;
+        margin-bottom: .5rem;
+        letter-spacing: -.01em;
+    }
+
+    .commerce-desc {
+        color: var(--co-muted);
+        line-height: 1.72;
+        font-size: .89rem;
+        min-height: 74px;
+        margin-bottom: .95rem;
+    }
+
+    .commerce-info-grid {
+        display: grid;
+        gap: .72rem;
+        margin-bottom: 1rem;
+    }
+
+    .commerce-info {
+        display: flex;
+        align-items: start;
+        gap: .72rem;
+    }
+
+    .commerce-info-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(16,58,45,.08);
+        color: var(--co-green-800);
+        flex: 0 0 auto;
+        font-size: .92rem;
+    }
+
+    .commerce-info-label {
+        display: block;
+        font-size: .72rem;
+        text-transform: uppercase;
+        letter-spacing: .03em;
+        color: var(--co-muted);
+        font-weight: 800;
+        margin-bottom: .08rem;
+    }
+
+    .commerce-info-value {
+        color: var(--co-ink);
+        font-weight: 800;
+        font-size: .88rem;
+        line-height: 1.5;
+    }
+
+    .commerce-actions {
+        margin-top: auto;
+        display: flex;
+        gap: .55rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-commerce {
+        border-radius: 999px;
+        font-weight: 800;
+        padding: .74rem .96rem;
+        font-size: .83rem;
+    }
+
+    .pagination-shell {
+        margin-top: 1.5rem;
+        display: flex;
+        justify-content: center;
+    }
+
+    .pagination-premium {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .52rem;
+        align-items: center;
+        justify-content: center;
+        padding: .82rem;
+        border-radius: 24px;
+        background: rgba(255,255,255,.84);
+        border: 1px solid rgba(255,255,255,.40);
+        box-shadow: 0 18px 36px rgba(17,24,39,.08);
+        backdrop-filter: blur(10px);
+    }
+
+    .page-chip {
+        min-width: 46px;
+        height: 46px;
+        padding: 0 .95rem;
+        border-radius: 999px;
+        border: 1px solid rgba(17,24,39,.08);
+        background: #fff;
+        color: var(--co-ink);
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: all .18s ease;
+        box-shadow: 0 8px 18px rgba(17,24,39,.04);
+    }
+
+        .page-chip:hover {
+            color: var(--co-green-800);
+            border-color: rgba(16,58,45,.18);
+            transform: translateY(-1px);
+            text-decoration: none;
+        }
+
+        .page-chip.active {
+            background: linear-gradient(135deg, #145544, #1f8a6c);
+            color: #fff;
+            border-color: #145544;
+            box-shadow: 0 10px 22px rgba(20,85,68,.22);
+        }
+
+        .page-chip.disabled {
+            opacity: .45;
+            pointer-events: none;
+        }
+
+    .empty-directory {
+        border-radius: 28px;
+        padding: 2.6rem 1.2rem;
+        background: rgba(255,255,255,.90);
+        border: 1px dashed rgba(17,24,39,.12);
+        text-align: center;
+        box-shadow: var(--co-shadow-soft);
+        backdrop-filter: blur(10px);
+    }
+
+    .empty-directory-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 22px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(16,58,45,.08);
+        color: var(--co-green-800);
+        font-size: 1.8rem;
+        margin-bottom: .95rem;
+    }
+
+    .empty-directory h4 {
+        margin-bottom: .4rem;
+        font-weight: 950;
+        color: var(--co-ink);
+        font-size: 1.08rem;
+    }
+
+    .empty-directory p {
+        margin: 0;
+        color: var(--co-muted);
+        font-size: .9rem;
+    }
+
+    @@media (max-width: 991.98px) {
+        .commerce-hero {
+            padding: 1.6rem 1rem;
+            border-radius: 22px;
+        }
+
+        .directory-head {
+            flex-direction: column;
+            align-items: start;
+        }
+    }
+</style>
+
+<div class="commerce-shell">
+    <section class="commerce-hero">
+        <div class="commerce-hero-inner">
+            <span class="hero-badge">
+                <i class="bi bi-shop"></i> Directorio comercial turístico
+            </span>
+
+            <h1>Comercios y servicios locales</h1>
+
+            <p>
+                Descubre negocios, emprendimientos y servicios registrados dentro del portal turístico municipal con una experiencia más cuidada, elegante y útil para visitantes y ciudadanos.
+            </p>
+
+            <div class="hero-inline-stats">
+                <span class="hero-stat"><i class="bi bi-patch-check"></i> Comercios aprobados</span>
+                <span class="hero-stat"><i class="bi bi-geo-alt"></i> Información de ubicación</span>
+                <span class="hero-stat"><i class="bi bi-chat-dots"></i> Contacto directo</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="directory-head">
+        <div>
+            <h2>Directorio de comercios</h2>
+            <p>Consulta ubicación, horario, descripción y medios de contacto de cada comercio disponible.</p>
+        </div>
+
+        <div class="directory-count">
+            <i class="bi bi-grid-3x3-gap"></i>
+            Total: @totalRegistros
+        </div>
+    </div>
+
+    @if (comercios.Any())
+    {
+        <div class="row g-3 row-cols-1 row-cols-md-2 row-cols-xl-3">
+            @foreach (var c in comercios)
+            {
+                var imagen = string.IsNullOrWhiteSpace(c.ImagenUrl)
+                    ? Url.Content("~/Content/img/comercios/default.jpg")
+                    : c.ImagenUrl;
+
+                var nombre = string.IsNullOrWhiteSpace(c.Nombre) ? "Comercio" : c.Nombre;
+                var descripcion = string.IsNullOrWhiteSpace(c.Descripcion)
+                    ? "Este comercio forma parte del directorio turístico municipal."
+                    : c.Descripcion;
+
+                var categoria = string.IsNullOrWhiteSpace(c.Categoria) ? "General" : c.Categoria;
+                var ubicacion = string.IsNullOrWhiteSpace(c.Ubicacion) ? "Ubicación no disponible" : c.Ubicacion;
+                var telefono = string.IsNullOrWhiteSpace(c.Telefono) ? "No disponible" : c.Telefono;
+
+                <div class="col">
+                    <div class="commerce-card">
+                        <div class="commerce-media">
+                            <img src="@imagen"
+                                 alt="@nombre"
+                                 class="commerce-image"
+                                 onerror="this.onerror=null;this.src='@Url.Content("~/Content/img/comercios/default.jpg")';" />
+
+                            <div class="commerce-overlay"></div>
+
+                            <span class="commerce-category">
+                                <i class="bi bi-tag"></i> @categoria
+                            </span>
+
+                            <span class="commerce-status">
+                                <i class="bi bi-patch-check-fill"></i> Aprobado
+                            </span>
+                        </div>
+
+                        <div class="commerce-body">
+                            <h3 class="commerce-name">@nombre</h3>
+
+                            <div class="commerce-desc">
+                                @descripcion
+                            </div>
+
+                            <div class="commerce-info-grid">
+                                <div class="commerce-info">
+                                    <div class="commerce-info-icon">
+                                        <i class="bi bi-geo-alt"></i>
+                                    </div>
+                                    <div>
+                                        <span class="commerce-info-label">Ubicación</span>
+                                        <div class="commerce-info-value">@ubicacion</div>
+                                    </div>
+                                </div>
+
+                                <div class="commerce-info">
+                                    <div class="commerce-info-icon">
+                                        <i class="bi bi-telephone"></i>
+                                    </div>
+                                    <div>
+                                        <span class="commerce-info-label">Teléfono</span>
+                                        <div class="commerce-info-value">@telefono</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="commerce-actions">
+                                <a href="@Url.Action("Perfil", "Comercios", new { id = c.Id })"
+                                   class="btn btn-outline-success btn-commerce flex-fill">
+                                    <i class="bi bi-eye me-1"></i> Ver perfil
+                                </a>
+
+                                <a href="@Url.Action("Contacto", "Comercios", new { id = c.Id })"
+                                   class="btn btn-success btn-commerce flex-fill">
+                                    <i class="bi bi-chat-dots me-1"></i> Contactar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        if (totalPaginas > 1)
+        {
+            <div class="pagination-shell">
+                <div class="pagination-premium">
+                    <a href="@Url.Action("Index", "Comercios", new { pagina = paginaActual - 1 })"
+                       class="page-chip @(paginaActual <= 1 ? "disabled" : "")">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+
+                    @for (int i = 1; i <= totalPaginas; i++)
+                    {
+                        if (i == paginaActual || i == 1 || i == totalPaginas || Math.Abs(i - paginaActual) <= 1)
+                        {
+                            <a href="@Url.Action("Index", "Comercios", new { pagina = i })"
+                               class="page-chip @(i == paginaActual ? "active" : "")">
+                                @i
+                            </a>
+                        }
+                        else if (i == paginaActual - 2 || i == paginaActual + 2)
+                        {
+                            <span class="page-chip disabled">...</span>
+                        }
+                    }
+
+                    <a href="@Url.Action("Index", "Comercios", new { pagina = paginaActual + 1 })"
+                       class="page-chip @(paginaActual >= totalPaginas ? "disabled" : "")">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="empty-directory">
+            <div class="empty-directory-icon">
+                <i class="bi bi-shop-window"></i>
+            </div>
+            <h4>No hay comercios registrados</h4>
+            <p>Actualmente no existen comercios visibles dentro del sistema.</p>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".commerce-image").forEach(function (img) {
+                img.addEventListener("error", function () {
+                    this.src = '@Url.Content("~/Content/img/comercios/default.jpg")';
+                });
+            });
+        });
+    </script>
+}

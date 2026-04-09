@@ -1,0 +1,309 @@
+﻿@model turistico.Controllers.ResenaCreateVM
+
+@{
+    ViewBag.Title = "Crear Reseña";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    document.body.classList.add("review-create-body");
+</script>
+
+<style>
+    :root {
+        --rc-green-900: #0f3d2e;
+        --rc-green-800: #145544;
+        --rc-green-700: #1b6b55;
+        --rc-green-soft: rgba(20,85,68,.08);
+        --rc-ink: #0f172a;
+        --rc-muted: #64748b;
+        --rc-border: rgba(15,23,42,.08);
+        --rc-card: rgba(255,255,255,.96);
+        --rc-shadow: 0 20px 46px rgba(15,23,42,.08);
+        --rc-radius-xl: 28px;
+        --rc-radius-lg: 20px;
+    }
+
+    body.review-create-body {
+        background: radial-gradient(circle at top left, rgba(20,85,68,.07), transparent 30%), radial-gradient(circle at top right, rgba(46,158,127,.08), transparent 26%), linear-gradient(180deg, #fbfdfc 0%, #f4f8f6 48%, #eef4f1 100%);
+    }
+
+    .review-create-wrap {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 2rem 1rem 3rem;
+    }
+
+    .create-hero {
+        border-radius: var(--rc-radius-xl);
+        padding: 1.7rem 1.25rem;
+        margin-bottom: 1rem;
+        background: radial-gradient(circle at top right, rgba(46,158,127,.12), transparent 30%), linear-gradient(135deg, #ffffff 0%, #f7fbf8 55%, #eff7f2 100%);
+        border: 1px solid rgba(15,23,42,.06);
+        box-shadow: 0 18px 42px rgba(15,23,42,.06);
+    }
+
+    .create-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .42rem;
+        padding: .52rem .82rem;
+        border-radius: 999px;
+        background: rgba(20,85,68,.08);
+        color: var(--rc-green-800);
+        border: 1px solid rgba(20,85,68,.10);
+        font-weight: 800;
+        font-size: .8rem;
+        margin-bottom: .85rem;
+    }
+
+    .create-hero h1 {
+        margin: 0 0 .55rem 0;
+        font-weight: 900;
+        color: var(--rc-ink);
+        line-height: 1.06;
+        letter-spacing: -.02em;
+    }
+
+    .create-hero p {
+        margin: 0;
+        color: var(--rc-muted);
+        line-height: 1.8;
+        font-size: .94rem;
+        max-width: 760px;
+    }
+
+    .create-card {
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: var(--rc-radius-xl);
+        background: var(--rc-card);
+        box-shadow: var(--rc-shadow);
+        overflow: hidden;
+    }
+
+    .create-card-body {
+        padding: 1.5rem 1.25rem;
+    }
+
+    .intro-box {
+        border-radius: 18px;
+        background: linear-gradient(180deg, #fbfdfc 0%, #f7faf8 100%);
+        border: 1px solid rgba(15,23,42,.06);
+        padding: .95rem 1rem;
+        margin-bottom: 1.15rem;
+    }
+
+    .intro-title {
+        font-weight: 900;
+        color: var(--rc-ink);
+        margin-bottom: .18rem;
+        font-size: .96rem;
+    }
+
+    .intro-sub {
+        color: var(--rc-muted);
+        font-size: .86rem;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .form-label {
+        font-weight: 900;
+        color: var(--rc-ink);
+        font-size: .84rem;
+        margin-bottom: .45rem;
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 16px;
+        border-color: rgba(15,23,42,.08);
+        min-height: 48px;
+        font-size: .9rem;
+        box-shadow: none !important;
+    }
+
+    textarea.form-control {
+        min-height: 140px;
+    }
+
+    .star-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: .7rem;
+    }
+
+    .star-option {
+        position: relative;
+    }
+
+        .star-option input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .star-option label {
+            width: 100%;
+            border: 1px solid rgba(15,23,42,.08);
+            border-radius: 18px;
+            background: #fff;
+            padding: .95rem .7rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: .38rem;
+            font-weight: 800;
+            color: var(--rc-ink);
+            cursor: pointer;
+            transition: all .2s ease;
+            box-shadow: 0 8px 18px rgba(15,23,42,.04);
+            min-height: 92px;
+        }
+
+            .star-option label i {
+                font-size: 1.08rem;
+                color: #f59e0b;
+            }
+
+            .star-option input:checked + label,
+            .star-option label:hover {
+                border-color: rgba(20,85,68,.20);
+                background: rgba(20,85,68,.05);
+                transform: translateY(-2px);
+            }
+
+    .upload-box {
+        border: 1px dashed rgba(15,23,42,.12);
+        border-radius: 18px;
+        padding: 1rem;
+        background: linear-gradient(180deg, #fbfdfc 0%, #ffffff 100%);
+    }
+
+    .upload-hint {
+        color: var(--rc-muted);
+        font-size: .82rem;
+        line-height: 1.6;
+        margin-top: .5rem;
+    }
+
+    .action-row {
+        display: flex;
+        gap: .65rem;
+        flex-wrap: wrap;
+        margin-top: 1.2rem;
+    }
+
+    .btn-review {
+        border-radius: 999px;
+        font-weight: 800;
+        padding: .8rem 1rem;
+        font-size: .84rem;
+    }
+
+    @@media (max-width: 768px) {
+        .star-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .star-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="review-create-wrap">
+    <section class="create-hero">
+        <span class="create-badge">
+            <i class="bi bi-star-half"></i> Nueva reseña
+        </span>
+
+        <h1 class="display-6">Comparte tu experiencia</h1>
+        <p>
+            Ayuda a otros usuarios describiendo cómo fue tu experiencia con un comercio, evento o lugar dentro del portal turístico municipal.
+        </p>
+    </section>
+
+    <div class="create-card">
+        <div class="create-card-body">
+            <div class="intro-box">
+                <div class="intro-title">Estás reseñando</div>
+                <p class="intro-sub">
+                    <strong>@(ViewBag.ElementoNombre ?? "Elemento")</strong>. Tu opinión puede incluir calificación, comentario y hasta imágenes de apoyo.
+                </p>
+            </div>
+
+            @using (Html.BeginForm("Create", "Resenas", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.HiddenFor(m => m.LugarId)
+                @Html.HiddenFor(m => m.ComercioId)
+                @Html.HiddenFor(m => m.EventoId)
+                @Html.HiddenFor(m => m.Tipo)
+
+                @Html.ValidationSummary(false, "", new { @class = "text-danger mb-3" })
+
+                <div class="mb-4">
+                    <label class="form-label">Calificación</label>
+
+                    <div class="star-grid">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            var optionId = "star_" + i;
+
+                            <div class="star-option">
+                                <input type="radio"
+                                       id="@optionId"
+                                       name="Calificacion"
+                                       value="@i"
+                                       @(Model.Calificacion == i ? "checked" : "") />
+                                <label for="@optionId">
+                                    <i class="bi bi-star-fill"></i>
+                                    <span>@i estrella@(i > 1 ? "s" : "")</span>
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Comentario</label>
+                    @Html.TextAreaFor(m => m.Comentario, 5, 1, new
+                    {
+                        @class = "form-control",
+                        placeholder = "Comparte tu experiencia con claridad, respeto y detalle..."
+                    })
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Imágenes (opcional)</label>
+
+                    <div class="upload-box">
+                        <input type="file"
+                               name="Imagenes"
+                               class="form-control"
+                               accept="image/*"
+                               multiple />
+                        <div class="upload-hint">
+                            Puedes subir varias imágenes JPG, PNG o WEBP. Máximo 5 MB por archivo.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-row">
+                    <button type="submit" class="btn btn-success btn-review">
+                        <i class="bi bi-send me-1"></i> Enviar reseña
+                    </button>
+
+                    <a href="javascript:history.back()" class="btn btn-outline-secondary btn-review">
+                        <i class="bi bi-arrow-left me-1"></i> Cancelar
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
