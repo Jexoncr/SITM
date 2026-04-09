@@ -1,0 +1,883 @@
+﻿@model turistico.Controllers.ComercioPanelDashboardVM
+
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_LayoutComercio.cshtml";
+
+    var estado = string.IsNullOrWhiteSpace(Model.Estado) ? "Sin estado" : Model.Estado;
+    var estadoClass = "pill-neutral";
+    if (estado == "Aprobado") { estadoClass = "pill-ok"; }
+    else if (estado == "Pendiente") { estadoClass = "pill-warn"; }
+    else if (estado == "Rechazado") { estadoClass = "pill-bad"; }
+
+    var eventosLabels = Model.ChartEventosMeses != null ? string.Join(",", Model.ChartEventosMeses.Select(x => "'" + x + "'")) : "";
+    var eventosData = Model.ChartEventosValores != null ? string.Join(",", Model.ChartEventosValores) : "";
+    var resenasLabels = Model.ChartResenasLabels != null ? string.Join(",", Model.ChartResenasLabels.Select(x => "'" + x + "'")) : "";
+    var resenasData = Model.ChartResenasValores != null ? string.Join(",", Model.ChartResenasValores) : "";
+}
+
+<style>
+    :root {
+        --cp-green-950: #0a241c;
+        --cp-green-900: #0f3d2e;
+        --cp-green-800: #145544;
+        --cp-green-700: #1b6b55;
+        --cp-soft: rgba(20,85,68,.08);
+        --cp-ink: #0f172a;
+        --cp-muted: #64748b;
+        --cp-card: rgba(255,255,255,.96);
+        --cp-shadow: 0 20px 48px rgba(15,23,42,.08);
+        --cp-shadow-soft: 0 10px 24px rgba(15,23,42,.05);
+        --cp-radius-xl: 30px;
+        --cp-radius-lg: 24px;
+        --cp-radius-md: 18px;
+    }
+
+    .trade-dashboard {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .dash-hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: var(--cp-radius-xl);
+        padding: 1.7rem 1.3rem;
+        background: radial-gradient(circle at top right, rgba(46,158,127,.16), transparent 28%), linear-gradient(135deg, #ffffff 0%, #f7fbf8 55%, #eef7f2 100%);
+        border: 1px solid rgba(15,23,42,.06);
+        box-shadow: 0 18px 42px rgba(15,23,42,.06);
+    }
+
+        .dash-hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(20,85,68,.04), transparent 24%);
+            pointer-events: none;
+        }
+
+    .dash-hero-inner {
+        position: relative;
+        z-index: 2;
+    }
+
+    .dash-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .42rem;
+        padding: .5rem .82rem;
+        border-radius: 999px;
+        background: rgba(20,85,68,.08);
+        color: var(--cp-green-800);
+        border: 1px solid rgba(20,85,68,.10);
+        font-weight: 800;
+        font-size: .8rem;
+        margin-bottom: .75rem;
+    }
+
+    .dash-title {
+        margin: 0;
+        color: var(--cp-ink);
+        font-weight: 950;
+        line-height: 1.04;
+        letter-spacing: -.03em;
+        font-size: clamp(2rem, 3vw, 3rem);
+    }
+
+    .dash-sub {
+        margin-top: .45rem;
+        color: var(--cp-muted);
+        line-height: 1.8;
+        font-size: .95rem;
+        max-width: 760px;
+    }
+
+    .dash-hero-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .6rem;
+        margin-top: 1rem;
+    }
+
+    .soft-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: .4rem;
+        padding: .52rem .8rem;
+        border-radius: 999px;
+        font-weight: 800;
+        font-size: .78rem;
+    }
+
+    .pill-ok {
+        background: rgba(22,163,74,.10);
+        color: #166534;
+    }
+
+    .pill-warn {
+        background: rgba(245,158,11,.14);
+        color: #946200;
+    }
+
+    .pill-bad {
+        background: rgba(220,53,69,.12);
+        color: #b42318;
+    }
+
+    .pill-neutral {
+        background: rgba(59,130,246,.10);
+        color: #1d4ed8;
+    }
+
+    .dash-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .7rem;
+        margin-top: 1.1rem;
+    }
+
+    .btn-dash {
+        border-radius: 999px;
+        font-weight: 850;
+        padding: .82rem 1.1rem;
+    }
+
+    .dash-switcher-wrap {
+        border-radius: 24px;
+        background: var(--cp-card);
+        box-shadow: var(--cp-shadow);
+        border: 1px solid rgba(15,23,42,.06);
+        padding: .95rem;
+    }
+
+    .dash-switcher {
+        display: flex;
+        gap: .7rem;
+        flex-wrap: wrap;
+    }
+
+    .dash-tab-btn {
+        border: 1px solid rgba(15,23,42,.08);
+        background: #fff;
+        color: var(--cp-ink);
+        border-radius: 999px;
+        font-weight: 850;
+        padding: .78rem 1rem;
+        line-height: 1;
+        box-shadow: var(--cp-shadow-soft);
+        transition: all .18s ease;
+    }
+
+        .dash-tab-btn:hover {
+            color: var(--cp-green-800);
+            transform: translateY(-1px);
+        }
+
+        .dash-tab-btn.active {
+            background: linear-gradient(135deg, #145544, #1f8a6c);
+            color: #fff;
+            border-color: #145544;
+        }
+
+    .dash-panel {
+        display: none;
+        animation: fadePanel .18s ease;
+    }
+
+        .dash-panel.active {
+            display: block;
+        }
+
+    @@keyframes fadePanel {
+        from {
+            opacity: 0;
+            transform: translateY(4px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+    }
+
+    @@media (max-width: 1199.98px) {
+        .kpi-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media (max-width: 575.98px) {
+        .kpi-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .kpi-card {
+        border-radius: 24px;
+        padding: 1.15rem;
+        background: var(--cp-card);
+        box-shadow: var(--cp-shadow);
+        border: 1px solid rgba(15,23,42,.06);
+        position: relative;
+        overflow: hidden;
+    }
+
+        .kpi-card::after {
+            content: "";
+            position: absolute;
+            right: -18px;
+            top: -18px;
+            width: 90px;
+            height: 90px;
+            border-radius: 999px;
+            background: rgba(20,85,68,.05);
+        }
+
+    .kpi-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: .8rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .kpi-label {
+        color: var(--cp-muted);
+        font-weight: 700;
+        font-size: .84rem;
+        margin-bottom: .3rem;
+    }
+
+    .kpi-value {
+        font-weight: 950;
+        color: var(--cp-ink);
+        font-size: 2rem;
+        line-height: 1;
+        margin: 0;
+    }
+
+    .kpi-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 16px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(20,85,68,.08);
+        color: var(--cp-green-800);
+        font-size: 1.15rem;
+        flex: 0 0 auto;
+    }
+
+    .kpi-foot {
+        margin-top: .9rem;
+        color: var(--cp-muted);
+        font-size: .82rem;
+        line-height: 1.6;
+        position: relative;
+        z-index: 1;
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1.4fr .95fr;
+        gap: 1rem;
+        align-items: start;
+    }
+
+    @@media (max-width: 991.98px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .dash-card {
+        border-radius: 28px;
+        background: var(--cp-card);
+        box-shadow: var(--cp-shadow);
+        border: 1px solid rgba(15,23,42,.06);
+        overflow: hidden;
+    }
+
+    .dash-card-head {
+        padding: 1rem 1.1rem;
+        border-bottom: 1px solid rgba(15,23,42,.06);
+        background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,250,252,.96));
+    }
+
+    .dash-card-title {
+        margin: 0;
+        color: var(--cp-ink);
+        font-weight: 950;
+        font-size: 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+    }
+
+    .dash-card-sub {
+        margin-top: .18rem;
+        color: var(--cp-muted);
+        font-size: .84rem;
+        line-height: 1.6;
+    }
+
+    .dash-card-body {
+        padding: 1rem 1.1rem 1.1rem;
+    }
+
+    .mini-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: .85rem;
+    }
+
+    .mini-card {
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: 18px;
+        padding: .95rem;
+        background: linear-gradient(180deg, rgba(248,250,252,.78), rgba(255,255,255,1));
+        box-shadow: var(--cp-shadow-soft);
+    }
+
+    .mini-card-label {
+        color: var(--cp-muted);
+        font-size: .8rem;
+        font-weight: 700;
+        margin-bottom: .2rem;
+    }
+
+    .mini-card-value {
+        color: var(--cp-ink);
+        font-weight: 900;
+        font-size: 1.35rem;
+    }
+
+    .summary-grid {
+        display: grid;
+        gap: .8rem;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: .9rem 1rem;
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: 18px;
+        background: linear-gradient(180deg, rgba(248,250,252,.78), rgba(255,255,255,1));
+        text-decoration: none;
+    }
+
+    .summary-row-label {
+        color: var(--cp-muted);
+        font-size: .86rem;
+        font-weight: 700;
+    }
+
+    .summary-row-value {
+        color: var(--cp-ink);
+        font-weight: 900;
+        text-align: right;
+    }
+
+    .chart-shell {
+        position: relative;
+        height: 320px;
+    }
+
+    .activity-list {
+        display: grid;
+        gap: .75rem;
+    }
+
+    .activity-item {
+        display: flex;
+        gap: .8rem;
+        align-items: flex-start;
+        padding: .9rem 1rem;
+        border-radius: 18px;
+        border: 1px solid rgba(15,23,42,.06);
+        background: linear-gradient(180deg, rgba(248,250,252,.78), rgba(255,255,255,1));
+    }
+
+    .activity-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(20,85,68,.08);
+        color: var(--cp-green-800);
+        flex: 0 0 auto;
+    }
+
+    .activity-title {
+        color: var(--cp-ink);
+        font-weight: 900;
+        font-size: .92rem;
+        margin-bottom: .14rem;
+    }
+
+    .activity-sub {
+        color: var(--cp-muted);
+        font-size: .82rem;
+        line-height: 1.55;
+        margin-bottom: .2rem;
+    }
+
+    .activity-date {
+        color: #94a3b8;
+        font-size: .76rem;
+        font-weight: 700;
+    }
+
+    .empty-lite {
+        text-align: center;
+        padding: 1.4rem 1rem;
+        color: var(--cp-muted);
+    }
+</style>
+
+<div class="trade-dashboard">
+    <section class="dash-hero">
+        <div class="dash-hero-inner">
+            <span class="dash-badge">
+                <i class="bi bi-speedometer2"></i> Panel de comercio
+            </span>
+
+            <h1 class="dash-title">@Model.NombreComercio</h1>
+            <div class="dash-sub">
+                Consulta el rendimiento de tu comercio, revisa actividad reciente, reservas, reseñas y el comportamiento de tus eventos desde un solo lugar.
+            </div>
+
+            <div class="dash-hero-meta">
+                <span class="soft-pill @estadoClass">
+                    <i class="bi bi-shield-check"></i> @estado
+                </span>
+
+                @if (!string.IsNullOrWhiteSpace(Model.Categoria))
+                {
+                    <span class="soft-pill pill-neutral">
+                        <i class="bi bi-tag"></i> @Model.Categoria
+                    </span>
+                }
+
+                <span class="soft-pill pill-neutral">
+                    <i class="bi bi-star-fill"></i> @Model.PromedioCalificacion.ToString("0.0") promedio
+                </span>
+            </div>
+
+            <div class="dash-actions">
+                <a href="@Url.Action("CrearEvento","ComercioPanel")" class="btn btn-success btn-dash">
+                    <i class="bi bi-plus-circle me-1"></i> Crear evento
+                </a>
+
+                <a href="@Url.Action("MisEventos","ComercioPanel")" class="btn btn-outline-dark btn-dash">
+                    <i class="bi bi-calendar-event me-1"></i> Ver eventos
+                </a>
+
+                <a href="@Url.Action("ReservasEventos","ComercioPanel")" class="btn btn-outline-dark btn-dash">
+                    <i class="bi bi-bookmark-check me-1"></i> Ver reservas
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="dash-switcher-wrap">
+        <div class="dash-switcher">
+            <button type="button" class="dash-tab-btn active" data-tab="tab-resumen">
+                <i class="bi bi-grid-1x2-fill me-1"></i> Resumen
+            </button>
+            <button type="button" class="dash-tab-btn" data-tab="tab-graficos">
+                <i class="bi bi-bar-chart-line-fill me-1"></i> Gráficos
+            </button>
+            <button type="button" class="dash-tab-btn" data-tab="tab-actividad">
+                <i class="bi bi-clock-history me-1"></i> Actividad
+            </button>
+            <button type="button" class="dash-tab-btn" data-tab="tab-accesos">
+                <i class="bi bi-lightning-charge-fill me-1"></i> Accesos rápidos
+            </button>
+        </div>
+    </section>
+
+    <section id="tab-resumen" class="dash-panel active">
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-top">
+                    <div>
+                        <div class="kpi-label">Eventos totales</div>
+                        <h2 class="kpi-value">@Model.TotalEventos</h2>
+                    </div>
+                    <div class="kpi-icon">
+                        <i class="bi bi-calendar-event"></i>
+                    </div>
+                </div>
+                <div class="kpi-foot">
+                    Incluye todos los eventos registrados para tu comercio.
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-top">
+                    <div>
+                        <div class="kpi-label">Eventos activos</div>
+                        <h2 class="kpi-value text-success">@Model.EventosActivos</h2>
+                    </div>
+                    <div class="kpi-icon">
+                        <i class="bi bi-lightning-charge"></i>
+                    </div>
+                </div>
+                <div class="kpi-foot">
+                    Eventos que siguen vigentes o aún no han finalizado.
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-top">
+                    <div>
+                        <div class="kpi-label">Reseñas</div>
+                        <h2 class="kpi-value">@Model.TotalResenas</h2>
+                    </div>
+                    <div class="kpi-icon">
+                        <i class="bi bi-chat-square-heart"></i>
+                    </div>
+                </div>
+                <div class="kpi-foot">
+                    Incluye aprobadas, pendientes y rechazadas.
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-top">
+                    <div>
+                        <div class="kpi-label">Reservas</div>
+                        <h2 class="kpi-value">@Model.TotalReservas</h2>
+                    </div>
+                    <div class="kpi-icon">
+                        <i class="bi bi-bookmark-check"></i>
+                    </div>
+                </div>
+                <div class="kpi-foot">
+                    Total de reservas asociadas a tus eventos.
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid mt-3">
+            <div class="dash-card">
+                <div class="dash-card-head">
+                    <h3 class="dash-card-title">
+                        <i class="bi bi-grid"></i> Resumen rápido
+                    </h3>
+                    <div class="dash-card-sub">
+                        Métricas clave del mes y estado actual del comercio.
+                    </div>
+                </div>
+                <div class="dash-card-body">
+                    <div class="mini-stats">
+                        <div class="mini-card">
+                            <div class="mini-card-label">Eventos del mes</div>
+                            <div class="mini-card-value">@Model.EventosDelMes</div>
+                        </div>
+
+                        <div class="mini-card">
+                            <div class="mini-card-label">Reservas del mes</div>
+                            <div class="mini-card-value">@Model.ReservasDelMes</div>
+                        </div>
+
+                        <div class="mini-card">
+                            <div class="mini-card-label">Próximos eventos</div>
+                            <div class="mini-card-value">@Model.ProximosEventos</div>
+                        </div>
+
+                        <div class="mini-card">
+                            <div class="mini-card-label">Últimos 30 días</div>
+                            <div class="mini-card-value">@Model.ReservasUltimos30Dias</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dash-card">
+                <div class="dash-card-head">
+                    <h3 class="dash-card-title">
+                        <i class="bi bi-star-half"></i> Estado de reseñas
+                    </h3>
+                    <div class="dash-card-sub">
+                        Distribución rápida de aprobación y seguimiento.
+                    </div>
+                </div>
+                <div class="dash-card-body">
+                    <div class="summary-grid">
+                        <div class="summary-row">
+                            <div class="summary-row-label">Reseñas pendientes</div>
+                            <div class="summary-row-value">@Model.ResenasPendientes</div>
+                        </div>
+
+                        <div class="summary-row">
+                            <div class="summary-row-label">Reseñas aprobadas</div>
+                            <div class="summary-row-value">@Model.ResenasAprobadas</div>
+                        </div>
+
+                        <div class="summary-row">
+                            <div class="summary-row-label">Reseñas rechazadas</div>
+                            <div class="summary-row-value">@Model.ResenasRechazadas</div>
+                        </div>
+
+                        <div class="summary-row">
+                            <div class="summary-row-label">Promedio de calificación</div>
+                            <div class="summary-row-value">@Model.PromedioCalificacion.ToString("0.0") / 5</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tab-graficos" class="dash-panel">
+        <div class="dashboard-grid">
+            <div class="dash-card">
+                <div class="dash-card-head">
+                    <h3 class="dash-card-title">
+                        <i class="bi bi-bar-chart-line"></i> Eventos por mes
+                    </h3>
+                    <div class="dash-card-sub">
+                        Comportamiento de creación o programación de eventos durante los últimos 6 meses.
+                    </div>
+                </div>
+                <div class="dash-card-body">
+                    <div class="chart-shell">
+                        <canvas id="chartEventosMes"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dash-card">
+                <div class="dash-card-head">
+                    <h3 class="dash-card-title">
+                        <i class="bi bi-pie-chart"></i> Estado de reseñas
+                    </h3>
+                    <div class="dash-card-sub">
+                        Distribución de las reseñas según su estado actual.
+                    </div>
+                </div>
+                <div class="dash-card-body">
+                    <div class="chart-shell">
+                        <canvas id="chartResenasEstado"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tab-actividad" class="dash-panel">
+        <div class="dash-card">
+            <div class="dash-card-head">
+                <h3 class="dash-card-title">
+                    <i class="bi bi-clock-history"></i> Actividad reciente
+                </h3>
+                <div class="dash-card-sub">
+                    Últimos movimientos detectados entre eventos, reservas y reseñas.
+                </div>
+            </div>
+            <div class="dash-card-body">
+                @if (Model.ActividadReciente != null && Model.ActividadReciente.Any())
+                {
+                    <div class="activity-list">
+                        @foreach (var item in Model.ActividadReciente)
+                        {
+                            var icon = "bi-activity";
+                            if (item.Tipo == "Evento") { icon = "bi-calendar-event"; }
+                            else if (item.Tipo == "Reserva") { icon = "bi-bookmark-check"; }
+                            else if (item.Tipo == "Reseña") { icon = "bi-chat-square-heart"; }
+
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="bi @icon"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="activity-title">@item.Titulo</div>
+                                    <div class="activity-sub">@item.Subtitulo</div>
+                                    <div class="activity-date">
+                                        @(item.Fecha.HasValue ? item.Fecha.Value.ToString("dd/MM/yyyy HH:mm") : "-")
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-lite">
+                        No hay actividad reciente para mostrar.
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    <section id="tab-accesos" class="dash-panel">
+        <div class="dashboard-grid">
+            <div class="dash-card">
+                <div class="dash-card-head">
+                    <h3 class="dash-card-title">
+                        <i class="bi bi-lightning"></i> Accesos rápidos
+                    </h3>
+                    <div class="dash-card-sub">
+                        Tareas frecuentes dentro del panel del comercio.
+                    </div>
+                </div>
+                <div class="dash-card-body">
+                    <div class="summary-grid">
+                        <a href="@Url.Action("MiComercio","ComercioPanel")" class="summary-row">
+                            <div class="summary-row-label">Ver información del comercio</div>
+                            <div class="summary-row-value"><i class="bi bi-arrow-right"></i></div>
+                        </a>
+
+                        <a href="@Url.Action("MisEventos","ComercioPanel")" class="summary-row">
+                            <div class="summary-row-label">Administrar eventos</div>
+                            <div class="summary-row-value"><i class="bi bi-arrow-right"></i></div>
+                        </a>
+
+                        <a href="@Url.Action("ReservasEventos","ComercioPanel")" class="summary-row">
+                            <div class="summary-row-label">Revisar reservas</div>
+                            <div class="summary-row-value"><i class="bi bi-arrow-right"></i></div>
+                        </a>
+
+                        <a href="@Url.Action("MisResenas","ComercioPanel")" class="summary-row">
+                            <div class="summary-row-label">Consultar reseñas</div>
+                            <div class="summary-row-value"><i class="bi bi-arrow-right"></i></div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dash-card">
+                <div class="dash-card-head">
+                    <h3 class="dash-card-title">
+                        <i class="bi bi-journal-check"></i> Resumen del negocio
+                    </h3>
+                    <div class="dash-card-sub">
+                        Lectura rápida de tu estado actual dentro del sistema.
+                    </div>
+                </div>
+                <div class="dash-card-body">
+                    <div class="summary-grid">
+                        <div class="summary-row">
+                            <div class="summary-row-label">Categoría</div>
+                            <div class="summary-row-value">@(string.IsNullOrWhiteSpace(Model.Categoria) ? "-" : Model.Categoria)</div>
+                        </div>
+
+                        <div class="summary-row">
+                            <div class="summary-row-label">Estado del comercio</div>
+                            <div class="summary-row-value">@estado</div>
+                        </div>
+
+                        <div class="summary-row">
+                            <div class="summary-row-label">Total de eventos</div>
+                            <div class="summary-row-value">@Model.TotalEventos</div>
+                        </div>
+
+                        <div class="summary-row">
+                            <div class="summary-row-label">Total de reservas</div>
+                            <div class="summary-row-value">@Model.TotalReservas</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        (function () {
+            const tabButtons = document.querySelectorAll('.dash-tab-btn');
+            const tabPanels = document.querySelectorAll('.dash-panel');
+
+            function activateTab(tabId) {
+                tabButtons.forEach(function (btn) {
+                    btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
+                });
+
+                tabPanels.forEach(function (panel) {
+                    panel.classList.toggle('active', panel.id === tabId);
+                });
+            }
+
+            tabButtons.forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    activateTab(this.getAttribute('data-tab'));
+                });
+            });
+
+            activateTab('tab-resumen');
+
+            const eventosCtx = document.getElementById('chartEventosMes');
+            const resenasCtx = document.getElementById('chartResenasEstado');
+
+            if (eventosCtx) {
+                new Chart(eventosCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: [@Html.Raw(eventosLabels)],
+                        datasets: [{
+                            label: 'Eventos',
+                            data: [@Html.Raw(eventosData)],
+                            borderWidth: 1,
+                            borderRadius: 12
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    precision: 0
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            if (resenasCtx) {
+                new Chart(resenasCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: [@Html.Raw(resenasLabels)],
+                        datasets: [{
+                            data: [@Html.Raw(resenasData)],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        },
+                        cutout: '62%'
+                    }
+                });
+            }
+        })();
+    </script>
+}

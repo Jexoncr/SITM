@@ -1,0 +1,317 @@
+﻿@model turistico.Controllers.EventoAdminVM
+
+@{
+    ViewBag.Title = "Crear Evento";
+    Layout = "~/Views/Shared/_LayoutComercio.cshtml";
+    var comercio = ViewBag.ComercioActual as turistico.Models.Comercio;
+}
+
+<style>
+    :root {
+        --ce-green-900: #0f3d2e;
+        --ce-green-800: #145544;
+        --ce-green-700: #1b6b55;
+        --ce-soft: rgba(20,85,68,.08);
+        --ce-ink: #0f172a;
+        --ce-muted: #64748b;
+        --ce-border: rgba(15,23,42,.08);
+        --ce-card: rgba(255,255,255,.97);
+        --ce-shadow: 0 20px 48px rgba(15,23,42,.08);
+        --ce-shadow-soft: 0 10px 24px rgba(15,23,42,.05);
+        --ce-radius-xl: 30px;
+        --ce-radius-lg: 24px;
+        --ce-radius-md: 18px;
+    }
+
+    .event-form-page {
+        background: radial-gradient(circle at top left, rgba(20,85,68,.07), transparent 30%), radial-gradient(circle at top right, rgba(46,158,127,.08), transparent 24%), linear-gradient(180deg, #fbfdfc 0%, #f4f8f6 50%, #eef4f1 100%);
+        min-height: 100%;
+    }
+
+    .event-form-shell {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 2rem 1rem 3rem;
+    }
+
+    .event-form-hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: var(--ce-radius-xl);
+        padding: 2rem 1.45rem 1.7rem;
+        margin-bottom: 1.1rem;
+        background: radial-gradient(circle at top right, rgba(46,158,127,.12), transparent 28%), linear-gradient(135deg, #ffffff 0%, #f7fbf8 55%, #eef7f2 100%);
+        border: 1px solid rgba(15,23,42,.06);
+        box-shadow: 0 20px 46px rgba(15,23,42,.06);
+    }
+
+        .event-form-hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(20,85,68,.04), transparent 24%);
+            pointer-events: none;
+        }
+
+    .event-form-hero-inner {
+        position: relative;
+        z-index: 2;
+    }
+
+    .event-form-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .42rem;
+        padding: .55rem .88rem;
+        border-radius: 999px;
+        background: rgba(20,85,68,.08);
+        color: var(--ce-green-800);
+        border: 1px solid rgba(20,85,68,.10);
+        font-weight: 800;
+        font-size: .8rem;
+        margin-bottom: .8rem;
+    }
+
+    .event-form-hero h1 {
+        margin: 0 0 .5rem;
+        color: var(--ce-ink);
+        font-weight: 950;
+        line-height: 1.03;
+        letter-spacing: -.03em;
+        font-size: clamp(2rem, 3vw, 3rem);
+    }
+
+    .event-form-hero p {
+        margin: 0;
+        max-width: 820px;
+        color: var(--ce-muted);
+        line-height: 1.82;
+        font-size: .95rem;
+    }
+
+    .event-form-card {
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: var(--ce-radius-xl);
+        background: var(--ce-card);
+        box-shadow: var(--ce-shadow);
+        overflow: hidden;
+    }
+
+    .event-form-head {
+        padding: 1rem 1.1rem;
+        border-bottom: 1px solid rgba(15,23,42,.06);
+        background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,250,252,.96));
+    }
+
+    .event-form-title {
+        margin: 0;
+        color: var(--ce-ink);
+        font-weight: 950;
+        font-size: 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem;
+    }
+
+    .event-form-sub {
+        color: var(--ce-muted);
+        font-size: .84rem;
+        margin-top: .22rem;
+        line-height: 1.6;
+    }
+
+    .event-form-body {
+        padding: 1.15rem;
+    }
+
+    .soft-box {
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: 20px;
+        background: linear-gradient(180deg, rgba(248,250,252,.8), rgba(255,255,255,1));
+        padding: 1rem;
+        box-shadow: var(--ce-shadow-soft);
+    }
+
+    .form-label {
+        font-weight: 900;
+        color: var(--ce-ink);
+        font-size: .84rem;
+        margin-bottom: .45rem;
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 16px;
+        min-height: 48px;
+        border: 1px solid rgba(15,23,42,.10);
+        box-shadow: none !important;
+        font-size: .92rem;
+    }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #1f8a6c;
+            box-shadow: 0 0 0 .2rem rgba(31,138,108,.12) !important;
+        }
+
+    textarea.form-control {
+        min-height: 140px;
+    }
+
+    .readonly-box {
+        min-height: 48px;
+        border-radius: 16px;
+        border: 1px solid rgba(15,23,42,.08);
+        background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+        display: flex;
+        align-items: center;
+        padding: .75rem .95rem;
+        color: #334155;
+        font-weight: 700;
+    }
+
+    .upload-card {
+        border: 1px dashed rgba(15,23,42,.14);
+        border-radius: 18px;
+        padding: 1rem;
+        background: linear-gradient(180deg, #fbfdfc 0%, #ffffff 100%);
+    }
+
+    .upload-hint {
+        color: var(--ce-muted);
+        font-size: .82rem;
+        line-height: 1.6;
+        margin-top: .45rem;
+    }
+
+    .form-actions {
+        margin-top: 1.1rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: .7rem;
+    }
+
+    .btn-event-form {
+        border-radius: 999px;
+        font-weight: 850;
+        padding: .82rem 1.15rem;
+    }
+</style>
+
+<div class="event-form-page">
+    <div class="event-form-shell">
+        <section class="event-form-hero">
+            <div class="event-form-hero-inner">
+                <span class="event-form-badge">
+                    <i class="bi bi-calendar-plus"></i> Panel de comercio
+                </span>
+
+                <h1>Crear evento</h1>
+                <p>
+                    Registra una nueva actividad asociada a tu comercio, define fechas, cupos, categoría e imagen principal para que se vea correctamente en el portal público.
+                </p>
+            </div>
+        </section>
+
+        <div class="event-form-card">
+            <div class="event-form-head">
+                <h2 class="event-form-title">
+                    <i class="bi bi-pencil-square"></i> Formulario del evento
+                </h2>
+                <div class="event-form-sub">
+                    Completa la información principal del evento antes de publicarlo.
+                </div>
+            </div>
+
+            <div class="event-form-body">
+                @using (Html.BeginForm("CrearEvento", "ComercioPanel", FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    @* IMPORTANTE: mandar estos campos ocultos para que no falle la validación *@
+                    @Html.HiddenFor(m => m.ComercioId)
+                    @Html.HiddenFor(m => m.LugarId)
+
+                    <div class="soft-box mb-3">
+                        @Html.ValidationSummary(false, "", new { @class = "text-danger mb-0" })
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Comercio</label>
+                            <div class="readonly-box">
+                                <i class="bi bi-shop me-2"></i>
+                                @(comercio != null ? comercio.Nombre : "-")
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-7">
+                            <label class="form-label">Nombre del evento</label>
+                            @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control", placeholder = "Ej. Feria gastronómica del cantón" })
+                            @Html.ValidationMessageFor(m => m.Nombre, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <div class="col-12 col-md-5">
+                            <label class="form-label">Categoría de evento</label>
+                            @Html.DropDownListFor(m => m.CategoriaEventoId, (SelectList)ViewBag.CategoriasEvento, "Seleccione...", new { @class = "form-select" })
+                            @Html.ValidationMessageFor(m => m.CategoriaEventoId, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Descripción</label>
+                            @Html.TextAreaFor(m => m.Descripcion, 5, 1, new { @class = "form-control", placeholder = "Describe el evento, sus actividades y qué puede esperar el visitante..." })
+                            @Html.ValidationMessageFor(m => m.Descripcion, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label">Fecha de inicio</label>
+                            @Html.TextBoxFor(m => m.FechaInicio, "{0:yyyy-MM-ddTHH:mm}", new { @class = "form-control", type = "datetime-local" })
+                            @Html.ValidationMessageFor(m => m.FechaInicio, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label">Fecha de fin</label>
+                            @Html.TextBoxFor(m => m.FechaFin, "{0:yyyy-MM-ddTHH:mm}", new { @class = "form-control", type = "datetime-local" })
+                            @Html.ValidationMessageFor(m => m.FechaFin, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label">Cupo máximo</label>
+                            @Html.TextBoxFor(m => m.CupoMaximo, new { @class = "form-control", type = "number", min = "0", placeholder = "0" })
+                            @Html.ValidationMessageFor(m => m.CupoMaximo, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label">Límite por persona</label>
+                            @Html.TextBoxFor(m => m.LimitePorPersona, new { @class = "form-control", type = "number", min = "1", placeholder = "1" })
+                            @Html.ValidationMessageFor(m => m.LimitePorPersona, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Imagen del evento</label>
+                            <div class="upload-card">
+                                <input type="file"
+                                       name="ImagenArchivo"
+                                       class="form-control"
+                                       accept=".jpg,.jpeg,.png,.webp,image/*" />
+                                <div class="upload-hint">
+                                    Opcional. Formatos permitidos: JPG, PNG y WEBP.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success btn-event-form">
+                            <i class="bi bi-check2-circle me-1"></i> Guardar evento
+                        </button>
+
+                        <a href="@Url.Action("MisEventos", "ComercioPanel")" class="btn btn-outline-secondary btn-event-form">
+                            Cancelar
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
