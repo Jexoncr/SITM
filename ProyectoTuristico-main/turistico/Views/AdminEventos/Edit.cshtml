@@ -1,0 +1,393 @@
+﻿@model turistico.Controllers.EventoAdminVM
+
+@{
+    ViewBag.Title = "Editar Evento";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    :root {
+        --ae-green-900: #0f3d2e;
+        --ae-green-800: #145544;
+        --ae-green-700: #1b6b55;
+        --ae-soft: rgba(20,85,68,.08);
+        --ae-ink: #0f172a;
+        --ae-muted: #64748b;
+        --ae-card: rgba(255,255,255,.97);
+        --ae-shadow: 0 20px 48px rgba(15,23,42,.08);
+        --ae-shadow-soft: 0 10px 24px rgba(15,23,42,.05);
+        --ae-radius-xl: 30px;
+        --ae-radius-lg: 24px;
+        --ae-radius-md: 18px;
+    }
+
+    .event-edit-shell {
+        display: grid;
+        gap: 1rem;
+        max-width: 1260px;
+    }
+
+    .event-edit-hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: var(--ae-radius-xl);
+        padding: 1.9rem 1.25rem 1.55rem;
+        background: radial-gradient(circle at top right, rgba(46,158,127,.12), transparent 28%), linear-gradient(135deg, #ffffff 0%, #f7fbf8 55%, #eef7f2 100%);
+        border: 1px solid rgba(15,23,42,.06);
+        box-shadow: 0 18px 42px rgba(15,23,42,.06);
+    }
+
+        .event-edit-hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(20,85,68,.04), transparent 24%);
+            pointer-events: none;
+        }
+
+    .event-edit-hero-inner {
+        position: relative;
+        z-index: 2;
+    }
+
+    .event-edit-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .42rem;
+        padding: .5rem .82rem;
+        border-radius: 999px;
+        background: rgba(20,85,68,.08);
+        color: var(--ae-green-800);
+        border: 1px solid rgba(20,85,68,.10);
+        font-weight: 800;
+        font-size: .8rem;
+        margin-bottom: .75rem;
+    }
+
+    .event-edit-title {
+        margin: 0 0 .45rem;
+        color: var(--ae-ink);
+        font-weight: 950;
+        line-height: 1.04;
+        letter-spacing: -.03em;
+        font-size: clamp(2rem, 3vw, 2.9rem);
+    }
+
+    .event-edit-sub {
+        margin: 0;
+        color: var(--ae-muted);
+        line-height: 1.78;
+        max-width: 860px;
+        font-size: .95rem;
+    }
+
+    .event-grid {
+        display: grid;
+        grid-template-columns: 1.15fr .85fr;
+        gap: 1rem;
+        align-items: start;
+    }
+
+    @@media (max-width: 991.98px) {
+        .event-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .card-premium {
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: var(--ae-radius-xl);
+        background: var(--ae-card);
+        box-shadow: var(--ae-shadow);
+        overflow: hidden;
+    }
+
+    .card-head {
+        padding: 1rem 1.05rem;
+        border-bottom: 1px solid rgba(15,23,42,.06);
+        background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,250,252,.96));
+    }
+
+    .card-head-title {
+        margin: 0;
+        color: var(--ae-ink);
+        font-weight: 950;
+        font-size: 1rem;
+    }
+
+    .card-head-sub {
+        margin-top: .2rem;
+        color: var(--ae-muted);
+        font-size: .84rem;
+        line-height: 1.6;
+    }
+
+    .card-body-premium {
+        padding: 1.1rem;
+    }
+
+    .form-label {
+        font-weight: 900;
+        color: var(--ae-ink);
+        font-size: .84rem;
+        margin-bottom: .45rem;
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 16px;
+        min-height: 48px;
+        border: 1px solid rgba(15,23,42,.10);
+        box-shadow: none !important;
+        font-size: .92rem;
+    }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #1f8a6c;
+            box-shadow: 0 0 0 .2rem rgba(31,138,108,.12) !important;
+        }
+
+    textarea.form-control {
+        min-height: 140px;
+    }
+
+    .upload-box {
+        border: 1px dashed rgba(15,23,42,.14);
+        border-radius: 20px;
+        padding: 1rem;
+        background: linear-gradient(180deg, #fbfdfc 0%, #ffffff 100%);
+    }
+
+    .upload-help {
+        color: var(--ae-muted);
+        font-size: .82rem;
+        line-height: 1.6;
+        margin-top: .45rem;
+    }
+
+    .image-preview-card {
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: 22px;
+        overflow: hidden;
+        background: linear-gradient(180deg, rgba(248,250,252,.78), rgba(255,255,255,1));
+        box-shadow: var(--ae-shadow-soft);
+    }
+
+    .image-preview-head {
+        padding: .9rem 1rem;
+        border-bottom: 1px solid rgba(15,23,42,.06);
+        font-weight: 900;
+        color: var(--ae-ink);
+        font-size: .9rem;
+    }
+
+    .image-preview-body {
+        padding: 1rem;
+    }
+
+    .current-image {
+        width: 100%;
+        border-radius: 18px;
+        border: 1px solid rgba(15,23,42,.08);
+        object-fit: cover;
+        max-height: 280px;
+        background: #f8fafc;
+    }
+
+    .no-image {
+        border-radius: 18px;
+        border: 1px dashed rgba(15,23,42,.12);
+        min-height: 220px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ae-muted);
+        background: #f8fafc;
+        text-align: center;
+        padding: 1rem;
+    }
+
+    .preview-note {
+        margin-top: .7rem;
+        color: var(--ae-muted);
+        font-size: .82rem;
+        line-height: 1.55;
+    }
+
+    .form-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .7rem;
+        margin-top: 1rem;
+    }
+
+    .btn-premium {
+        border-radius: 999px;
+        font-weight: 850;
+        padding: .82rem 1rem;
+    }
+</style>
+
+<div class="event-edit-shell">
+    <section class="event-edit-hero">
+        <div class="event-edit-hero-inner">
+            <span class="event-edit-badge">
+                <i class="bi bi-pencil-square"></i> Administración de eventos
+            </span>
+            <h1 class="event-edit-title">Editar evento</h1>
+            <p class="event-edit-sub">
+                Actualiza la información general del evento, su comercio, fechas, cupos y también la imagen principal que se mostrará en el portal.
+            </p>
+        </div>
+    </section>
+
+    @using (Html.BeginForm("Edit", "AdminEventos", FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.Id)
+
+        <div class="event-grid">
+            <div class="card-premium">
+                <div class="card-head">
+                    <h2 class="card-head-title">Datos del evento</h2>
+                    <div class="card-head-sub">Edita la información principal del evento y guarda los cambios.</div>
+                </div>
+
+                <div class="card-body-premium">
+                    @Html.ValidationSummary(false, "", new { @class = "text-danger mb-3" })
+
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label">Nombre</label>
+                            @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control", placeholder = "Nombre del evento" })
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label">Comercio</label>
+                            @Html.DropDownListFor(m => m.ComercioId, (SelectList)ViewBag.Comercios, "Seleccione...", new { @class = "form-select" })
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label">Categoría de evento</label>
+                            @Html.DropDownListFor(m => m.CategoriaEventoId, (SelectList)ViewBag.CategoriasEvento, "Seleccione...", new { @class = "form-select" })
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label">Cupo máximo</label>
+                            @Html.TextBoxFor(m => m.CupoMaximo, new { @class = "form-control", type = "number", min = "0" })
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label">Límite por persona</label>
+                            @Html.TextBoxFor(m => m.LimitePorPersona, new { @class = "form-control", type = "number", min = "1" })
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label">Fecha inicio</label>
+                            @Html.TextBoxFor(m => m.FechaInicio, "{0:yyyy-MM-ddTHH:mm}", new { @class = "form-control", type = "datetime-local" })
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label">Fecha fin</label>
+                            @Html.TextBoxFor(m => m.FechaFin, "{0:yyyy-MM-ddTHH:mm}", new { @class = "form-control", type = "datetime-local" })
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Descripción</label>
+                            @Html.TextAreaFor(m => m.Descripcion, 4, 1, new { @class = "form-control", placeholder = "Descripción del evento..." })
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Cambiar imagen del evento</label>
+                            <div class="upload-box">
+                                @Html.TextBoxFor(m => m.ImagenArchivo, new
+                                {
+                                    @class = "form-control",
+                                    type = "file",
+                                    accept = ".jpg,.jpeg,.png,.webp,image/*"
+                                })
+                                <div class="upload-help">
+                                    Si seleccionas una nueva imagen, reemplazará la actual. Formatos permitidos: JPG, PNG y WEBP. Tamaño máximo: 5 MB.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success btn-premium">
+                            <i class="bi bi-check2-circle me-1"></i> Guardar cambios
+                        </button>
+
+                        <a href="@Url.Action("Index","AdminEventos")" class="btn btn-outline-secondary btn-premium">
+                            Cancelar
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-premium">
+                <div class="card-head">
+                    <h2 class="card-head-title">Imagen actual</h2>
+                    <div class="card-head-sub">Vista previa de la imagen principal del evento.</div>
+                </div>
+
+                <div class="card-body-premium">
+                    <div class="image-preview-card">
+                        <div class="image-preview-head">
+                            Vista previa
+                        </div>
+                        <div class="image-preview-body">
+                            @if (!string.IsNullOrWhiteSpace(Model.ImagenUrlActual))
+                            {
+                                <img src="@Model.ImagenUrlActual" alt="Imagen actual del evento" class="current-image" id="previewImage" />
+                            }
+                            else
+                            {
+                                <div class="no-image" id="previewFallback">
+                                    <div>
+                                        <i class="bi bi-image" style="font-size:2rem;"></i>
+                                        <div class="mt-2">Este evento no tiene imagen registrada.</div>
+                                    </div>
+                                </div>
+                                <img src="" alt="Vista previa del evento" class="current-image d-none" id="previewImage" />
+                            }
+
+                            <div class="preview-note">
+                                Puedes seleccionar una nueva imagen desde el formulario para actualizar la portada del evento.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            const fileInput = document.querySelector('input[type="file"][name="ImagenArchivo"]');
+            const previewImage = document.getElementById('previewImage');
+            const previewFallback = document.getElementById('previewFallback');
+
+            if (!fileInput || !previewImage) return;
+
+            fileInput.addEventListener('change', function () {
+                const file = this.files && this.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewImage.src = e.target.result;
+                    previewImage.classList.remove('d-none');
+
+                    if (previewFallback) {
+                        previewFallback.classList.add('d-none');
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        })();
+    </script>
+}

@@ -1,0 +1,262 @@
+﻿@model turistico.Controllers.EventoAdminVM
+
+@{
+    ViewBag.Title = "Crear Evento";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    :root {
+        --aec-green-900: #0f3d2e;
+        --aec-green-800: #145544;
+        --aec-ink: #0f172a;
+        --aec-muted: #64748b;
+        --aec-card: rgba(255,255,255,.97);
+        --aec-shadow: 0 20px 48px rgba(15,23,42,.08);
+        --aec-shadow-soft: 0 10px 24px rgba(15,23,42,.05);
+        --aec-radius-xl: 28px;
+    }
+
+    .admin-event-form-shell {
+        display: grid;
+        gap: 1rem;
+        max-width: 1180px;
+    }
+
+    .admin-event-form-hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: var(--aec-radius-xl);
+        padding: 1.8rem 1.25rem 1.55rem;
+        background: radial-gradient(circle at top right, rgba(46,158,127,.12), transparent 28%), linear-gradient(135deg, #ffffff 0%, #f7fbf8 55%, #eef7f2 100%);
+        border: 1px solid rgba(15,23,42,.06);
+        box-shadow: 0 18px 42px rgba(15,23,42,.06);
+    }
+
+        .admin-event-form-hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(20,85,68,.04), transparent 24%);
+            pointer-events: none;
+        }
+
+    .admin-event-form-hero-inner {
+        position: relative;
+        z-index: 2;
+    }
+
+    .admin-event-form-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .42rem;
+        padding: .5rem .82rem;
+        border-radius: 999px;
+        background: rgba(20,85,68,.08);
+        color: #145544;
+        border: 1px solid rgba(20,85,68,.10);
+        font-weight: 800;
+        font-size: .8rem;
+        margin-bottom: .75rem;
+    }
+
+    .admin-event-form-title {
+        margin: 0 0 .45rem;
+        color: var(--aec-ink);
+        font-weight: 950;
+        line-height: 1.04;
+        letter-spacing: -.03em;
+        font-size: clamp(1.9rem, 2.8vw, 2.8rem);
+    }
+
+    .admin-event-form-sub {
+        margin: 0;
+        color: var(--aec-muted);
+        line-height: 1.78;
+        max-width: 860px;
+        font-size: .94rem;
+    }
+
+    .admin-event-form-card {
+        border: 1px solid rgba(15,23,42,.06);
+        border-radius: var(--aec-radius-xl);
+        background: var(--aec-card);
+        box-shadow: var(--aec-shadow);
+        overflow: hidden;
+    }
+
+    .admin-event-form-head {
+        padding: 1rem 1.05rem;
+        border-bottom: 1px solid rgba(15,23,42,.06);
+        background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,250,252,.96));
+    }
+
+    .admin-event-form-head-title {
+        margin: 0;
+        color: var(--aec-ink);
+        font-weight: 950;
+        font-size: 1rem;
+    }
+
+    .admin-event-form-head-sub {
+        margin-top: .2rem;
+        color: var(--aec-muted);
+        font-size: .84rem;
+        line-height: 1.6;
+    }
+
+    .admin-event-form-body {
+        padding: 1.1rem;
+    }
+
+    .form-label {
+        font-weight: 900;
+        color: var(--aec-ink);
+        font-size: .84rem;
+        margin-bottom: .45rem;
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 16px;
+        min-height: 48px;
+        border: 1px solid rgba(15,23,42,.10);
+        box-shadow: none !important;
+        font-size: .92rem;
+    }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #1f8a6c;
+            box-shadow: 0 0 0 .2rem rgba(31,138,108,.12) !important;
+        }
+
+    textarea.form-control {
+        min-height: 140px;
+    }
+
+    .upload-box {
+        border: 1px dashed rgba(15,23,42,.14);
+        border-radius: 18px;
+        padding: 1rem;
+        background: linear-gradient(180deg, #fbfdfc 0%, #ffffff 100%);
+    }
+
+    .upload-hint {
+        color: var(--aec-muted);
+        font-size: .82rem;
+        line-height: 1.6;
+        margin-top: .45rem;
+    }
+
+    .form-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .7rem;
+        margin-top: 1rem;
+    }
+
+    .btn-admin-form {
+        border-radius: 999px;
+        font-weight: 850;
+        padding: .8rem 1rem;
+    }
+</style>
+
+<div class="admin-event-form-shell">
+    <section class="admin-event-form-hero">
+        <div class="admin-event-form-hero-inner">
+            <span class="admin-event-form-badge">
+                <i class="bi bi-calendar-plus"></i> Gestión administrativa
+            </span>
+
+            <h1 class="admin-event-form-title">Crear evento</h1>
+            <p class="admin-event-form-sub">
+                Registra un nuevo evento dentro del sistema, asociándolo a un comercio, categoría, fechas, cupos e imagen principal.
+            </p>
+        </div>
+    </section>
+
+    <div class="admin-event-form-card">
+        <div class="admin-event-form-head">
+            <div class="admin-event-form-head-title">Formulario de evento</div>
+            <div class="admin-event-form-head-sub">
+                Completa la información principal antes de guardar.
+            </div>
+        </div>
+
+        <div class="admin-event-form-body">
+            @using (Html.BeginForm("Create", "AdminEventos", FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off" }))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.ValidationSummary(false, "", new { @class = "text-danger mb-3" })
+
+                <div class="row g-3">
+                    <div class="col-12 col-md-7">
+                        <label class="form-label">Nombre del evento</label>
+                        @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control", placeholder = "Nombre del evento" })
+                    </div>
+
+                    <div class="col-12 col-md-5">
+                        <label class="form-label">Categoría</label>
+                        @Html.DropDownListFor(m => m.CategoriaEventoId, (SelectList)ViewBag.CategoriasEvento, "Seleccione...", new { @class = "form-select" })
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">Comercio</label>
+                        @Html.DropDownListFor(m => m.ComercioId, (SelectList)ViewBag.Comercios, "Seleccione...", new { @class = "form-select" })
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">Cupo máximo</label>
+                        @Html.TextBoxFor(m => m.CupoMaximo, new { @class = "form-control", type = "number", min = "0" })
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">Límite por persona</label>
+                        @Html.TextBoxFor(m => m.LimitePorPersona, new { @class = "form-control", type = "number", min = "1" })
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">Fecha de inicio</label>
+                        @Html.TextBoxFor(m => m.FechaInicio, "{0:yyyy-MM-ddTHH:mm}", new { @class = "form-control", type = "datetime-local" })
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">Fecha de fin</label>
+                        @Html.TextBoxFor(m => m.FechaFin, "{0:yyyy-MM-ddTHH:mm}", new { @class = "form-control", type = "datetime-local" })
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Descripción</label>
+                        @Html.TextAreaFor(m => m.Descripcion, 5, 1, new { @class = "form-control", placeholder = "Descripción del evento..." })
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Imagen del evento</label>
+                        <div class="upload-box">
+                            <input type="file"
+                                   name="ImagenArchivo"
+                                   class="form-control"
+                                   accept=".jpg,.jpeg,.png,.webp,image/*" />
+                            <div class="upload-hint">
+                                Opcional. Formatos permitidos: JPG, PNG y WEBP.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success btn-admin-form">
+                        <i class="bi bi-check2-circle me-1"></i> Guardar evento
+                    </button>
+
+                    <a href="@Url.Action("Index", "AdminEventos")" class="btn btn-outline-secondary btn-admin-form">
+                        Cancelar
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
